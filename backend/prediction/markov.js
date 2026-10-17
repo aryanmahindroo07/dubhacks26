@@ -33,6 +33,28 @@ class MarkovPredictor {
     }
   }
 
+  recordTransition(history) {
+  const n = history.length;
+  if (n < 2) return;
+
+  const current = history[n - 1];
+  const previous = history[n - 2];
+
+  // Update first-order transition
+  this.addCount(this.first, previous, current);
+
+  // Update second-order transition
+  if (n >= 3) {
+    const previousPrevious = history[n - 3];
+
+    this.addCount(
+      this.second,
+      JSON.stringify([previousPrevious, previous]),
+      current
+    );
+  }
+  }
+
   predict(history, candidates = this.states) {
     const current = history.at(-1);
     const previous = history.at(-2);
