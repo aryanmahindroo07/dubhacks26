@@ -39,6 +39,11 @@ function predict(history: string[]): Prediction[];
 // Teach the engine about a real navigation.
 function recordTransition(from: string, to: string): void;
 
+predictNext(
+history: StateId[],
+config?: object
+): Prediction[];
+
 // Snapshot for the HUD (probabilities, counts, hit rate).
 function getState(): object;
 ```
