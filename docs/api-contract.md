@@ -6,7 +6,7 @@ Status: DRAFT — written by Backend 1, waiting for Backend 2 review.
 
 | Module | Owner | Location |
 |---|---|---|
-| Prediction engine | Backend 1 | `backend/engine/` |
+| Prediction engine | Backend 1 | `backend/prediction/` |
 | Endpoint registry, cache, prefetch execution | Backend 2 | `backend/cache/` |
 
 ## Endpoint keys
