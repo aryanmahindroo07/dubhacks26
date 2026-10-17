@@ -59,10 +59,10 @@ Placeholder values until Backend 2 finalizes them:
 
 ```js
 const registry = {
-  "/api/customers/:id":           { estimatedLatencyMs: 1200, estimatedCost: 300 },
-  "/api/customers/:id/orders":    { estimatedLatencyMs: 1200, estimatedCost: 300 },
-  "/api/customers/:id/support":   { estimatedLatencyMs: 1200, estimatedCost: 300 },
-  "/api/customers/:id/analytics": { estimatedLatencyMs: 1200, estimatedCost: 300 },
+  "/api/customers/:id":           { estimatedLatencyMs: 1200, latencySaved: 300 },
+  "/api/customers/:id/orders":    { estimatedLatencyMs: 1200, latencySaved: 300 },
+  "/api/customers/:id/support":   { estimatedLatencyMs: 1200, latencySaved: 300 },
+  "/api/customers/:id/analytics": { estimatedLatencyMs: 1200, latencySaved: 300 },
 };
 ```
 
