@@ -79,8 +79,7 @@ ANALYTICS:{ route: "/api/customers/:id/analytics", estimatedLatencyMs: 1200, est
 2. Track `history` per session and pass it to `predict` after each request.
 3. Decide which predictions to execute using `expectedValue` and the request
    budget. The engine ranks; the cache module decides.
-4. Mark each response with an `X-Cache: HIT` or `X-Cache: MISS` header so the
-   frontend HUD can show cache performance.
+4. Report cache hits, misses, prefetch status, and measured latency directly through the SDK's metrics interface to the frontend HUD. Browser-     memory cache hits do not require an HTTP response.
 
 ## Open questions for Backend 2
 
