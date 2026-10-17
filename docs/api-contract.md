@@ -11,9 +11,8 @@ Status: DRAFT — written by Backend 1, waiting for Backend 2 review.
 
 ## Endpoint keys
 
-The engine works with **route templates**, never concrete URLs, so it learns
-across all customers. The caching module replaces `:id` with the real id
-before executing a request.
+The engine predicts normalized state IDs (`CUSTOMER`, `ORDERS`, `SUPPORT`, `ANALYTICS`) across all customers.
+The caching module maps state IDs to route templates and replaces `:id` with the actual customer ID before prefetching.
 
 ```
 /api/customers/:id
