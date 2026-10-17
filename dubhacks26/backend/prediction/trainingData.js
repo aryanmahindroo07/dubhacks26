@@ -1,0 +1,27 @@
+
+const trainingJourneys = [
+  ["CUSTOMERS", "CUSTOMER", "ORDERS"],
+  ["CUSTOMERS", "CUSTOMER", "ORDERS"],
+  ["CUSTOMERS", "CUSTOMER", "ORDERS"],
+  ["CUSTOMERS", "CUSTOMER", "ORDERS"],
+  ["CUSTOMERS", "CUSTOMER", "SUPPORT"],
+  ["CUSTOMERS", "CUSTOMER", "ANALYTICS"],
+
+  ["ANALYTICS", "CUSTOMER", "SUPPORT"],
+  ["ANALYTICS", "CUSTOMER", "SUPPORT"],
+  ["ANALYTICS", "CUSTOMER", "ORDERS"],
+
+  ["ORDERS", "CUSTOMER", "ANALYTICS"],
+  ["ORDERS", "CUSTOMER", "ANALYTICS"],
+  ["ORDERS", "CUSTOMER", "SUPPORT"],
+];
+
+const STATES = [
+  "CUSTOMERS",
+  "CUSTOMER",
+  "ORDERS",
+  "SUPPORT",
+  "ANALYTICS",
+];
+
+module.exports = { trainingJourneys, STATES };
