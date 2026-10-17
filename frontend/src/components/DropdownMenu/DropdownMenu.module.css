@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+.menu {
+    box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid #b4b4b4;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 340px;
+    height: 370px;
+    padding: 10px;
+    font-family: 'Manrope', sans-serif;
+}
+
+.smallText {
+    font-size: 10px;
+}
+
+.header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.xButton {
+    font-weight: bold;
+}
+
+.title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-weight: bold;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+.dataBox {
+    border: 1px solid #b4b4b4;
+    border-radius: 10px;
+    grid-column: span 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #FBFCFB;
+}
+
+.label {
+    font-size: 10px;
+}
+
+.data {
+    font-weight: bold;
+}
+
+.description {
+    font-size: 10px;
+}
+
+.footerBox {
+    border-radius: 10px;
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px;
+    background-color: #EFF5E8;
+}
+
+.footer {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leftItems {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.likelyNext {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.likelyNextText {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.right {
+    font-size: 12px;
+}
