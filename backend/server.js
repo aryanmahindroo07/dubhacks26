@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { customers } = require("./data");
+const { predictNext } = require("./prediction/engine");
 
 const app = express();
 app.use(cors());
@@ -49,6 +50,15 @@ function findCustomer(req, res) {
 }
 
 // ---- Endpoints ------------------------------------------------------------
+// Search returns summary fields only; detailed data stays on customer endpoints.
+app.get("/api/search", withDelay("customers", (req, res) => {
+  const query = String(req.query.q || "").trim().toLowerCase();
+  const results = customers
+    .filter((customer) => !query || customer.name.toLowerCase().includes(query))
+    .map(({ id, name, plan, mrr }) => ({ id, name, plan, mrr }));
+  res.json({ results });
+}));
+
 app.get("/api/customers", withDelay("customers", (req, res) => {
   res.json(customers.map(({ id, name, plan, mrr }) => ({ id, name, plan, mrr })));
 }));
@@ -91,3 +101,19 @@ app.post("/api/config/delays", (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+
+// ---- Prediction endpoint --------------------------------------------------
+app.post("/api/predict", (req, res) => {
+  const history = req.body?.history;
+
+  if (!Array.isArray(history) ||
+      !history.every(state => typeof state === "string")) {
+    return res.status(400).json({
+      error: "history must be an array of state strings"
+    });
+  }
+
+  const predictions = predictNext(history);
+
+  res.json(predictions);
+});

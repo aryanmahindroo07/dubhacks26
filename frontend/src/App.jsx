@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './App.css';
 
 const metrics = [
@@ -24,6 +25,31 @@ const metrics = [
 ];
 
 function App() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [searched, setSearched] = useState(false);
+
+  async function handleSearch(event) {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+    setSearched(false);
+    setResults([]);
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`);
+      if (!response.ok) throw new Error('Search failed. Please try again.');
+      const data = await response.json();
+      setResults(data.results);
+      setSearched(true);
+    } catch {
+      setError('Could not search. Make sure the backend is running on port 4000, then try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="app">
       <header className="topbar">
@@ -56,6 +82,34 @@ function App() {
             <option>Last 30 days</option>
           </select>
         </label>
+      </section>
+
+      <section className="search-demo" aria-labelledby="search-heading">
+        <h2 id="search-heading">Try a customer search</h2>
+        <p>Search customers through the backend. Try “Acme” or leave the search empty to see everyone.</p>
+        <form className="search-form" onSubmit={handleSearch}>
+          <label className="sr-only" htmlFor="customer-search">Customer name</label>
+          <input id="customer-search" type="search" value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search customers…" disabled={loading} />
+          <button type="submit" disabled={loading}>{loading ? 'Searching…' : 'Search'}</button>
+        </form>
+        <div aria-live="polite" aria-busy={loading}>
+          {loading && <p>Searching customers…</p>}
+          {error && <p role="alert">{error}</p>}
+          {searched && <p>{results.length} customer{results.length === 1 ? '' : 's'} found.</p>}
+          {results.length > 0 && (
+            <ul className="search-results">
+              {results.map((customer) => (
+                <li key={customer.id}>
+                  <strong>{customer.name}</strong>
+                  <span>{customer.plan} · ${customer.mrr.toLocaleString()} monthly revenue</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <p className="metric-note">Search results come from the running backend. The metrics below are sample data; prediction and prefetching are not connected yet.</p>
       </section>
 
       <section className="metric-grid">
