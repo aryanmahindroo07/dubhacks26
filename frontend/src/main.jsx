@@ -7,7 +7,7 @@ import './index.css';
 const isOverview = window.location.pathname.replace(/\/+$/, '') === '/overview';
 const Page = isOverview ? Overview : App;
 
-document.title = isOverview ? 'Requestflow · Overview' : 'RequestFlow';
+document.title = isOverview ? 'Requestflow · Live overview' : 'RequestFlow';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -65,7 +65,7 @@ function App() {
       <nav className="topbar-nav">
         <a className="active" href="#metrics" aria-current="page">Metrics</a>
         <a href="#customers">Customers</a>
-        <a href="/overview">Sample overview</a>
+        <a href="/overview">Live overview</a>
       </nav>
     </header>
     <main className="app">
@@ -123,7 +123,7 @@ function App() {
               </ul>
             )}
           </div>
-          <p className="metric-note">Search results come from the running backend. Metrics shown are sample data; prediction and prefetching are not connected yet.</p>
+          <p className="metric-note">Search results come from the running backend. The four metric cards are sample data; live prediction and prefetch measurements are in the customer workspace below and on the Live overview page.</p>
         </section>
 
         <section className="metric-grid" aria-label="Sample API metrics">

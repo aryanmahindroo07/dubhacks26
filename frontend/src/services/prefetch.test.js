@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { responseCache, ResponseCache } from './cache.js';
-import { requestEndpoint, prefetchNext, getPrefetchMetrics } from './prefetch.js';
+import { requestEndpoint, prefetchNext, getPrefetchMetrics, setPrefetchEnabled } from './prefetch.js';
 
 const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 
@@ -71,4 +71,46 @@ test('hit-rate metrics count in-flight reuse separately from misses', async () =
   assert.deepEqual([m.hits, m.reused, m.misses], [1, 1, 1]);
   assert.equal(m.hitRate, 1 / 3);
   assert.equal(m.servedRate, 2 / 3);
+});
+
+test('OFF sends no predictions or prefetches; ON counts useful and unused prefetches', async () => {
+  const calls = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, options) => {
+    calls.push(url);
+    if (options?.method === 'POST') {
+      return { ok: true, json: async () => [{ endpoint: 'ORDERS', shouldPrefetch: true, expectedValue: 100 }] };
+    }
+    await tick();
+    return { ok: true, json: async () => ({ url }) };
+  };
+  const settle = async () => { for (let i = 0; i < 20; i++) await tick(); };
+  try {
+    responseCache.clear();
+    const before = getPrefetchMetrics();
+
+    setPrefetchEnabled(false);
+    await requestEndpoint('CUSTOMER', '8');
+    await settle();
+    assert.deepEqual(calls, ['/api/customers/8'], 'OFF: only the demanded GET');
+    let m = getPrefetchMetrics();
+    assert.equal(m.prefetchEnabled, false);
+    assert.equal(m.predictionCalls, before.predictionCalls);
+    assert.equal(m.speculativeRequests, before.speculativeRequests);
+
+    setPrefetchEnabled(true);
+    await requestEndpoint('CUSTOMER', '9');
+    await settle();
+    assert.ok(calls.includes('/api/customers/9/orders'), 'ON: Orders prefetched');
+    await requestEndpoint('ORDERS', '9');
+    m = getPrefetchMetrics();
+    assert.equal(m.lastRequest.servedByPrefetch, true);
+    assert.equal(m.usefulPrefetches, before.usefulPrefetches + 1);
+    assert.equal(m.demandRequests, before.demandRequests + 2, 'two demanded GETs: customers 8 and 9');
+    assert.equal(m.navigationWaits.length, before.navigationWaits.length + 3);
+    assert.equal(m.requestLog[0].kind, 'navigation');
+  } finally {
+    globalThis.fetch = originalFetch;
+    setPrefetchEnabled(true);
+  }
 });

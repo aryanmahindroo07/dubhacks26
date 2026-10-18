@@ -1,19 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "./OverviewIcon.jsx";
+import CustomerWorkspace from "../../components/CustomerWorkspace/CustomerWorkspace.jsx";
 import {
-  chartValues,
-  createDemoRequests,
-  filterRequests,
-  sampleMetrics,
-  sampleRequests,
-  timeRanges,
-} from "./overviewData.js";
+  getPrefetchMetrics,
+  isPrefetchEnabled,
+  setPrefetchEnabled,
+} from "../../services/prefetch.js";
 import styles from "./Overview.module.css";
 
-function Sidebar() {
+const DELAY_MS = 1200;
+const LABELS = {
+  CUSTOMERS: "Customer list",
+  CUSTOMER: "Customer profile",
+  ORDERS: "Orders",
+  SUPPORT: "Support tickets",
+  ANALYTICS: "Analytics",
+};
+
+const percent = (part, whole) =>
+  whole === 0 ? "0%" : `${((part / whole) * 100).toFixed(0)}%`;
+
+function Sidebar({ enabled }) {
   return (
     <aside className={styles.sidebar} aria-label="Main navigation">
-      <a className={styles.brand} href="#overview">
+      <a className={styles.brand} href="/">
         <span className={styles.brandMark}>
           <Icon name="workflow" size={23} />
         </span>
@@ -21,177 +31,144 @@ function Sidebar() {
       </a>
       <p className={styles.navLabel}>Workspace</p>
       <nav className={styles.navigation}>
-        <button type="button" className={styles.navItem} disabled>
+        <a className={styles.navItem} href="/">
           <Icon name="home" />
           Home
-        </button>
+        </a>
         <a
           className={`${styles.navItem} ${styles.navActive}`}
           href="#overview"
           aria-current="page"
         >
           <Icon name="chart" />
-          Overview
+          Live overview
         </a>
-        <button type="button" className={styles.navItem} disabled>
-          <Icon name="sequence" />
-          Sequences
-        </button>
-        <button type="button" className={styles.navItem} disabled>
-          <Icon name="plug" />
-          Apps &amp; setup
-        </button>
       </nav>
       <div className={styles.sidebarBottom}>
         <div className={styles.workspaceNote}>
-          <strong>Sample workspace</strong>
+          <strong>This page session</strong>
           <p>
-            Illustrative telemetry only. No browser traffic is being
-            intercepted.
+            Measured in this browser from the customer workspace below.
+            Reloading resets these counters; the backend model keeps learning.
+            Prefetch is {enabled ? "on" : "paused"}.
           </p>
-        </div>
-        <div className={styles.profile}>
-          <span className={styles.avatar}>RF</span>
-          <div>
-            <strong>Requestflow demo</strong>
-            <span>Frontend team</span>
-          </div>
         </div>
       </div>
     </aside>
   );
 }
 
-function MetricCard({ metric, extraCalls }) {
-  const value =
-    metric.id === "calls"
-      ? (12486 + extraCalls).toLocaleString("en-US")
-      : metric.value;
+function MetricCard({ label, icon, value, unit, note }) {
   return (
     <article className={styles.metricCard}>
       <div className={styles.metricTop}>
-        <h2>{metric.label}</h2>
+        <h2>{label}</h2>
         <span className={styles.metricIcon}>
-          <Icon name={metric.icon} />
+          <Icon name={icon} />
         </span>
       </div>
       <p className={styles.metricValue}>
         {value}
-        {metric.unit && <span>{metric.unit}</span>}
+        {unit && <span>{unit}</span>}
       </p>
-      <p className={styles.metricNote}>{metric.note}</p>
+      <p className={styles.metricNote}>{note}</p>
     </article>
   );
 }
 
-function chartPath(values) {
-  const points = values.map((value, index) => ({
-    x: (index * 720) / (values.length - 1),
-    y: 186 - value * 1.55,
-  }));
-  return points.reduce((path, point, index) => {
-    if (index === 0) return `M ${point.x} ${point.y}`;
-    const previous = points[index - 1];
-    const before = points[Math.max(0, index - 2)];
-    const after = points[Math.min(points.length - 1, index + 1)];
-    return `${path} C ${previous.x + (point.x - before.x) / 6} ${previous.y + (point.y - before.y) / 6}, ${point.x - (after.x - previous.x) / 6} ${point.y - (after.y - previous.y) / 6}, ${point.x} ${point.y}`;
-  }, "");
+function resultClass(result) {
+  if (result === "cache hit") return styles.barHit;
+  if (result === "reused running request") return styles.barReused;
+  return styles.barNetwork;
 }
 
-function ActivityChart({ range }) {
-  const received = chartPath(chartValues[range]);
-  const predicted = chartPath(
-    chartValues[range].map((value, index) => value - 10 - (index % 3) * 2),
-  );
+function WaitChart({ log }) {
+  const navigations = log
+    .filter((entry) => entry.kind === "navigation")
+    .slice(0, 24)
+    .reverse();
+  const scale = DELAY_MS * 1.2;
+  const fast = navigations.filter((n) => n.result !== "network").length;
   return (
     <section
       className={`${styles.panel} ${styles.chartPanel}`}
-      aria-labelledby="activity-heading"
+      aria-labelledby="wait-heading"
     >
       <div className={styles.chartHeader}>
         <div>
-          <h2 id="activity-heading">API calls over time</h2>
-          <p>Solid line: calls received · dotted line: calls predicted</p>
+          <h2 id="wait-heading">How long each page waited for data</h2>
+          <p>Latest {navigations.length} navigations, oldest on the left</p>
         </div>
-        <div className={styles.legend}>
-          <span>
-            <i />
-            Received
-          </span>
-          <span>
-            <i />
-            Predicted
-          </span>
+        <div className={styles.waitLegend}>
+          <span><i className={styles.barNetwork} />Network</span>
+          <span><i className={styles.barReused} />Joined prefetch</span>
+          <span><i className={styles.barHit} />Cache hit</span>
         </div>
       </div>
-      <svg
-        className={styles.chart}
-        viewBox="0 0 720 200"
-        preserveAspectRatio="none"
-        role="img"
-        aria-label={`Illustrative received and predicted request activity over ${timeRanges[range].label}`}
-      >
-        <defs>
-          <linearGradient id="overview-chart-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3c806d" stopOpacity="0.17" />
-            <stop offset="100%" stopColor="#3c806d" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        {[18, 62, 106, 150, 194].map((y) => (
-          <line
-            key={y}
-            x1="0"
-            x2="720"
-            y1={y}
-            y2={y}
-            className={styles.chartGridLine}
-          />
-        ))}
-        <path
-          d={`${received} L 720 194 L 0 194 Z`}
-          fill="url(#overview-chart-fill)"
-        />
-        <path d={predicted} className={styles.predictedLine} />
-        <path d={received} className={styles.receivedLine} />
-      </svg>
-      <div className={styles.chartLabels}>
-        {timeRanges[range].labels.map((label) => (
-          <span key={label}>{label}</span>
-        ))}
-      </div>
+      {navigations.length === 0 ? (
+        <p className={styles.emptyChart}>
+          No navigations yet. Open a customer in the workspace below.
+        </p>
+      ) : (
+        <div
+          className={styles.waitChart}
+          role="img"
+          aria-label={`${navigations.length} navigations: ${fast} served by cache or a running prefetch, ${navigations.length - fast} waited on the network.`}
+        >
+          <span
+            className={styles.delayLine}
+            style={{ bottom: `${(DELAY_MS / scale) * 100}%` }}
+          >
+            1,200 ms artificial delay
+          </span>
+          {navigations.map((n) => (
+            <span
+              key={n.id}
+              className={`${styles.waitBar} ${resultClass(n.result)}`}
+              style={{ height: `${Math.max(2, (Math.min(n.waitMs, scale) / scale) * 100)}%` }}
+              title={`${LABELS[n.stateId] ?? n.stateId}: ${Math.round(n.waitMs)} ms (${n.result})`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
 
-function PredictionExample() {
+function PrefetchOutcomes({ m }) {
+  const extra = m.unusedPrefetches + m.failed;
   return (
     <section
-      className={styles.predictionExample}
-      aria-labelledby="example-heading"
+      className={`${styles.panel} ${styles.outcomePanel}`}
+      aria-labelledby="outcome-heading"
     >
-      <div className={styles.exampleTop}>
-        <span>
-          <Icon name="sparkles" size={18} />
-          Example prediction
-        </span>
-        <span>94% likely</span>
-      </div>
-      <h2 id="example-heading">
-        After a search, product results
-        <br className={styles.wideBreak} /> are often needed next.
-      </h2>
-      <p>Based on 1,832 similar searches in the sample data.</p>
-      <div className={styles.exampleSteps}>
-        <span>Search</span>
-        <Icon name="arrow" size={19} />
-        <span>Show matching products</span>
-      </div>
+      <h2 id="outcome-heading">Prefetch outcomes</h2>
+      <p>Speculative requests and whether the user needed them</p>
+      <dl className={styles.outcomeList}>
+        <div><dt>Useful</dt><dd>{m.usefulPrefetches}</dd></div>
+        <div><dt>Unused so far</dt><dd>{m.unusedPrefetches}</dd></div>
+        <div><dt>Failed</dt><dd>{m.failed}</dd></div>
+        <div><dt>Still loading</dt><dd>{m.inFlightRequests}</dd></div>
+        <div><dt>Prediction calls</dt><dd>{m.predictionCalls}</dd></div>
+      </dl>
+      <p className={styles.outcomeNote}>
+        Extra data GETs so far: <strong>{extra}</strong> of{" "}
+        {m.speculativeRequests} prefetches. Prediction calls are small POSTs
+        without the artificial delay.
+      </p>
     </section>
   );
 }
 
-function RequestTable({ requests, query, setQuery, app, setApp }) {
-  const filteredRequests = filterRequests(requests, query, app);
+function RequestLog({ log }) {
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+  const rows = log.filter(
+    (entry) =>
+      !q ||
+      entry.url.toLowerCase().includes(q) ||
+      (LABELS[entry.stateId] ?? "").toLowerCase().includes(q),
+  );
   return (
     <section
       className={`${styles.panel} ${styles.requestsPanel}`}
@@ -200,7 +177,7 @@ function RequestTable({ requests, query, setQuery, app, setApp }) {
       <div className={styles.requestHeader}>
         <div>
           <h2 id="requests-heading">Recent data requests</h2>
-          <p>Examples of data the app requested or may request next</p>
+          <p>Every navigation and prefetch in this session, newest first</p>
         </div>
         <div className={styles.requestFilters}>
           <label className={styles.searchField}>
@@ -212,70 +189,57 @@ function RequestTable({ requests, query, setQuery, app, setApp }) {
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
-          <label className={styles.selectField}>
-            <select
-              aria-label="Filter by app"
-              value={app}
-              onChange={(event) => setApp(event.target.value)}
-            >
-              <option value="all">All apps</option>
-              <option>Northstar Storefront</option>
-              <option>Atlas Projects</option>
-            </select>
-            <Icon name="chevron" size={16} />
-          </label>
         </div>
       </div>
       <div className={styles.tableScroll}>
         <table className={styles.requestTable}>
           <caption className={styles.srOnly}>
-            Sample API requests, response times, and prediction results
+            Navigations and prefetches with wait times and outcomes
           </caption>
           <thead>
             <tr>
               <th scope="col">Time</th>
               <th scope="col">Type</th>
               <th scope="col">Data requested</th>
-              <th scope="col">Response</th>
+              <th scope="col">Wait</th>
               <th scope="col">Result</th>
             </tr>
           </thead>
           <tbody>
-            {filteredRequests.map((request) => (
-              <tr key={request.id}>
+            {rows.map((entry) => (
+              <tr key={entry.id}>
                 <td>
-                  <time>{request.time}</time>
+                  <time>
+                    {new Date(entry.at).toLocaleTimeString("en-GB", { hour12: false })}
+                  </time>
                 </td>
                 <td>
-                  <span className={styles.method}>{request.method}</span>
+                  <span className={styles.method}>
+                    {entry.kind === "prefetch" ? "PREFETCH" : "OPEN"}
+                  </span>
                 </td>
                 <td>
-                  <span className={styles.requestTitle}>{request.title}</span>
-                  <span className={styles.requestPath}>{request.path}</span>
+                  <span className={styles.requestTitle}>
+                    {LABELS[entry.stateId] ?? entry.stateId}
+                  </span>
+                  <span className={styles.requestPath}>{entry.url}</span>
                 </td>
-                <td className={styles.response}>{request.response} ms</td>
+                <td className={styles.response}>{Math.round(entry.waitMs)} ms</td>
                 <td>
                   <span
-                    className={`${styles.result} ${request.result === "Not predicted" ? styles.notPredicted : ""}`}
+                    className={`${styles.result} ${entry.result === "network" || entry.result === "prefetch failed" ? styles.notPredicted : ""}`}
                   >
-                    {request.result}
+                    {entry.servedByPrefetch ? `${entry.result} (prefetched)` : entry.result}
                   </span>
                 </td>
               </tr>
             ))}
-            {filteredRequests.length === 0 && (
+            {rows.length === 0 && (
               <tr>
                 <td colSpan="5" className={styles.emptyState}>
-                  No requests match your filters.
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setQuery("");
-                      setApp("all");
-                    }}
-                  >
-                    Clear filters
-                  </button>
+                  {log.length === 0
+                    ? "No requests yet. Use the customer workspace below."
+                    : "No requests match your search."}
                 </td>
               </tr>
             )}
@@ -286,185 +250,108 @@ function RequestTable({ requests, query, setQuery, app, setApp }) {
   );
 }
 
-function NextRequest() {
-  return (
-    <section
-      className={`${styles.panel} ${styles.nextPanel}`}
-      aria-labelledby="next-heading"
-    >
-      <div className={styles.nextHeader}>
-        <div>
-          <h2 id="next-heading">What may be needed next</h2>
-          <p>A common pattern after a product search</p>
-        </div>
-        <Icon name="branch" size={22} />
-      </div>
-      <div className={styles.nextRequest}>
-        <div>
-          <p className={styles.journeyTitle}>Someone searches for a product</p>
-          <p className={styles.journeyNote}>
-            Northstar Storefront · seen 1,832 times in the sample
-          </p>
-          <div className={styles.nextTags}>
-            <span>Show matching products</span>
-            <span>Update filters</span>
-          </div>
-        </div>
-        <div className={styles.likelihood}>
-          <strong>94%</strong>
-          <span>likelihood</span>
-        </div>
-      </div>
-      <div className={styles.timeEstimate}>
-        <Icon name="bolt" size={20} />
-        <p>
-          <strong>Could be ready about 0.2 seconds sooner</strong>
-          <span>
-            Illustrative estimate from sample timings; not measured in a live
-            app.
-          </span>
-        </p>
-      </div>
-    </section>
-  );
-}
-
 export default function Overview() {
-  const [range, setRange] = useState("24h");
-  const [paused, setPaused] = useState(false);
-  const [query, setQuery] = useState("");
-  const [app, setApp] = useState("all");
-  const [requests, setRequests] = useState(sampleRequests);
-  const [demoRuns, setDemoRuns] = useState(0);
+  const [m, setMetrics] = useState(getPrefetchMetrics);
+  const [enabled, setEnabled] = useState(isPrefetchEnabled);
   const [announcement, setAnnouncement] = useState("");
 
-  function runDemo() {
-    const run = demoRuns + 1;
-    const time = new Date().toLocaleTimeString("en-GB", { hour12: false });
-    setRequests((current) =>
-      [...createDemoRequests(run, paused, time), ...current].slice(0, 25),
-    );
-    setDemoRuns(run);
-    setQuery("");
-    setApp("all");
-    setAnnouncement(
-      paused
-        ? "Sample request received. Prefetch is paused, so no prediction was added."
-        : "Sample journey complete. A search was received and matching products were predicted next.",
-    );
-  }
+  useEffect(() => {
+    const timer = setInterval(() => setMetrics(getPrefetchMetrics()), 250);
+    return () => clearInterval(timer);
+  }, []);
 
   function togglePrefetch() {
-    setPaused((current) => !current);
+    const next = !enabled;
+    setPrefetchEnabled(next);
+    setEnabled(next);
+    setMetrics(getPrefetchMetrics());
     setAnnouncement(
-      paused
-        ? "Prefetch resumed for the local demo."
-        : "Prefetch paused for the local demo.",
+      next
+        ? "Prefetch resumed. New navigations will request predictions and prefetch."
+        : "Prefetch paused. New navigations send no prediction calls or prefetches.",
     );
   }
 
+  const served = m.hits + m.reused;
   return (
     <div className={styles.overview}>
       <a className={styles.skipLink} href="#overview">
         Skip to overview
       </a>
-      <Sidebar />
+      <Sidebar enabled={enabled} />
       <div className={styles.workspace}>
         <header className={styles.topbar}>
           <div className={styles.breadcrumb}>
             Workspace<span>/</span>
-            <strong>metrics</strong>
+            <strong>live overview</strong>
           </div>
           <div className={styles.workspaceStatus}>
-            <span className={styles.sampleDate}>Tuesday, 14 May</span>
-            <span className={styles.sampleBadge}>Sample telemetry</span>
+            <span className={styles.sampleBadge}>Mock records · live measurements</span>
           </div>
         </header>
         <main className={styles.content} id="overview" tabIndex="-1">
           <div className={styles.pageHeader}>
             <div>
-              <p className={styles.eyebrow}>Requestflow · sample dashboard</p>
-              <h1>Search activity, made simple.</h1>
+              <p className={styles.eyebrow}>Customer API activity</p>
+              <h1>Measure the waiting.</h1>
               <p className={styles.subtitle}>
-                See what data apps requested, what they may need next, and where
-                preloading could reduce waiting.
+                Use the workspace below to make real navigation, prediction and
+                prefetch requests. Pause prefetch to compare.
               </p>
             </div>
             <div className={styles.pageActions}>
-              <label className={styles.selectField}>
-                <select
-                  aria-label="Date range"
-                  value={range}
-                  onChange={(event) => setRange(event.target.value)}
-                >
-                  {Object.entries(timeRanges).map(([value, item]) => (
-                    <option key={value} value={value}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-                <Icon name="chevron" size={16} />
-              </label>
               <button
                 className={styles.prefetchButton}
                 type="button"
                 onClick={togglePrefetch}
-                aria-pressed={paused}
+                aria-pressed={!enabled}
               >
-                <Icon name={paused ? "play" : "pause"} size={17} />
-                {paused ? "Resume prefetch" : "Pause prefetch"}
+                <Icon name={enabled ? "pause" : "play"} size={17} />
+                {enabled ? "Pause prefetch" : "Resume prefetch"}
               </button>
             </div>
           </div>
-          <section
-            className={styles.metricGrid}
-            aria-label="Sample telemetry summary"
-          >
-            {sampleMetrics.map((metric) => (
-              <MetricCard
-                key={metric.id}
-                metric={metric}
-                extraCalls={demoRuns * 2}
-              />
-            ))}
+          <section className={styles.metricGrid} aria-label="Live measurements">
+            <MetricCard
+              label="Data GETs sent"
+              icon="activity"
+              value={m.dataRequests}
+              note={`${m.demandRequests} demanded · ${m.speculativeRequests} speculative`}
+            />
+            <MetricCard
+              label="Cache hits"
+              icon="sparkles"
+              value={m.hits}
+              note={`${percent(m.hits, m.navigations)} of ${m.navigations} navigations answered instantly`}
+            />
+            <MetricCard
+              label="Joined a running prefetch"
+              icon="timer"
+              value={m.reused}
+              note={`With cache hits, ${percent(served, m.navigations)} of navigations avoided a new request`}
+            />
+            <MetricCard
+              label="Median wait"
+              icon="gauge"
+              value={m.navigations ? Math.round(m.medianWaitMs).toLocaleString("en-US") : "—"}
+              unit={m.navigations ? "ms" : undefined}
+              note={`Total ${(m.totalWaitMs / 1000).toFixed(1)} s across ${m.navigations} navigations`}
+            />
           </section>
           <p className={styles.explainer}>
-            <strong>How to read this:</strong> An API call asks an app for data.
-            A prediction is a guess about what it may need next. Time saved is
-            an estimate.
+            <strong>How to read this:</strong> customer records are generated
+            mock data, and the backend adds an artificial {DELAY_MS.toLocaleString("en-US")} ms
+            delay to every data request. Everything on this page is measured in
+            this browser session; for an OFF/ON comparison, run{" "}
+            <code>scripts/benchmark_prefetch.py</code>.
           </p>
           <div className={styles.activityGrid}>
-            <ActivityChart range={range} />
-            <PredictionExample />
+            <WaitChart log={m.requestLog} />
+            <PrefetchOutcomes m={m} />
           </div>
-          <div className={styles.detailsGrid}>
-            <RequestTable
-              requests={requests}
-              query={query}
-              setQuery={setQuery}
-              app={app}
-              setApp={setApp}
-            />
-            <NextRequest />
+          <div className={styles.liveDetails}>
+            <RequestLog log={m.requestLog} />
           </div>
-          <section className={styles.demoPanel} aria-labelledby="demo-heading">
-            <div>
-              <h2 id="demo-heading">Try a sample request journey</h2>
-              <p>
-                Simulate a storefront search locally to see how a prediction
-                appears. This does not send a network request or intercept
-                browser traffic.
-              </p>
-            </div>
-            <button
-              type="button"
-              className={styles.demoButton}
-              onClick={runDemo}
-            >
-              <Icon name="play" size={19} />
-              Run demo request
-            </button>
-          </section>
           <p className={styles.announcement} role="status" aria-live="polite">
             {announcement && (
               <>
@@ -473,11 +360,7 @@ export default function Overview() {
               </>
             )}
           </p>
-          <p className={styles.disclaimer}>
-            All values on this page are sample telemetry for interface
-            demonstration. Predictions and time saved are illustrative
-            estimates.
-          </p>
+          <CustomerWorkspace />
         </main>
       </div>
     </div>

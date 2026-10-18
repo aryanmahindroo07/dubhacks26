@@ -1,0 +1,24 @@
+/* Self-contained so the workspace renders the same on / and /overview. */
+.customer-workspace {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 28px;
+  border: 1px solid #dde6e0;
+  border-radius: 24px;
+  background: white;
+  color: #1f2a30;
+  font-family: 'Manrope', sans-serif;
+}
+.customer-workspace h2 { margin-top: 0; }
+.customer-workspace .search-results { list-style: none; padding: 0; }
+.customer-workspace .search-results li {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
+  padding: 16px 0; border-bottom: 1px solid #dde6e0; color: #247B65;
+}
+.customer-workspace .metric-note { margin: 0; font-size: 0.95rem; color: #5a6b66; }
+.customer-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.customer-workspace button { border: 1px solid #bdd3c9; border-radius: 8px; padding: 8px 12px; background: #eaf1eb; color: #245c49; cursor: pointer; font: inherit; }
+.customer-workspace button:disabled { opacity: .5; cursor: default; }
+.customer-workspace button[aria-pressed="true"] { background: #245c49; color: white; }
+@media (max-width: 640px) { .customer-workspace { padding: 18px; } }
