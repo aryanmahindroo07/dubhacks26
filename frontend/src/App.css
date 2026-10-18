@@ -6,8 +6,9 @@
 }
 
 .app {
+  container: home / inline-size;
   min-height: 100vh;
-  padding: 0 clamp(18px, 5vw, 64px) 48px;
+  padding: 0 clamp(18px, 5vw, 64px);
   background: #F2F7F6;
   color: #24352e;
   font-family: Times, system-ui, sans-serif;
@@ -16,9 +17,9 @@
 
 .title {
   font-weight: bold;
-  font-size: 50px;
+  font-size: clamp(32px, 4.5vw, 50px);
   text-align: center;
-  margin: 100px 100px 0px 100px;
+  margin: 100px 0 0;
 }
 
 .title-accent {
@@ -39,6 +40,54 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   pointer-events: none;
+}
+
+.title-underline-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: title-underline-extend 900ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+}
+
+.title-underline-head {
+  transform-box: fill-box;
+  transform-origin: right center;
+  animation: title-underline-point 280ms cubic-bezier(0.22, 1, 0.36, 1) 1000ms both;
+}
+
+@keyframes title-underline-extend {
+  from {
+    stroke-dashoffset: 0.96;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes title-underline-point {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-underline-line,
+  .title-underline-head {
+    animation: none;
+  }
+
+  .title-underline-line {
+    stroke-dashoffset: 0;
+  }
+
+  .title-underline-head {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .search-bar {
@@ -89,60 +138,6 @@
 .search-bar button:focus-visible {
   outline: 2px solid hsl(165 55% 31%);
   outline-offset: 2px;
-}
-
-.topbar {
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  border-bottom: 1px solid #e0e8e2;
-  background: #fff;
-  width: 100%;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: #243d33;
-  font-size: 16px;
-  font-weight: 750;
-  text-decoration: none;
-}
-
-.brand-mark {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border-radius: 9px;
-  background: #276b57;
-  color: white;
-  font-size: 15px;
-}
-
-.topbar-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.topbar-nav a {
-  padding: 9px 11px;
-  border-radius: 8px;
-  color: #708078;
-  font-size: 13px;
-  text-decoration: none;
-}
-
-.topbar-nav a:hover,
-.topbar-nav a.active {
-  background: #eaf1eb;
-  color: #276b57;
 }
 
 .sample-pill {
@@ -283,6 +278,12 @@
   line-height: 1.5;
 }
 
+@container home (max-width: 620px) {
+  .results-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 800px) {
   .results-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -290,21 +291,6 @@
 }
 
 @media (max-width: 640px) {
-  .topbar {
-    flex-wrap: wrap;
-    padding: 14px 0;
-  }
-
-  .topbar-nav {
-    order: 3;
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .topbar-nav a {
-    padding: 8px;
-  }
-
   .page-heading {
     align-items: flex-start;
     flex-direction: column;
@@ -336,3 +322,87 @@
 .customer-workspace button { border: 1px solid #bdd3c9; border-radius: 8px; padding: 8px 12px; background: #eaf1eb; color: #245c49; cursor: pointer; }
 .customer-workspace button:disabled { opacity: .5; cursor: default; }
 .customer-workspace button[aria-pressed="true"] { background: #245c49; color: white; }
+
+.home-content {
+  display: grid;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 36px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.home-content > .page-heading,
+.home-content > .results-layout,
+.home-content > .customer-workspace {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0;
+}
+
+.home-content .results-layout {
+  gap: 24px;
+}
+
+.home-content .metric-grid {
+  gap: 16px;
+}
+
+.home-content .search-demo,
+.home-content .metric-card {
+  padding: 24px;
+}
+
+.home-content h2 {
+  margin: 0 0 18px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.home-content h3 {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.home-content .metric-label {
+  font-size: 13px;
+}
+
+.home-content .metric-value {
+  font-size: 27px;
+  line-height: 1.25;
+}
+
+.home-content .metric-note,
+.home-content .customer-workspace .metric-note {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.home-content .subtitle {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.home-content .range-select select,
+.home-content .customer-workspace button {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.home-content .customer-actions {
+  gap: 10px;
+}
+
+.home-content .search-results li,
+.home-content .customer-workspace .search-results li {
+  padding: 12px 0;
+}
+
+@media (max-width: 420px) {
+  .home-content .search-demo,
+  .home-content .metric-card {
+    padding: 16px;
+  }
+}

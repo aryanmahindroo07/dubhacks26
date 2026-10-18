@@ -86,10 +86,17 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     return summary(s, item);
   }
   function summary(s, doc) {
-    const ocr = s.cache.get(keyFor(doc, 'READ_TEXT'));
+    // Report the live cache, not historical completion events: a Ready badge
+    // must disappear when its result expires or a provider call fails.
+    const actionStates = Object.fromEntries(SUPPORTED_ACTIONS.map(action => {
+      const entry = cached(s, keyFor(doc, action));
+      return [action, entry ? { status: entry.status, prefetched: entry.speculative && !entry.used } : null];
+    }));
+    const ocr = actionStates.READ_TEXT;
     return { id: doc.id, name: doc.name, type: doc.type, active: s.activeItem === doc.id, read: Boolean(doc.text),
       textReady: Boolean(doc.text) || ocr?.status === 'ready', textPending: ocr?.status === 'pending', duplicateOf: doc.duplicateOf,
-      textSource: doc.textSource, error: doc.lastError };
+      textSource: doc.textSource, error: doc.lastError,
+      actionStates, prefires: doc.prefires, predictions: (doc.predictions || []).map(p => ({...p})) };
   }
   // Switching to another item means the user finished the previous one: record
   // DONE in the user's own model so it learns when they stop, not only what
@@ -255,7 +262,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
       s.personal.recordTransition(toHistory(doc.type,doc.history));
     }
     if (action==='EXTRACT_FIELDS' && doc.type==='RECEIPT') checkDuplicate(s, doc, output.result);
-    const predictions=predict(s,doc,doc.history);s.predictions=predictions;
+    const predictions=predict(s,doc,doc.history);s.predictions=predictions;doc.predictions=predictions;
     prefetch(s,doc,predictions);
     readAhead(s);
     return { action,result:output.result,provider:output.provider,model:output.model,promptVersion:output.promptVersion,usage:output.usage,

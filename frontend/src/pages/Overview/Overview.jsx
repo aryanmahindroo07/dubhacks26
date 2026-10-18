@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Icon from "./OverviewIcon.jsx";
 import CustomerWorkspace from "../../components/CustomerWorkspace/CustomerWorkspace.jsx";
+import AppLayout from "../../components/AppLayout/AppLayout.jsx";
 import {
   getPrefetchMetrics,
   isPrefetchEnabled,
@@ -19,45 +20,6 @@ const LABELS = {
 
 const percent = (part, whole) =>
   whole === 0 ? "0%" : `${((part / whole) * 100).toFixed(0)}%`;
-
-function Sidebar({ enabled }) {
-  return (
-    <aside className={styles.sidebar} aria-label="Main navigation">
-      <a className={styles.brand} href="/">
-        <span className={styles.brandMark}>
-          <Icon name="workflow" size={23} />
-        </span>
-        <span>requestflow</span>
-      </a>
-      <p className={styles.navLabel}>Workspace</p>
-      <nav className={styles.navigation}>
-        <a className={styles.navItem} href="/">
-          <Icon name="home" />
-          Home
-        </a>
-        <a
-          className={`${styles.navItem} ${styles.navActive}`}
-          href="#overview"
-          aria-current="page"
-        >
-          <Icon name="chart" />
-          Live overview
-        </a>
-        <a className={styles.navItem} href="/ai"><Icon name="sparkles" />Receipt inbox</a>
-      </nav>
-      <div className={styles.sidebarBottom}>
-        <div className={styles.workspaceNote}>
-          <strong>This page session</strong>
-          <p>
-            Measured in this browser from the customer workspace below.
-            Reloading resets these counters; the backend model keeps learning.
-            Prefetch is {enabled ? "on" : "paused"}.
-          </p>
-        </div>
-      </div>
-    </aside>
-  );
-}
 
 function MetricCard({ label, icon, value, unit, note }) {
   return (
@@ -192,7 +154,7 @@ function RequestLog({ log }) {
           </label>
         </div>
       </div>
-      <div className={styles.tableScroll}>
+      <div className={styles.tableScroll} tabIndex={0} role="region" aria-label="Scrollable request log">
         <table className={styles.requestTable}>
           <caption className={styles.srOnly}>
             Navigations and prefetches with wait times and outcomes
@@ -275,21 +237,12 @@ export default function Overview() {
 
   const served = m.hits + m.reused;
   return (
+    <AppLayout activePage="overview">
     <div className={styles.overview}>
       <a className={styles.skipLink} href="#overview">
         Skip to overview
       </a>
-      <Sidebar enabled={enabled} />
       <div className={styles.workspace}>
-        <header className={styles.topbar}>
-          <div className={styles.breadcrumb}>
-            Workspace<span>/</span>
-            <strong>live overview</strong>
-          </div>
-          <div className={styles.workspaceStatus}>
-            <span className={styles.sampleBadge}>Mock records · live measurements</span>
-          </div>
-        </header>
         <main className={styles.content} id="overview" tabIndex="-1">
           <div className={styles.pageHeader}>
             <div>
@@ -365,5 +318,6 @@ export default function Overview() {
         </main>
       </div>
     </div>
+    </AppLayout>
   );
 }
