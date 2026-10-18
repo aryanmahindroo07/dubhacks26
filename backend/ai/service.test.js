@@ -62,9 +62,41 @@ test('expired prefires are unused; a demand refetch is not credited as a prefire
   const f=fixture({now:()=>clock,cacheTtl:10});f.service.setEnabled(f.session,true);
   await f.service.perform(f.session,f.item.id,'READ_TEXT');await f.service.idle(f.session);
   clock+=11;
+  assert.equal(f.service.snapshot(f.session).items[0].actionStates.EXTRACT_FIELDS,null);
   const output=await f.service.perform(f.session,f.item.id,'EXTRACT_FIELDS');await f.service.idle(f.session);
   assert.equal(output.source,'network');assert.equal(output.usedPrefetch,false);
   const m=f.service.snapshot(f.session).metrics;assert.equal(m.usedPrefetches,0);assert.equal(m.unusedPrefetches,1);
+});
+
+test('item readiness follows pending, ready, consumed and expired cache entries without starting calls',async()=>{
+  let clock=100;
+  const f=fixture({hold:true,now:()=>clock,cacheTtl:10});
+  f.service.setEnabled(f.session,true);
+  await f.service.perform(f.session,f.item.id,'READ_TEXT');await tick();
+  const item=()=>f.service.snapshot(f.session).items.find(i=>i.id===f.item.id);
+  assert.deepEqual(item().actionStates.EXTRACT_FIELDS,{status:'pending',prefetched:true});
+  f.release();await f.service.idle(f.session);
+  assert.deepEqual(item().actionStates.EXTRACT_FIELDS,{status:'ready',prefetched:true});
+  assert.equal(item().actionStates.SUMMARIZE,null);
+  await f.service.perform(f.session,f.item.id,'EXTRACT_FIELDS');await f.service.idle(f.session);
+  assert.deepEqual(item().actionStates.EXTRACT_FIELDS,{status:'ready',prefetched:false});
+  const calls=f.calls.length;
+  clock+=11;
+  assert.equal(item().actionStates.EXTRACT_FIELDS,null);
+  assert.equal(f.calls.length,calls,'reading readiness never starts provider work');
+});
+
+test('failed prefires and another image never inherit Ready or prediction state',async()=>{
+  const f=fixture({fail:true});f.service.setEnabled(f.session,true);
+  await f.service.perform(f.session,f.item.id,'READ_TEXT');await f.service.idle(f.session);
+  const other=f.service.upload(f.session,{type:'WHITEBOARD',name:'whiteboard.png',image:IMAGE});
+  f.service.open(f.session,other.id);
+  const state=f.service.snapshot(f.session);
+  const first=state.items.find(i=>i.id===f.item.id),second=state.items.find(i=>i.id===other.id);
+  assert.equal(first.actionStates.EXTRACT_FIELDS,null);
+  assert.ok(first.predictions.length);
+  assert.deepEqual(second.predictions,[]);
+  assert.ok(Object.values(second.actionStates).every(value=>value===null));
 });
 
 test('failed speculative call is cleaned up and demand can retry',async()=>{

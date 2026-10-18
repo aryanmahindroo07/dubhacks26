@@ -154,7 +154,7 @@ function RequestLog({ log }) {
           </label>
         </div>
       </div>
-      <div className={styles.tableScroll}>
+      <div className={styles.tableScroll} tabIndex={0} role="region" aria-label="Scrollable request log">
         <table className={styles.requestTable}>
           <caption className={styles.srOnly}>
             Navigations and prefetches with wait times and outcomes

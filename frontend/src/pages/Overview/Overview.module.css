@@ -498,7 +498,8 @@
   width: 145px;
 }
 .tableScroll {
-  overflow-x: auto;
+  max-height: 360px;
+  overflow: auto;
 }
 .requestTable {
   width: 100%;
@@ -506,6 +507,10 @@
   text-align: left;
 }
 .requestTable th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;
   padding: 12px 8px;
   color: #8b9790;
   font-size: 12px;

@@ -1,34 +1,33 @@
 import {useState} from 'react';
 import {compareTrials} from './comparison.mjs';
 import styles from './AIWorkspace.module.css';
+import {backgroundFailure} from './prefetchState.mjs';
 const names={READ_TEXT:'Read text',EXTRACT_FIELDS:'Extract fields',SUMMARIZE:'Summarize',MAKE_TASKS:'Turn into tasks'};
 const seconds=ms=>ms===null?'—':Math.abs(ms)<10?`${ms.toFixed(1)} ms`:`${(ms/1000).toFixed(2)} s`;
 
 export function PrefireStatus({session,current,result}){
   if(!current)return null;
-  const events=(session?.requestLog||[]).filter(e=>e.itemId===current.id);
-  const consumed=events.find(e=>e.kind==='navigation'&&e.usedPrefetch);
-  const background=events.find(e=>e.kind==='prefetch'||e.kind==='read-ahead');
-  // Predictions are session-wide; never label the previous image's as current.
-  const latestNavigation=session?.requestLog?.find(e=>e.kind==='navigation');
-  const prediction=latestNavigation?.itemId===current.id?session.predictions?.find(p=>p.shouldPrefetch&&p.eligible):null;
-  let title='Choose Read text to begin',detail='Perceptron reads the image. Gemini transforms its text.';
-  if(consumed&&(!background||events.indexOf(consumed)<events.indexOf(background))){title=`Used ${names[consumed.action]} · ${consumed.waitMs.toFixed(1)} ms wait`;detail=consumed.source==='in-flight'?'Joined a prefire still running. Only part of the wait was hidden.':'Reused a completed prefire. No second provider request for this action.';}
-  else if(background){
-    title=`${names[background.action]} · ${{started:'Preparing…',completed:'Ready',failed:'Failed'}[background.result]||background.result}`;
-    detail=background.kind==='read-ahead'?'OCR read-ahead for this image. Accounted separately from next-action prediction.':prediction?`Model estimate: ${(prediction.probability*100).toFixed(0)}% for ${names[prediction.action]}. This is not measured prediction accuracy.`:'Background next-action prefire for this image.';
-  }else if(prediction){title=`Predicting ${names[prediction.action]} · ${(prediction.probability*100).toFixed(0)}%`;detail=session.enabled?'Eligible prediction; scheduling depends on cache and request budget.':'Prefetch is OFF. This action will run when you request it.';}
-  else if(result){title=`${names[result.action]} completed`;detail='No eligible prefire is currently shown for this image.';}
-  return <div className={styles.prefireStatus} role="status"><span className={styles.eyebrow}>Behind the next click</span><strong>{title}</strong><p>{detail}</p></div>;
+  const states=Object.entries(current.actionStates||{});
+  const ready=states.find(([,state])=>state?.prefetched&&state.status==='ready');
+  const pending=states.find(([,state])=>state?.prefetched&&state.status==='pending');
+  const failed=backgroundFailure(session,current);
+  const prediction=current.predictions?.find(p=>p.shouldPrefetch&&p.eligible);
+  let title='Choose Read text to begin',detail='Watch the next action change from Preparing to Ready.';
+  if(ready){title=`${names[ready[0]]} is ready before your click.`;detail='Prepared in the background. Choose the Ready button to use it.';}
+  else if(pending){title=`Preparing ${names[pending[0]]}…`;detail='You can click now to join the running request, or keep reviewing.';}
+  else if(failed){title=`${names[failed.action]} wasn’t prepared`;detail='Background call failed. Choose this action to retry.';}
+  else if(result?.usedPrefetch){title=`${names[result.action]} · ${seconds(result.waitMs)} wait`;detail=`Provider call: ${seconds(result.providerMs)} · Your wait: ${seconds(result.waitMs)}. ${result.source==='in-flight'?'Joined while still running.':'Reused the prepared result.'}`;}
+  else if(prediction){title=`Next likely: ${names[prediction.action]} · ${(prediction.probability*100).toFixed(0)}%`;detail=session.enabled?'See the decisions below for what runs early.':'Enable prefetch to prepare likely actions in the background.';}
+  else if(result||current.read){title='Choose your next action';detail='Your choices teach RequestFlow what to prepare next time.';}
+  return <div className={`${styles.prefireStatus} ${failed&&!ready&&!pending?styles.prefireFailed:''}`} role="status"><span className={styles.eyebrow}>Behind the next click</span><strong>{title}</strong><p>{detail}</p></div>;
 }
 
 export function DemoGuide(){
-  return <details className={`${styles.panel} ${styles.demoGuide}`}><summary>Run the demo · real inputs, visible predictions, measured tradeoffs</summary>
-    <ol><li><strong>Real receipt:</strong> add the three public receipts. Read text, inspect the image and OCR, then Extract fields. Check evidence and unknown amounts.</li>
-    <li><strong>Prediction:</strong> use a fresh run with prefetch ON and read-ahead OFF. After Read text, watch Preparing → Ready. Click the predicted action; the strip reports the actual wait. Choosing a different action demonstrates unused work.</li>
-    <li><strong>Compare:</strong> run the matched benchmark described in <code>docs/demo-evidence.md</code>, then load its results below. Review time must match; waiting for Ready only in ON would bias the comparison.</li>
-    <li><strong>Adaptation:</strong> in a fresh run, add four demo whiteboards. On each of the first three choose Read text → Summarize, then open the next. Inspect the learning panel; on the fourth, observe which action is prepared. This is a controlled demonstration using synthetic whiteboards, not an accuracy study.</li></ol>
-    <p className={styles.small}>Do not infer OCR accuracy from latency, or real-user accuracy from these scripted choices. Savings accumulate across steps; they do not grow exponentially.</p>
+  return <details className={`${styles.panel} ${styles.demoGuide}`}><summary>Try the demo · watch it prepare, then learn</summary>
+    <ol><li><strong>Prepare:</strong> enable prefetch, add a receipt, then Read text. Watch the predicted button change from Preparing → Ready before you click.</li>
+    <li><strong>Learn:</strong> start fresh with prefetch ON and read-ahead OFF. Add four demo whiteboards. On the first three choose Read text → Summarize, then open the next. Watch “Prefetch changed: Turn into tasks → Summarize”; try the fourth.</li>
+    <li><strong>Compare:</strong> load matched results below. Use fresh sessions and equal review time in both modes; waiting for Ready only in ON biases the comparison. See <code>docs/demo-evidence.md</code>.</li></ol>
+    <p className={styles.small}>These scripted workflows demonstrate latency and adaptation, not real-user accuracy. Verify AI output against each image.</p>
   </details>;
 }
 
