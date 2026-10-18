@@ -64,3 +64,6 @@
 .shift {font-weight:700;color:#245c49;}
 @media(max-width:800px){.learningGrid{grid-template-columns:1fr}}
 .toggleRow button {flex:none;}
+.warning p {margin:0 0 10px;}
+.typed {margin-top:14px;}
+.typed textarea {width:100%;padding:10px;border:1px solid #cbdace;border-radius:8px;font:inherit;resize:vertical;}

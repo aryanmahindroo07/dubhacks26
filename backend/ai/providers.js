@@ -19,7 +19,7 @@ function configuration(env = process.env) {
 
 function createProviders({ env = process.env, fetchImpl = globalThis.fetch } = {}) {
   const config = configuration(env);
-  const timeout = Math.min(120000, Math.max(1000, Number(env.AI_TIMEOUT_MS) || 60000));
+  const timeout = Math.min(120000, Math.max(1000, Number(env.AI_TIMEOUT_MS) || 30000));
   async function post(url, headers, body, provider) {
     let response;
     try {

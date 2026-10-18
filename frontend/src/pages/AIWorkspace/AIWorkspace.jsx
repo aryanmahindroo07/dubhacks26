@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-import {getAISession,setAIPrefetch,setAIReadAhead,uploadAIImage,openAIItem,runAIAction,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
+import {getAISession,setAIPrefetch,setAIReadAhead,uploadAIImage,openAIItem,runAIAction,setAIText,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
 import styles from './AIWorkspace.module.css';
 
 const ACTIONS=[['READ_TEXT','Read text','Perceptron'],['EXTRACT_FIELDS','Extract fields','Gemini'],['SUMMARIZE','Summarize','Gemini'],['MAKE_TASKS','Turn into tasks','Gemini']];
@@ -37,6 +37,7 @@ export default function AIWorkspace(){
   const [previews,setPreviews]=useState({}),[currentId,setCurrentId]=useState(null);
   const [busy,setBusy]=useState(''),[error,setError]=useState(''),[result,setResult]=useState(null);
   const [notice,setNotice]=useState(''),[sessionFailed,setSessionFailed]=useState(false);
+  const [typing,setTyping]=useState(false),[typedText,setTypedText]=useState('');
   const fileInput=useRef(null);
   useEffect(()=>{
     let active=true;
@@ -52,7 +53,7 @@ export default function AIWorkspace(){
   const refresh=async()=>setSession(await getAISession());
 
   async function openItem(id){
-    setError('');setResult(null);
+    setError('');setResult(null);setTyping(false);setTypedText('');
     try{await openAIItem(id);setCurrentId(id);await refresh();}
     catch(e){setError(e.message);}
   }
@@ -85,6 +86,11 @@ export default function AIWorkspace(){
   async function run(action){
     setBusy(LABELS[action]);setError('');setResult(null);
     try{const output=await runAIAction(current.id,action);setResult({...output,action});await refresh();}
+    catch(e){setError(e.message);}finally{setBusy('');}
+  }
+  async function useTypedText(){
+    setBusy('Saving text');setError('');
+    try{const output=await setAIText(current.id,typedText);setResult({...output,action:'READ_TEXT'});setTyping(false);setTypedText('');await refresh();setNotice('Using the text you typed. Gemini actions are now available.');}
     catch(e){setError(e.message);}finally{setBusy('');}
   }
   async function next(){
@@ -138,6 +144,8 @@ export default function AIWorkspace(){
             <span className={styles.chips}>
               <span className={styles.chip}>{it.type==='RECEIPT'?'Receipt':'Whiteboard'}</span>
               {it.read?<span className={styles.chip}>Text read</span>:it.textReady?<span className={`${styles.chip} ${styles.chipReady}`}>Text ready</span>:it.textPending?<span className={styles.chip}>Reading…</span>:null}
+              {!it.read&&it.error?.action==='READ_TEXT'&&<span className={`${styles.chip} ${styles.chipWarn}`}>Couldn't read</span>}
+              {it.textSource==='manual'&&<span className={styles.chip}>Typed text</span>}
               {it.duplicateOf&&<span className={`${styles.chip} ${styles.chipWarn}`}>Possible duplicate</span>}
             </span></button></li>)}</ul>:<div className={styles.empty}>Your images will appear here.</div>}
           {current&&<figure><img className={styles.preview} src={previews[current.id]} alt={`${current.type.toLowerCase()}: ${current.name}`}/><figcaption>{current.name} · {current.type.toLowerCase()}</figcaption></figure>}
@@ -146,8 +154,16 @@ export default function AIWorkspace(){
         <section className={styles.panel} aria-labelledby="action-heading"><div className={styles.sectionHeading}><h2 id="action-heading">2. Work on {current?`image ${index+1}`:'an image'}</h2>{current&&index<items.length-1&&<button disabled={Boolean(busy)} onClick={next}>Next image →</button>}</div>
           {current?.duplicateOf&&<p className={styles.warning}>Possible duplicate of “{current.duplicateOf.name}”. {current.duplicateOf.reason}</p>}
           <div className={styles.actions}>{ACTIONS.map(([id,label,provider])=><button key={id} disabled={!current||Boolean(busy)||sessionFailed||(id!=='READ_TEXT'&&!read)||!session?.providers[provider.toLowerCase()].configured} onClick={()=>run(id)}><span>{label}</span><small>{provider}{id==='READ_TEXT'&&current?.textReady&&!read?' · ready':''}</small></button>)}</div>
-          {current&&!read&&<p className={styles.small}>Gemini actions become available after Read text succeeds.</p>}
-          {result?<div aria-live="polite"><h3>{LABELS[result.action]}</h3><p className={styles.source}>{result.source==='cache'?'Completed cache hit':result.source==='in-flight'?'Joined running request':'New provider request'}{result.usedPrefetch?' · consumed a prefetch':''} · observed wait {milliseconds(result.waitMs)}</p><p className={styles.small}>{result.provider} · {result.model} · original provider call {milliseconds(result.providerMs)}</p><Result result={result.result}/><p className={styles.small}>AI-generated output. Check extracted amounts, names, and tasks before using them.</p></div>:<div className={styles.empty}>{current?'Run Read text, then choose what to do with it. If RequestFlow already prepared that step, it appears instantly.':'Add or choose an image to start.'}</div>}
+          {current&&!read&&!busy&&current.error?.action==='READ_TEXT'&&<div className={styles.warning}>
+            <p><strong>Couldn't read this image.</strong> {current.error.message} Try again, use a sharper or smaller photo, or type the text yourself.</p>
+            <div className={styles.controls}><button onClick={()=>run('READ_TEXT')}>Retry Read text</button><button aria-expanded={typing} onClick={()=>setTyping(t=>!t)}>Type the text instead</button></div>
+          </div>}
+          {current&&!read&&typing&&<div className={styles.typed}>
+            <label className={styles.label}>Text from the image<textarea rows="6" value={typedText} onChange={e=>setTypedText(e.target.value)} placeholder={'e.g. TOTAL 13.20\nDATE 2026-10-17'}/></label>
+            <button disabled={!typedText.trim()||Boolean(busy)} onClick={useTypedText}>Use this text</button>
+          </div>}
+          {current&&!read&&!current.error&&<p className={styles.small}>Gemini actions become available after Read text succeeds.</p>}
+          {result?<div aria-live="polite"><h3>{LABELS[result.action]}</h3><p className={styles.source}>{result.source==='manual'?'Text typed by you':result.source==='cache'?'Completed cache hit':result.source==='in-flight'?'Joined running request':'New provider request'}{result.usedPrefetch?' · consumed a prefetch':''} · observed wait {milliseconds(result.waitMs)}</p><p className={styles.small}>{result.provider} · {result.model} · original provider call {milliseconds(result.providerMs)}</p><Result result={result.result}/><p className={styles.small}>AI-generated output. Check extracted amounts, names, and tasks before using them.</p></div>:<div className={styles.empty}>{current?'Run Read text, then choose what to do with it. If RequestFlow already prepared that step, it appears instantly.':'Add or choose an image to start.'}</div>}
           {!!session?.predictions.length&&<div className={styles.predictions}><h3>Next-action estimates for this image</h3>{session.predictions.map(p=><p key={p.action}>{p.label}: {percent(p.probability)}{p.personalObservations?` (starting model ${percent(p.startingProbability)})`:''} · {p.shouldPrefetch&&p.eligible?'eligible':'skipped'}{p.eligibilityNote?` · ${p.eligibilityNote}`:''} · {p.latencySource} latency estimate</p>)}</div>}
         </section>
       </div>

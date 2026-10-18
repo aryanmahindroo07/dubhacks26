@@ -51,7 +51,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const imageHash = validateImage(image);
     const storedBytes = [...s.docs.values()].reduce((sum, doc) => sum + doc.image.length, 0);
     if (storedBytes + image.length > 12 * 1024 * 1024) throw new AIError("Image memory limit reached. Start a fresh run.");
-    const item = { id: randomUUID(), name: typeof name === 'string' ? name.slice(0,120) : 'Uploaded image', type, image, imageHash, text: null, history: [], prefires: 0, facts: null, duplicateOf: null };
+    const item = { id: randomUUID(), name: typeof name === 'string' ? name.slice(0,120) : 'Uploaded image', type, image, imageHash, text: null, textSource: null, history: [], prefires: 0, facts: null, duplicateOf: null, lastError: null, backgroundFailed: new Set() };
     // Duplicate receipts matter for expenses; other images are not flagged.
     const sameImage = type === 'RECEIPT' && [...s.docs.values()].find(doc => doc.type === 'RECEIPT' && doc.imageHash === imageHash);
     if (sameImage) item.duplicateOf = { id: sameImage.id, name: sameImage.name, reason: 'Same image was already uploaded.' };
@@ -64,7 +64,8 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
   function summary(s, doc) {
     const ocr = s.cache.get(keyFor(doc, 'READ_TEXT'));
     return { id: doc.id, name: doc.name, type: doc.type, active: s.activeItem === doc.id, read: Boolean(doc.text),
-      textReady: Boolean(doc.text) || ocr?.status === 'ready', textPending: ocr?.status === 'pending', duplicateOf: doc.duplicateOf };
+      textReady: Boolean(doc.text) || ocr?.status === 'ready', textPending: ocr?.status === 'pending', duplicateOf: doc.duplicateOf,
+      textSource: doc.textSource, error: doc.lastError };
   }
   // Switching to another item means the user finished the previous one: record
   // DONE in the user's own model so it learns when they stop, not only what
@@ -120,6 +121,8 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     }).catch(error => {
       entry.status = 'failed'; s.metrics.failures++;
       s.cache.delete(key);
+      // Background calls are never retried automatically; a click retries.
+      if (speculative) doc.backgroundFailed.add(action);
       event(s,{kind,action,itemId:doc.id,result:'failed',message:error.message});
       throw error;
     }).finally(()=>{s.running--;});
@@ -139,7 +142,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
   }
   function prefetch(s,doc,predictions) {
     if (!s.enabled || doc.prefires >= prefetchLimit || s.attempts.some(e=>e.status==='pending')) return;
-    const prediction = predictions.find(p=>p.shouldPrefetch && p.eligible && !cached(s,keyFor(doc,p.action)));
+    const prediction = predictions.find(p=>p.shouldPrefetch && p.eligible && !doc.backgroundFailed.has(p.action) && !cached(s,keyFor(doc,p.action)));
     if (!prediction) return;
     // No new operations are invented: only the registered read-only actions.
     track(s, start(s,doc,prediction.action,true));
@@ -159,7 +162,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const from = s.order.indexOf(s.activeItem);
     const nextId = s.order.slice(from + 1).find(id => {
       const doc = s.docs.get(id);
-      return !doc.text && !cached(s, keyFor(doc, 'READ_TEXT')) && doc.prefires < prefetchLimit;
+      return !doc.text && !doc.lastError && !doc.backgroundFailed.has('READ_TEXT') && !cached(s, keyFor(doc, 'READ_TEXT')) && doc.prefires < prefetchLimit;
     });
     if (!nextId) return;
     const doc = s.docs.get(nextId);
@@ -183,12 +186,14 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     catch (error) {
       const waitMs=performance.now()-startTime;
       s.waits.push(waitMs);s.metrics.failedActions++;
+      doc.lastError={action,message:error.message};
       event(s,{kind:'navigation',action,itemId:doc.id,result:'failed',source,waitMs,message:error.message});
       throw error;
     }
     const usedPrefetch=entry.speculative && !entry.used;
     if (usedPrefetch) entry.used=true;
-    if (action==='READ_TEXT') doc.text=output.result.text;
+    doc.lastError=null;
+    if (action==='READ_TEXT') { doc.text=output.result.text; doc.textSource='ocr'; }
     const waitMs=performance.now()-startTime;
     s.metrics.navigations++;s.waits.push(waitMs);
     event(s,{kind:'navigation',action,itemId:doc.id,result:source,waitMs,usedPrefetch,providerMs:entry.providerMs});
@@ -204,6 +209,24 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     readAhead(s);
     return { action,result:output.result,provider:output.provider,model:output.model,promptVersion:output.promptVersion,usage:output.usage,
       source,waitMs,providerMs:entry.providerMs,usedPrefetch,predictions,duplicateOf:doc.duplicateOf,simulated:false };
+  }
+  // When OCR fails, the user can type or paste the text instead. It counts as
+  // "text read" for learning and unlocks the Gemini actions; no provider call.
+  function setText(id,itemId,text) {
+    const s=getSession(id), doc=docFor(s,itemId);
+    if (typeof text!=='string' || !text.trim()) throw new AIError('Enter the text from the image.');
+    if (text.length>20000) throw new AIError('Text is too long (20,000 characters maximum).');
+    focus(s,doc);
+    doc.text=text.trim(); doc.textSource='manual'; doc.lastError=null;
+    event(s,{kind:'navigation',action:'READ_TEXT',itemId:doc.id,result:'typed by user',waitMs:0});
+    if(!doc.history.includes('READ_TEXT')) {
+      doc.history.push('READ_TEXT');
+      s.personal.recordTransition(toHistory(doc.type,doc.history));
+    }
+    const predictions=predict(s,doc,doc.history);s.predictions=predictions;
+    prefetch(s,doc,predictions);
+    readAhead(s);
+    return { action:'READ_TEXT', result:{ text:doc.text, manual:true }, provider:'you', model:'typed text', source:'manual', waitMs:0, providerMs:0, usedPrefetch:false, predictions, simulated:false };
   }
   function setEnabled(id,enabled) {
     if (typeof enabled !== 'boolean') throw new AIError('enabled must be true or false.');
@@ -266,6 +289,6 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     if(s.running)throw new AIError('Wait for running calls to finish before clearing this run.',409);
     sessions.delete(id);
   }
-  return {createSession,upload,open,perform,setEnabled,setReadAhead,snapshot,idle,remove};
+  return {createSession,upload,open,perform,setText,setEnabled,setReadAhead,snapshot,idle,remove};
 }
 module.exports={createAIService,validateImage};

@@ -241,3 +241,29 @@ test('duplicate receipts are flagged: same image, or same total and date',async(
   const flagged=service.snapshot(session).items.find(i=>i.id===b.id).duplicateOf;
   assert.equal(flagged.id,a.id);assert.match(flagged.reason,/13\.20.*2026-10-17/);
 });
+
+test('a failed background OCR is not retried automatically; a click still retries',async()=>{
+  let calls=0;
+  const providers={available:()=>true,identity:a=>({provider:'p',model:'m',promptVersion:'t'}),status:()=>({perceptron:{configured:true},gemini:{configured:true}}),
+    run:async()=>{calls++;await tick();throw new AIError('Perceptron request failed or timed out.',502);}};
+  const service=createAIService({providers});const session=service.createSession().sessionId;
+  const a=service.upload(session,{type:'RECEIPT',name:'a.png',image:IMAGE});
+  service.upload(session,{type:'RECEIPT',name:'b.png',image:IMAGE});
+  service.open(session,a.id);service.setReadAhead(session,true);await service.idle(session);
+  assert.equal(calls,1,'one background attempt, no automatic retries');
+  service.open(session,a.id);await service.idle(session);assert.equal(calls,1);
+  await assert.rejects(service.perform(session,a.id,'READ_TEXT'),/failed or timed out/);
+  assert.equal(calls,2,'an explicit click does retry');
+  assert.equal(service.snapshot(session).items.find(i=>i.id===a.id).error.action,'READ_TEXT');
+});
+
+test('typed text replaces failed OCR and unlocks Gemini actions',async()=>{
+  const f=fixture();
+  assert.throws(()=>f.service.setText(f.session,f.item.id,'   '),/Enter the text/);
+  const typed=f.service.setText(f.session,f.item.id,'Total $13.20');
+  assert.equal(typed.source,'manual');assert.equal(f.calls.length,0,'no provider call for typed text');
+  const extract=await f.service.perform(f.session,f.item.id,'EXTRACT_FIELDS');
+  assert.equal(f.calls.at(-1).text,'Total $13.20');assert.equal(extract.source,'network');
+  const item=f.service.snapshot(f.session).items.find(i=>i.id===f.item.id);
+  assert.equal(item.textSource,'manual');assert.equal(item.read,true);
+});

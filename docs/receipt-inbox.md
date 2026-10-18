@@ -37,6 +37,17 @@ A receipt is flagged as a possible duplicate when the same image was uploaded
 earlier, or when its extracted total and date (both supported by OCR evidence)
 match an earlier receipt. It is a warning only; nothing is blocked or removed.
 
+## When OCR fails
+
+- A failed call made in the background (prefetch or read-ahead) is never
+  retried automatically. Only a click retries.
+- Provider calls give up after 30 s by default (`AI_TIMEOUT_MS` in
+  `backend/.env`; lower it for demos).
+- The item is marked "Couldn't read" in the inbox, with **Retry Read text**
+  and **Type the text instead**. Typed text counts as the text for that image:
+  Gemini actions work on it and it is labelled "Typed text". No provider call
+  is made for typed text.
+
 ## Receipt-check fixes
 
 - An amount after the word ITEMS is no longer discarded (`TOTAL 3 ITEMS 13.20`);
