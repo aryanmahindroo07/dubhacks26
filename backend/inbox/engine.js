@@ -39,7 +39,7 @@ function predictNextAction(type, actions, config = {}, predictor = model) {
   return predictions
     .map((prediction) => {
       const action = untyped(prediction.endpoint);
-      const [scored] = scorePredictions([prediction], { ...config, latencyMs: ACTIONS[action].latencyMs });
+      const [scored] = scorePredictions([prediction], { ...config, latencyMs: config.latencyByAction?.[action] ?? ACTIONS[action].latencyMs });
       return { ...scored, action, label: ACTIONS[action].label, model: ACTIONS[action].model, latencyMs: ACTIONS[action].latencyMs };
     })
     .sort((a, b) => b.expectedValue - a.expectedValue);

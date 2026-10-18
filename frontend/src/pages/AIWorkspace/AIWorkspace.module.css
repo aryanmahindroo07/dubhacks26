@@ -1,0 +1,46 @@
+.topbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; padding:20px 5%; background:#fff; border-bottom:1px solid #dde6e0; }
+.brand {font-weight:800;color:#245c49;text-decoration:none;}
+.topbar nav {display:flex;gap:20px;flex-wrap:wrap;}
+.topbar nav a {color:#365b4c;text-decoration:none;}
+.topbar nav a[aria-current] {font-weight:800;text-decoration:underline;text-underline-offset:6px;}
+.page {background:#f2f7f6;color:#24352e;min-height:100vh;padding:36px clamp(16px,5vw,64px);}
+.heading {display:flex;justify-content:space-between;gap:24px;align-items:center;max-width:1280px;margin:auto;}
+.heading h1 {font-size:clamp(30px,5vw,44px);margin:4px 0 10px;}
+.heading p {max-width:730px;}
+.eyebrow {text-transform:uppercase;letter-spacing:1.5px;font-size:12px;font-weight:700;color:#276b57;}
+.controls {display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.page button {border:1px solid #b9cec2;border-radius:9px;background:#eaf1eb;color:#245c49;padding:10px 14px;cursor:pointer;font:inherit;}
+.page button:hover:not(:disabled) {background:#d9e8df;}
+.page button:focus-visible,.page input:focus-visible,.page select:focus-visible {outline:3px solid #276b57;outline-offset:3px;}
+.page button[aria-pressed=true] {background:#245c49;color:white;}
+.page button:disabled {opacity:.5;cursor:default;}
+.disclosure,.providerStatus,.setup,.notice,.error {max-width:1280px;margin:16px auto;}
+.disclosure,.small {font-size:13px;line-height:1.6;color:#51685b;}
+.providerStatus {display:flex;gap:20px;flex-wrap:wrap;font-weight:700;}
+.setup {background:#f8edce;border:1px solid #e0c987;border-radius:10px;padding:14px;}
+.error {color:#922b21;background:#fff1ed;border:1px solid #e5b5a9;padding:14px;border-radius:10px;}
+.notice {min-height:24px;}
+.workspace {display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:24px;max-width:1280px;margin:24px auto;align-items:start;}
+.panel {background:white;border:1px solid #dde6e0;border-radius:18px;padding:24px;min-width:0;max-width:1280px;margin:auto;width:100%;}
+.panel h2 {margin:0 0 18px;font-size:20px;}
+.label {display:grid;gap:7px;margin:16px 0;font-weight:600;}
+.label select,.label input {max-width:100%;padding:10px;border:1px solid #cbdace;border-radius:8px;background:white;color:#24352e;}
+.preview {width:100%;max-height:460px;object-fit:contain;border-radius:8px;background:#f8faf8;}
+.panel figure {margin:20px 0 0;}
+.panel figcaption {font-size:13px;overflow-wrap:anywhere;}
+.actions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.actions button {display:grid;text-align:left;gap:5px;}
+.actions small {font-size:12px;}
+.empty {padding:34px 10px;text-align:center;color:#64776a;}
+.transcript {white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f7f4;border-radius:10px;padding:18px;font:inherit;max-height:420px;overflow:auto;}
+.source {font-weight:700;color:#245c49;}
+.fields div {display:grid;grid-template-columns:minmax(90px,.6fr) minmax(0,1fr);gap:14px;border-bottom:1px solid #e3ebe4;padding:10px 0;}
+.fields dt {font-weight:700;overflow-wrap:anywhere;}.fields dd {margin:0;overflow-wrap:anywhere;}
+.predictions {margin-top:24px;border-top:1px solid #e3ebe4;}.predictions p {font-size:13px;}
+.sectionHeading {display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;}
+.metrics {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:20px 0;}
+.metrics div {display:grid;gap:6px;}.metrics strong {font-size:23px;}.metrics span {font-size:13px;}
+.tableWrap {overflow:auto;margin-top:20px;}.tableWrap table {width:100%;border-collapse:collapse;text-align:left;font-size:13px;}.tableWrap th,.tableWrap td {padding:12px 8px;border-bottom:1px solid #e3ebe4;}
+.srOnly {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.heading{align-items:start;flex-direction:column}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.panel{padding:16px}.actions{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.fields div{grid-template-columns:1fr;gap:4px}}
