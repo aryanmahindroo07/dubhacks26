@@ -72,3 +72,22 @@ OFF/ON benchmark (fresh backend, both servers running, Playwright installed):
 `python scripts/benchmark_prefetch.py --think-ms 1500 --out results`. It runs
 the same 10 customer journeys with prefetch paused, then on, and reports
 waiting time, useful and unused prefetches, and extra API calls.
+
+## AI inbox (dummy data)
+
+The next version of RequestFlow predicts which AI action a user will run next
+on an inbox item (read text, extract fields, turn into tasks, caption…) and
+runs it early. Everything lives in `backend/inbox/`:
+
+- `actions.js` – the Perceptron and Gemini actions, with placeholder latencies
+- `items.js` – 12 dummy items (receipts, whiteboards, product photos, forms)
+  with mock results; all names and emails are invented
+- `journeys.js` – designed per-type habits and a seeded journey generator
+- `engine.js` – the existing Markov model and scoring, trained on 500 journeys
+- `routes.js` – `GET /api/inbox`, `GET /api/inbox/:id/actions/:action`
+  (simulated delay; `INBOX_DELAY_SCALE=0.1` speeds it up),
+  `POST /api/inbox/predict` with `{ sessionId, itemId, action? }`
+
+`npm run inbox:eval` (in `backend/`) tests the model on unseen journeys; results
+are in [docs/inbox-model-results.md](docs/inbox-model-results.md).
+

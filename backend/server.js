@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { customers } = require("./data");
 const { predictNext, recordTransition, getHistory } = require("./prediction/engine");
+const { registerInboxRoutes } = require("./inbox/routes");
 
 const app = express();
 app.use(cors());
@@ -98,6 +99,9 @@ app.post("/api/config/delays", (req, res) => {
   }
   res.json(DELAYS);
 });
+
+// ---- AI inbox (dummy data, simulated AI latency) --------------------------
+registerInboxRoutes(app);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
