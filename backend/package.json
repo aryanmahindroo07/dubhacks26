@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "inbox:eval": "node inbox/evaluate.js",
+    "test": "node --test inbox/inbox.test.js prediction/policy.test.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
