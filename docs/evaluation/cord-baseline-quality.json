@@ -1,0 +1,356 @@
+{
+  "source": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+  "selection": "First six test rows, indices 0\u20135; selected before provider calls; not selected by outcome.",
+  "scoring": "Exact normalized amount match for total/subtotal/tax only. Fixed English/Indonesian field aliases; ambiguous, missing or failed outputs are incorrect. This is not a full OCR metric or prediction-accuracy metric. Each mode is a separate output on the same image, not an independent document.",
+  "rows": [
+    {
+      "sample": "cord-test-000",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "60.000",
+          "predicted": [
+            "60.000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "60.000",
+          "predicted": [
+            "60.000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "tax",
+          "expected": "5.455",
+          "predicted": [
+            "5.455"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 3,
+      "expected": 3
+    },
+    {
+      "sample": "cord-test-000",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "60.000",
+          "predicted": [
+            "60.000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "60.000",
+          "predicted": [
+            "60.000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "tax",
+          "expected": "5.455",
+          "predicted": [
+            "5.455"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 3,
+      "expected": 3
+    },
+    {
+      "sample": "cord-test-001",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "91000",
+          "predicted": [
+            "91000"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 1,
+      "expected": 1
+    },
+    {
+      "sample": "cord-test-001",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "91000",
+          "predicted": [
+            "91000"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 1,
+      "expected": 1
+    },
+    {
+      "sample": "cord-test-002",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "28,000",
+          "predicted": [
+            "28.000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "28,000",
+          "predicted": [],
+          "correct": false
+        }
+      ],
+      "correct": 1,
+      "expected": 2
+    },
+    {
+      "sample": "cord-test-002",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "28,000",
+          "predicted": [],
+          "correct": false
+        },
+        {
+          "field": "subtotal",
+          "expected": "28,000",
+          "predicted": [],
+          "correct": false
+        }
+      ],
+      "correct": 0,
+      "expected": 2
+    },
+    {
+      "sample": "cord-test-003",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "11,000",
+          "predicted": [
+            "11,000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "11,000",
+          "predicted": [
+            "11,000"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 2,
+      "expected": 2
+    },
+    {
+      "sample": "cord-test-003",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "11,000",
+          "predicted": [
+            "11,000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "11,000",
+          "predicted": [
+            "11,000"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 2,
+      "expected": 2
+    },
+    {
+      "sample": "cord-test-004",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "174,600",
+          "predicted": [
+            "174,600"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "194,000",
+          "predicted": [
+            "194,000"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 2,
+      "expected": 2
+    },
+    {
+      "sample": "cord-test-004",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "174,600",
+          "predicted": [
+            "174,600"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "194,000",
+          "predicted": [
+            "194,000"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 2,
+      "expected": 2
+    },
+    {
+      "sample": "cord-test-005",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "31.000",
+          "predicted": [
+            "31.000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "28.182",
+          "predicted": [],
+          "correct": false
+        },
+        {
+          "field": "tax",
+          "expected": "2.818",
+          "predicted": [],
+          "correct": false
+        }
+      ],
+      "correct": 1,
+      "expected": 3
+    },
+    {
+      "sample": "cord-test-005",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "31.000",
+          "predicted": [],
+          "correct": false
+        },
+        {
+          "field": "subtotal",
+          "expected": "28.182",
+          "predicted": [],
+          "correct": false
+        },
+        {
+          "field": "tax",
+          "expected": "2.818",
+          "predicted": [],
+          "correct": false
+        }
+      ],
+      "correct": 0,
+      "expected": 3
+    }
+  ],
+  "latencyPairs": [
+    {
+      "sample": "cord-test-000",
+      "dwellMs": 0,
+      "offWaitMs": 1500.1110420000023,
+      "onWaitMs": 1433.2589580000022,
+      "savedMs": 66.8520840000001
+    },
+    {
+      "sample": "cord-test-001",
+      "dwellMs": 1500,
+      "offWaitMs": 1411.1463749999966,
+      "onWaitMs": 641.4756660000057,
+      "savedMs": 769.6707089999909
+    },
+    {
+      "sample": "cord-test-002",
+      "dwellMs": 5000,
+      "offWaitMs": 1897.8445829999982,
+      "onWaitMs": 529.5150830000057,
+      "savedMs": 1368.3294999999925
+    },
+    {
+      "sample": "cord-test-003",
+      "dwellMs": 0,
+      "offWaitMs": 1890.2452920000069,
+      "onWaitMs": 1589.7102089999826,
+      "savedMs": 300.5350830000243
+    },
+    {
+      "sample": "cord-test-004",
+      "dwellMs": 1500,
+      "offWaitMs": 1521.1865000000107,
+      "onWaitMs": 593.0972919999913,
+      "savedMs": 928.0892080000194
+    },
+    {
+      "sample": "cord-test-005",
+      "dwellMs": 5000,
+      "offWaitMs": 1957.6307920000108,
+      "onWaitMs": 1690.6274580000027,
+      "savedMs": 267.0033340000082
+    }
+  ],
+  "exploratoryPairedMeanSavedMs": 616.746653000006,
+  "exploratoryBootstrap95IntervalMs": [
+    282.69731283334204,
+    990.8108334999973
+  ]
+}

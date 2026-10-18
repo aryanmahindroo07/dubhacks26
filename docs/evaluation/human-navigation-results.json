@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "source": "https://snap.stanford.edu/data/wikispeedia.html",
+    "archiveSha256": "97697096f5d2dcb77aa69e3992305c6c561de89edb9fb10b5ad9feaf8ba534d5",
+    "sourceCounts": {
+      "paths_finished.tsv": 51318,
+      "paths_unfinished.tsv": 24875
+    },
+    "invalidPathsExcluded": 0,
+    "trainGroups": 16670,
+    "testGroups": 4198,
+    "split": "Fixed SHA256 grouping of hashed IP identifier, seed requestflow-eval-42; approx 80/20. Same identifier never occurs on both sides; identifiers are proxies, not guaranteed unique people. Includes finished and unfinished games. No test-time learning.",
+    "processing": "Back clicks resolved to their destination via stack; STOP appended at each finished/unfinished path end. Cache starts empty per game and visited pages are excluded from prefetch candidates. Target article is not an input feature. Raw data remains local; report contains aggregates only."
+  },
+  "trainPaths": 62215,
+  "testPaths": 13978,
+  "novelNext": 65222,
+  "stops": 13978,
+  "backOrCached": 7246,
+  "examples": {
+    "correct": [
+      {
+        "history": [
+          "Whale",
+          "Fish"
+        ],
+        "predicted": "Whale_shark",
+        "actual": "Whale_shark",
+        "probability": 0.4897959183673469
+      },
+      {
+        "history": [
+          "Fish",
+          "Whale_shark"
+        ],
+        "predicted": "Shark",
+        "actual": "Shark",
+        "probability": 0.7723577235772358
+      },
+      {
+        "history": [
+          "Whale_shark",
+          "Shark"
+        ],
+        "predicted": "Great_white_shark",
+        "actual": "Great_white_shark",
+        "probability": 0.4
+      }
+    ],
+    "incorrect": [
+      {
+        "history": [
+          "Ice",
+          "Climate"
+        ],
+        "predicted": "Global_warming",
+        "actual": "Weather",
+        "probability": 0.3684210526315789
+      },
+      {
+        "history": [
+          "Biology",
+          "Anatomy"
+        ],
+        "predicted": "Human",
+        "actual": "Biology",
+        "probability": 0.45
+      },
+      {
+        "history": [
+          "Animal",
+          "Fish"
+        ],
+        "predicted": "Whale_shark",
+        "actual": "Fishing",
+        "probability": 0.4380165289256198
+      }
+    ]
+  },
+  "results": [
+    {
+      "policy": "Global popularity",
+      "decisions": 86446,
+      "predictions": 86388,
+      "correct": 5897,
+      "confidenceSum": 0,
+      "coverage": 0.9993290609166416,
+      "precision": 0.068261795619762,
+      "correctPerDecision": 0.06821599611318048,
+      "immediateUnused": 80491,
+      "meanEstimatedProbability": null
+    },
+    {
+      "policy": "First order, always top-1",
+      "decisions": 86446,
+      "predictions": 86376,
+      "correct": 12787,
+      "confidenceSum": 11817.994511678653,
+      "coverage": 0.9991902459338778,
+      "precision": 0.14803880707603964,
+      "correctPerDecision": 0.14791893205006593,
+      "immediateUnused": 73589,
+      "meanEstimatedProbability": null
+    },
+    {
+      "policy": "First/second order, always top-1",
+      "decisions": 86446,
+      "predictions": 86376,
+      "correct": 13118,
+      "confidenceSum": 10542.451106634831,
+      "coverage": 0.9991902459338778,
+      "precision": 0.1518708900620543,
+      "correctPerDecision": 0.15174791199130092,
+      "immediateUnused": 73258,
+      "meanEstimatedProbability": null
+    },
+    {
+      "policy": "First order, scored 35% floor",
+      "decisions": 86446,
+      "predictions": 2646,
+      "correct": 1308,
+      "confidenceSum": 1221.8602491371478,
+      "coverage": 0.03060870369941929,
+      "precision": 0.4943310657596372,
+      "correctPerDecision": 0.015130833121254888,
+      "immediateUnused": 1338,
+      "meanEstimatedProbability": 0.46177636021812085
+    },
+    {
+      "policy": "First/second order, scored 35% floor",
+      "decisions": 86446,
+      "predictions": 3068,
+      "correct": 1609,
+      "confidenceSum": 1499.771480438983,
+      "coverage": 0.035490363926613144,
+      "precision": 0.5244458930899609,
+      "correctPerDecision": 0.01861277560558036,
+      "immediateUnused": 1459,
+      "meanEstimatedProbability": 0.4888433769357832
+    }
+  ],
+  "evaluationMs": 2287.303791
+}

@@ -1,0 +1,914 @@
+{
+  "metadata": {
+    "createdAt": "2026-10-18T09:16:26.444Z",
+    "manifests": [
+      "datasets/cord-test/manifest.json",
+      "datasets/cord-check/manifest.json",
+      "work/ocr-correctness/new-inputs/manifest.json"
+    ],
+    "gapMs": 8000,
+    "providers": {
+      "perceptron": {
+        "configured": true,
+        "model": "perceptron-mk1.5"
+      },
+      "gemini": {
+        "configured": true,
+        "model": "gemini-3.5-flash-lite"
+      }
+    },
+    "identity": {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "promptVersion": "ai-inbox-v4"
+    },
+    "method": "Sequential quality check; no prefetch, no retries. Reference answers remain local and are not provider inputs. Not an OFF/ON timing benchmark."
+  },
+  "rows": [
+    {
+      "id": "cord-test-000",
+      "expected": {
+        "total": "60.000",
+        "subtotal": "60.000",
+        "tax": "5.455"
+      },
+      "ocr": {
+        "result": {
+          "text": "901016 -TICKET CP\n2 60.000 60.000\nTOTAL DISC $ -60.000\nTAX 5.455\nSubtotal 60.000\nTOTAL (Qty 2.00 60.000\n- EDC CIMB NIAGA No: xx7730 60.000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 460,
+          "completion_tokens": 100,
+          "total_tokens": 560,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 671.361459,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": "60.000",
+              "evidence": "Subtotal 60.000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "tax",
+              "value": "5.455",
+              "evidence": "TAX 5.455",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": "60.000",
+              "evidence": "TOTAL (Qty 2.00 60.000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 287,
+          "candidatesTokenCount": 145,
+          "totalTokenCount": 432,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 287
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 914.035875
+    },
+    {
+      "id": "cord-test-001",
+      "expected": {
+        "total": "91000"
+      },
+      "ocr": {
+        "result": {
+          "text": "J.STB PROMO 17500\nY.B.BAT 46000\nY.BASO PROM 27500\nTOTAL 91000\nCASH 91000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 1380,
+          "completion_tokens": 54,
+          "total_tokens": 1434,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 556.0510839999988,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "name",
+              "value": "J.STB PROMO",
+              "evidence": "J.STB PROMO 17500",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "subtotal",
+              "value": null,
+              "evidence": "TOTAL 91000",
+              "reason": "OCR evidence does not identify this amount field.",
+              "proposedValue": "91000",
+              "status": "needs-review"
+            },
+            {
+              "name": "total",
+              "value": "91000",
+              "evidence": "TOTAL 91000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": true,
+            "issues": [
+              {
+                "field": "subtotal",
+                "reason": "OCR evidence does not identify this amount field."
+              }
+            ],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 248,
+          "candidatesTokenCount": 139,
+          "totalTokenCount": 387,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 248
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 977.931125000001
+    },
+    {
+      "id": "cord-test-002",
+      "expected": {
+        "total": "28,000",
+        "subtotal": "28,000"
+      },
+      "ocr": {
+        "result": {
+          "text": "1 JASMINE MT ( L ) 24.000\nCOCONUT JELLY ( L ) 4.000\nSUB TOTAL 28.000\nTOTAL SALES 28.000\nTOTAL ITEMS 1\nCASH 100.000\nCHANGE 72.000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 1260,
+          "completion_tokens": 81,
+          "total_tokens": 1341,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 669.4880840000005,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": "28.000",
+              "evidence": "SUB TOTAL 28.000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": "28.000",
+              "evidence": "TOTAL SALES 28.000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "tax",
+              "value": null,
+              "evidence": "",
+              "status": "not-stated"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 271,
+          "candidatesTokenCount": 126,
+          "totalTokenCount": 397,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 271
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 822.6986249999973
+    },
+    {
+      "id": "cord-test-003",
+      "expected": {
+        "total": "11,000",
+        "subtotal": "11,000"
+      },
+      "ocr": {
+        "result": {
+          "text": "@11000\n1X DONAT GULA 11,000\n1.00xITEMs\nSUBTOTAL 11,000\nTOTAL 11,000\nCASH 11,000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 1260,
+          "completion_tokens": 61,
+          "total_tokens": 1321,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 637.3054580000025,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": "11,000",
+              "evidence": "SUBTOTAL 11,000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": "11,000",
+              "evidence": "TOTAL 11,000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 252,
+          "candidatesTokenCount": 98,
+          "totalTokenCount": 350,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 252
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 673.2285410000004
+    },
+    {
+      "id": "cord-test-004",
+      "expected": {
+        "total": "174,600",
+        "subtotal": "194,000"
+      },
+      "ocr": {
+        "result": {
+          "text": "ICE BLACKCOFFE 2 82,000\nAVOCADO COFFEE 1 61,000\nCHIKEN KATSU FF 1 51,000\nSUB TOTAL 194,000\nDISCOUNT 19,400\nTOTAL 174,600\nCASH 200,000\nCHANGE 25,400",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 1260,
+          "completion_tokens": 101,
+          "total_tokens": 1361,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 660.0237080000006,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": "194,000",
+              "evidence": "SUB TOTAL 194,000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": "174,600",
+              "evidence": "TOTAL 174,600",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "cash",
+              "value": "200,000",
+              "evidence": "CASH 200,000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "change",
+              "value": "25,400",
+              "evidence": "CHANGE 25,400",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 290,
+          "candidatesTokenCount": 189,
+          "totalTokenCount": 479,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 290
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 895.6191669999971
+    },
+    {
+      "id": "cord-test-005",
+      "expected": {
+        "total": "31.000",
+        "subtotal": "28.182",
+        "tax": "2.818"
+      },
+      "ocr": {
+        "result": {
+          "text": "TRAD KY TOAST CARTE 28.182\nITEMS 1.00\nSUBTTL 28.182\nPB-1 10% 2.818\nTOTAL 31.000\nCASH 31.000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 9396,
+          "completion_tokens": 70,
+          "total_tokens": 9466,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 1783.5899579999968,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": "28.182",
+              "evidence": "SUBTTL 28.182",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "tax",
+              "value": "2.818",
+              "evidence": "PB-1 10% 2.818",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": "31.000",
+              "evidence": "TOTAL 31.000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 259,
+          "candidatesTokenCount": 82,
+          "totalTokenCount": 341,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 259
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 921.9469170000011
+    },
+    {
+      "id": "cord-test-006",
+      "expected": {
+        "total": "46,000"
+      },
+      "ocr": {
+        "result": {
+          "text": "1 EGG TART 13,000\n2 CHOCO CUSARD PASTRY 24,000\n1 REDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 1260,
+          "completion_tokens": 73,
+          "total_tokens": 1333,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 801.4671670000025,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "total",
+              "value": "46,000",
+              "evidence": "TOTAL 46,000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "cash",
+              "value": "50,000",
+              "evidence": "CASH 50,000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "change",
+              "value": "4,000",
+              "evidence": "CHANGE 4,000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 263,
+          "candidatesTokenCount": 75,
+          "totalTokenCount": 338,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 263
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 757.791624999998
+    },
+    {
+      "id": "cord-test-007",
+      "expected": {
+        "total": "111,000",
+        "subtotal": "100,909",
+        "tax": "10,091"
+      },
+      "ocr": {
+        "result": {
+          "text": "Kupon 15 100,000\nADD CHICKEN BOX 909\nSubtotal 100,909\nPBI (10%) 10,091\nTotal 111,000\nCash Rp.111,000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 666,
+          "completion_tokens": 73,
+          "total_tokens": 739,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 609.5224579999922,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": "100,909",
+              "evidence": "Subtotal 100,909",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "tax",
+              "value": "10,091",
+              "evidence": "PBI (10%) 10,091",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": "111,000",
+              "evidence": "Total 111,000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 264,
+          "candidatesTokenCount": 149,
+          "totalTokenCount": 413,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 264
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 769.4970419999881
+    },
+    {
+      "id": "cord-test-008",
+      "expected": {
+        "total": "50,000",
+        "subtotal": "45,455",
+        "tax": "4,545"
+      },
+      "ocr": {
+        "result": {
+          "text": "1 [REG] BLACK SAKURA 45,455\n1 COOKIE DOH SAUCES 0\n1 NATA DE COCO 0\nSub Total 45,455\nPB1 (10%) 4,545\nRounding 0\nTotal 50,000\nCard Payment 50,000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 1260,
+          "completion_tokens": 85,
+          "total_tokens": 1345,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 753.4477909999987,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": "45,455",
+              "evidence": "Sub Total 45,455",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "tax",
+              "value": "4,545",
+              "evidence": "PB1 (10%) 4,545",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": "50,000",
+              "evidence": "Total 50,000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 276,
+          "candidatesTokenCount": 143,
+          "totalTokenCount": 419,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 276
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 840.0285000000003
+    },
+    {
+      "id": "cord-test-009",
+      "expected": {
+        "subtotal": "36000"
+      },
+      "ocr": {
+        "result": {
+          "text": "Bumbu Kaldu Ayam 1 36000\n36000\nSub Total 36000\nDiscount (0 %)\nTunai 50000\nKembalian 14000",
+          "quality": {
+            "hasReadableTotal": false
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 666,
+          "completion_tokens": 57,
+          "total_tokens": 723,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 533.9845829999977,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "name",
+              "value": "Bumbu Kaldu Ayam",
+              "evidence": "Bumbu Kaldu Ayam 1 36000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "subtotal",
+              "value": "36000",
+              "evidence": "Sub Total 36000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": null,
+              "evidence": "36000",
+              "reason": "OCR evidence does not identify this amount field.",
+              "proposedValue": "36000",
+              "status": "needs-review"
+            },
+            {
+              "name": "cash",
+              "value": "50000",
+              "evidence": "Tunai 50000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "change",
+              "value": "14000",
+              "evidence": "Kembalian 14000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": true,
+            "issues": [
+              {
+                "field": "total",
+                "reason": "OCR evidence does not identify this amount field."
+              }
+            ],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 247,
+          "candidatesTokenCount": 221,
+          "totalTokenCount": 468,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 247
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 1010.1413330000069
+    },
+    {
+      "id": "cord-test-010",
+      "expected": {
+        "total": "17,000",
+        "subtotal": "17,000"
+      },
+      "ocr": {
+        "result": {
+          "text": "CINNAMON SUGAR 17,000\nSUB TOTAL 17,000\nGRAND TOTAL 17,000\nCASH IDR 20,000\nCHANGE DUE 3,000",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 666,
+          "completion_tokens": 60,
+          "total_tokens": 726,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 511.52920900000026,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": "17,000",
+              "evidence": "SUB TOTAL 17,000",
+              "status": "supported-by-ocr"
+            },
+            {
+              "name": "total",
+              "value": "17,000",
+              "evidence": "GRAND TOTAL 17,000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": false,
+            "issues": [],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 248,
+          "candidatesTokenCount": 99,
+          "totalTokenCount": 347,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 248
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 677.9611250000016
+    },
+    {
+      "id": "cord-test-011",
+      "expected": {
+        "total": "230,000"
+      },
+      "ocr": {
+        "result": {
+          "text": "1 BANABERRY FRESH CREAM CAK 230,000\nTOTAL 230,000\nCASH 230,000\nCHANGE 0",
+          "quality": {
+            "hasReadableTotal": true
+          }
+        },
+        "provider": "perceptron",
+        "model": "perceptron-mk1.5",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "prompt_tokens": 666,
+          "completion_tokens": 47,
+          "total_tokens": 713,
+          "prompt_tokens_details": {
+            "audio_tokens": 0
+          }
+        }
+      },
+      "ocrMs": 546.1451669999951,
+      "extraction": {
+        "result": {
+          "fields": [
+            {
+              "name": "subtotal",
+              "value": null,
+              "evidence": "TOTAL 230,000",
+              "reason": "OCR evidence does not identify this amount field.",
+              "proposedValue": "230,000",
+              "status": "needs-review"
+            },
+            {
+              "name": "total",
+              "value": "230,000",
+              "evidence": "TOTAL 230,000",
+              "status": "supported-by-ocr"
+            }
+          ],
+          "validation": {
+            "requiresReview": true,
+            "issues": [
+              {
+                "field": "subtotal",
+                "reason": "OCR evidence does not identify this amount field."
+              }
+            ],
+            "note": "Checked against OCR text only. Verify important amounts against the image."
+          }
+        },
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "promptVersion": "ai-inbox-v4",
+        "usage": {
+          "promptTokenCount": 236,
+          "candidatesTokenCount": 57,
+          "totalTokenCount": 293,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 236
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "extractionMs": 839.0668339999975
+    }
+  ]
+}
