@@ -1,13 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
 * {
   box-sizing: border-box;
+  font-family: 'Manrope', sans-serif;
 }
 
 .app {
   min-height: 100vh;
   padding: 0 clamp(18px, 5vw, 64px) 48px;
-  background: #e6f9e6;
+  background: #F2F7F6;
   color: #24352e;
   font-family: Times, system-ui, sans-serif;
+  display: flow-root;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 50px;
+  text-align: center;
+  margin: 100px 100px 0px 100px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 700px;
+  height: 50px;
+  margin: 24px auto;
+  border: 1px solid #dde6e0;
+  border-radius: 24px;
+  background: #fff;
+  padding: 5px 6px 5px 16px;
+}
+
+.search-bar input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+}
+
+.search-bar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 38px;
+  padding: 0 13px;
+  border: 1px solid hsl(165 55% 31%);
+  border-radius: 24px;
+  background: hsl(165 55% 31%);
+  color: #f7fbf7;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .18s, background .18s, border-color .18s;
+}
+
+.search-bar button:hover {
+  transform: translateY(-1px);
+  border-color: #a9c3b5;
+  background: #205f50;
+  color: white;
+}
+
+.search-bar button:focus-visible {
+  outline: 2px solid hsl(165 55% 31%);
+  outline-offset: 2px;
 }
 
 .topbar {
@@ -17,6 +78,10 @@
   justify-content: space-between;
   gap: 24px;
   border-bottom: 1px solid #e0e8e2;
+  background: #fff;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .brand {
@@ -137,7 +202,7 @@
   max-width: 1200px;
   margin: 24px auto 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
 
