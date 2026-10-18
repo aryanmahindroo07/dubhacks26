@@ -1,5 +1,25 @@
-# dubhacks26
-Hackathon project for DubHacks '26
+# RequestFlow
+
+Hackathon project for DubHacks '26.
+
+## What this project does
+
+RequestFlow predicts which registered API action a user is likely to request next and starts an eligible read-only request while the user reviews the current result. First- and second-order Markov models estimate next-action probabilities; a confidence and expected-value policy decides whether to speculate. A matching click reuses the completed response or joins the running request. Incorrect predictions can consume extra provider calls, so waiting, reuse, failures and unused prefires are measured alongside benefits.
+
+The core machine-learning task is **sequential categorical next-action prediction**. Its outputs are action probabilities and a prefetch decision. Latency is an evaluation metric, not a continuous target learned by a regression model.
+
+Two applications demonstrate the same scheduler:
+
+- **Customer workspace:** customer, orders, support and analytics API navigation. Customer records and initial training journeys are synthetic, and the customer API uses a disclosed artificial delay.
+- **Visual AI workspace:** Perceptron transcribes an image; Gemini transforms the OCR text into fields, summaries or tasks. These are OCR and generative structured-extraction tasks. Provider-backed runs use actual model responses and latency; public real-receipt evaluations are documented separately from synthetic examples.
+
+## Intended use and scope
+
+This is a local hackathon prototype for reducing waiting in API and AI workflows. Its automatic decision selects which read-only request to run early. It does not make lending, creditworthiness, employment, healthcare, benefits or other eligibility decisions; execute payments or physical actions; or automatically approve extracted receipt data. It is not a robotics system or a project that trains an image-classification/object-detection model.
+
+AI output remains subject to human review. Receipt evidence checks establish consistency with OCR text, not guaranteed correctness against the image. Seeded app journeys are synthetic; the separate held-out human-navigation evaluation uses Wikispeedia and does not establish prediction accuracy for actual users of this app. The implementation uses React/Vite with an Express backend; frontend service modules are client API wrappers, not Next.js routes.
+
+See the [real-data evaluation protocol](docs/real-data-evaluation.md), [receipt correctness checks](docs/receipt-correctness.md), and [AI setup guide](docs/ai-inbox-setup.md) for evidence and limitations. These descriptions document intended behavior; they are not a compliance certification or a determination of legal applicability.
 
 ## Frontend starter
 
@@ -99,3 +119,11 @@ The separate `/ai` workspace supports image OCR through Perceptron and text tran
 ## Real-data validation
 
 See [the evaluation protocol](docs/real-data-evaluation.md) for real CORD receipt inputs, real provider timings and a separate held-out human-navigation evaluation. These experiments are separate from synthetic dashboard data and are not a claim of real-user AI-workflow accuracy. [Dataset attribution and upload instructions](datasets/README.md).
+
+## Receipt inbox features
+
+Per-user habit learning, consent-gated read-ahead of the next receipt, duplicate flags and receipt-check fixes: see [docs/receipt-inbox.md](docs/receipt-inbox.md).
+
+### Demo evidence
+
+See [the real-input demo and measurement protocol](docs/demo-evidence.md) for public receipt inputs, visible prefire progress, matched OFF/ON measurements, and a controlled personal-learning demonstration.

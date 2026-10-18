@@ -32,3 +32,5 @@ export async function resetAIRun(){
   return getAISession();
 }
 export async function restartExpiredAIRun(){sessionId=undefined;pendingSession=undefined;return getAISession();}
+export async function setAIReadAhead(readAhead){await getAISession();return request('/session',{method:'PATCH',body:JSON.stringify({readAhead})});}
+export async function openAIItem(itemId){await getAISession();return request(`/items/${encodeURIComponent(itemId)}/open`,{method:'POST',body:'{}'});}

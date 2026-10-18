@@ -10,7 +10,7 @@ const navigationItems = [
     icon: "chart",
     label: "Live overview",
   },
-  { page: "ai", href: "/ai", icon: "sparkles", label: "AI inbox" },
+  { page: "ai", href: "/ai", icon: "sparkles", label: "Receipt inbox" },
 ];
 
 const pageStatuses = {

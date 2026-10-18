@@ -1,0 +1,3116 @@
+{
+  "metadata": {
+    "createdAt": "2026-10-18T10:21:05.939Z",
+    "dwellMs": 1500,
+    "repetitions": 2,
+    "trialGapMs": 20000,
+    "inputDescription": "Three public photographed CORD receipts, plus a deliberately unexpected summary action. Authored workflows, not observed user behavior. Fixed 1500 ms review interval in both modes. Read-ahead OFF.",
+    "manifestSource": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+    "method": "Actual provider-backed API. Fresh backend AI session/cache/seed model for each trial. OFF and ON use identical image inputs and scripts; ordinary caching enabled in both. Alternating paired order. Final background work drained for usage accounting. No artificial latency. Authored scenarios, not real-user prediction accuracy. Input provenance is specified separately in inputDescription.",
+    "scenarios": [
+      {
+        "name": "cord-test-006-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-006.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 1500,
+        "sampleId": "cord-test-006"
+      },
+      {
+        "name": "cord-test-007-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-007.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 1500,
+        "sampleId": "cord-test-007"
+      },
+      {
+        "name": "cord-test-008-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-008.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 1500,
+        "sampleId": "cord-test-008"
+      },
+      {
+        "name": "cord-test-006-unexpected-summary",
+        "type": "RECEIPT",
+        "imagePath": "test-006.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "SUMMARIZE"
+        ],
+        "dwellMs": 1500,
+        "sampleId": "cord-test-006"
+      }
+    ]
+  },
+  "trials": [
+    {
+      "scenario": "cord-test-006-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 2952.6123749999997,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 619.141084,
+          "result": {
+            "text": "1 EGG TART 13,000\n2 CHOCO CUSARD PASTRY 24,000\n1 REDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 615.9799170000001,
+          "providerMs": 615.8432499999999,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 831.7596670000003,
+          "result": {
+            "fields": [
+              {
+                "name": "total",
+                "value": "46,000",
+                "evidence": "TOTAL 46,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 826.9556249999996,
+          "providerMs": 826.8181249999998,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 263,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 317,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 263
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1442.9355419999997,
+        "medianWaitMs": 721.4677709999999,
+        "p95WaitMs": 826.9556249999996
+      },
+      "requestLog": [
+        {
+          "id": "b3acbd13-cea8-49ff-a64f-7ad95783786f",
+          "at": 1792318868924,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "5478543b-e081-4b10-8a6b-6cff2e61b9be",
+          "result": "network",
+          "waitMs": 826.9556249999996,
+          "usedPrefetch": false,
+          "providerMs": 826.8181249999998
+        },
+        {
+          "id": "5b8df338-ed45-49fd-a90d-ee9c57f9124a",
+          "at": 1792318868924,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "5478543b-e081-4b10-8a6b-6cff2e61b9be",
+          "result": "completed",
+          "providerMs": 826.8181249999998,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 263,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 317,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 263
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "045a7ba6-6793-4a7b-9a4c-c86310b44623",
+          "at": 1792318868097,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "5478543b-e081-4b10-8a6b-6cff2e61b9be",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "c4e77384-3867-4b6e-ac25-befbf3b4070d",
+          "at": 1792318866591,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "5478543b-e081-4b10-8a6b-6cff2e61b9be",
+          "result": "network",
+          "waitMs": 615.9799170000001,
+          "usedPrefetch": false,
+          "providerMs": 615.8432499999999
+        },
+        {
+          "id": "f8195b22-9a7c-4736-8754-8b2b27af3215",
+          "at": 1792318866591,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "5478543b-e081-4b10-8a6b-6cff2e61b9be",
+          "result": "completed",
+          "providerMs": 615.8432499999999,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "625903a0-d163-4a33-81d1-bd2d121b2b0d",
+          "at": 1792318865976,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "5478543b-e081-4b10-8a6b-6cff2e61b9be",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-006-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2490.343291000001,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 985.6467499999999,
+          "result": {
+            "text": "1 EGG TART 13,000\n2 CHOCO CUSARD PASTRY 24,000\n1 REDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 982.5112909999989,
+          "providerMs": 982.4165839999987,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 4.1947090000030585,
+          "result": {
+            "fields": [
+              {
+                "name": "total",
+                "value": "46,000",
+                "evidence": "TOTAL 46,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.11000000000058208,
+          "providerMs": 856.4524590000001,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 263,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 317,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 263
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 982.6212909999995,
+        "medianWaitMs": 491.31064549999974,
+        "p95WaitMs": 982.5112909999989
+      },
+      "requestLog": [
+        {
+          "id": "803057a4-c722-403d-9671-d5ffa0b6a4b4",
+          "at": 1792318891430,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c65b61fd-d60c-403a-90a3-bef268161eb9",
+          "result": "cache",
+          "waitMs": 0.11000000000058208,
+          "usedPrefetch": true,
+          "providerMs": 856.4524590000001
+        },
+        {
+          "id": "36cf9332-2d5d-4e9c-8979-9c6a8028c570",
+          "at": 1792318890782,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c65b61fd-d60c-403a-90a3-bef268161eb9",
+          "result": "completed",
+          "providerMs": 856.4524590000001,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 263,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 317,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 263
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "12f0190f-e9d2-4f42-8e67-b4cfc427489c",
+          "at": 1792318889925,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c65b61fd-d60c-403a-90a3-bef268161eb9",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "db574f74-00b6-4fd2-921e-2ea20721c13b",
+          "at": 1792318889925,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "c65b61fd-d60c-403a-90a3-bef268161eb9",
+          "result": "network",
+          "waitMs": 982.5112909999989,
+          "usedPrefetch": false,
+          "providerMs": 982.4165839999987
+        },
+        {
+          "id": "2da6c221-be0c-4b95-b94c-08304aec0155",
+          "at": 1792318889925,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "c65b61fd-d60c-403a-90a3-bef268161eb9",
+          "result": "completed",
+          "providerMs": 982.4165839999987,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "2cbdd42d-50ed-440b-b9f0-3c90aad529f9",
+          "at": 1792318888943,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "c65b61fd-d60c-403a-90a3-bef268161eb9",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-007-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2099.484375,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 595.2135419999977,
+          "result": {
+            "text": "Kupon 15 100,000\nADD CHICKEN BOX 909\nSubtotal 100,909\nPBI (10%) 10,091\nTotal 111,000\nCash Rp. 111,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 592.0318750000006,
+          "providerMs": 591.9545829999988,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 3.5242080000025453,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "100,909",
+                "evidence": "Subtotal 100,909",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "10,091",
+                "evidence": "PBI (10%) 10,091",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "111,000",
+                "evidence": "Total 111,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.12837500000023283,
+          "providerMs": 933.0509160000001,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 592.1602500000008,
+        "medianWaitMs": 296.0801250000004,
+        "p95WaitMs": 592.0318750000006
+      },
+      "requestLog": [
+        {
+          "id": "df6921be-0fa8-442c-ad51-bcc88b3da252",
+          "at": 1792318913555,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4ce96229-dbce-4d19-9955-2e1cedc58508",
+          "result": "cache",
+          "waitMs": 0.12837500000023283,
+          "usedPrefetch": true,
+          "providerMs": 933.0509160000001
+        },
+        {
+          "id": "0a9f6fd2-f59a-4dbb-8ee7-aafec87415a9",
+          "at": 1792318912983,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4ce96229-dbce-4d19-9955-2e1cedc58508",
+          "result": "completed",
+          "providerMs": 933.0509160000001,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "926d9efd-1e3a-45e9-abac-230b9083a342",
+          "at": 1792318912050,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4ce96229-dbce-4d19-9955-2e1cedc58508",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "eb5ce26b-6506-4c89-a258-a0fecf4ac730",
+          "at": 1792318912050,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "4ce96229-dbce-4d19-9955-2e1cedc58508",
+          "result": "network",
+          "waitMs": 592.0318750000006,
+          "usedPrefetch": false,
+          "providerMs": 591.9545829999988
+        },
+        {
+          "id": "c557f309-db95-4547-a6a7-2481e67bc4a7",
+          "at": 1792318912050,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "4ce96229-dbce-4d19-9955-2e1cedc58508",
+          "result": "completed",
+          "providerMs": 591.9545829999988,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "0be21e90-868b-4732-8d50-e75644f32ec9",
+          "at": 1792318911458,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "4ce96229-dbce-4d19-9955-2e1cedc58508",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-007-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 3036.050166999994,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 631.5601670000033,
+          "result": {
+            "text": "Kupon 15 100,000\nADD CHICKEN BOX 909\nSubtotal 100,909\nPBI (10%) 10,091\nTotal 111,000\nCash Rp.111,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 629.437791999997,
+          "providerMs": 629.3650419999904,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 73,
+            "total_tokens": 739,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 903.9227499999979,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "100,909",
+                "evidence": "Subtotal 100,909",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "10,091",
+                "evidence": "PBI (10%) 10,091",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "111,000",
+                "evidence": "Total 111,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 900.549583,
+          "providerMs": 900.4198330000072,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 264,
+            "candidatesTokenCount": 87,
+            "totalTokenCount": 351,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 264
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1529.987374999997,
+        "medianWaitMs": 764.9936874999985,
+        "p95WaitMs": 900.549583
+      },
+      "requestLog": [
+        {
+          "id": "a30daa96-cf9c-47e4-aa0a-48a32dafaaca",
+          "at": 1792318936613,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "632af014-51f3-4d46-b194-0322a774aa17",
+          "result": "network",
+          "waitMs": 900.549583,
+          "usedPrefetch": false,
+          "providerMs": 900.4198330000072
+        },
+        {
+          "id": "08e2abe6-1e94-4c6f-980c-3a0f36d172fd",
+          "at": 1792318936613,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "632af014-51f3-4d46-b194-0322a774aa17",
+          "result": "completed",
+          "providerMs": 900.4198330000072,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 264,
+            "candidatesTokenCount": 87,
+            "totalTokenCount": 351,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 264
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "4a81b8bf-0355-4dd8-9d64-4018b5e35be4",
+          "at": 1792318935712,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "632af014-51f3-4d46-b194-0322a774aa17",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "f1c5b9b5-3523-4b3c-8bc9-1139fd93aa3e",
+          "at": 1792318934208,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "632af014-51f3-4d46-b194-0322a774aa17",
+          "result": "network",
+          "waitMs": 629.437791999997,
+          "usedPrefetch": false,
+          "providerMs": 629.3650419999904
+        },
+        {
+          "id": "80cca6b3-5a5c-48f4-91cc-9b2e9297e732",
+          "at": 1792318934208,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "632af014-51f3-4d46-b194-0322a774aa17",
+          "result": "completed",
+          "providerMs": 629.3650419999904,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 73,
+            "total_tokens": 739,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "945add05-50ad-4b1c-b8cd-d3c186818210",
+          "at": 1792318933579,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "632af014-51f3-4d46-b194-0322a774aa17",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-008-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 2917.0191249999916,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 675.7325830000045,
+          "result": {
+            "text": "1 [REG] BLACK SAKURA 45,455\n1 COOKIE DOH SAUCES 0\n1 NATA DE COCO 0\nSub Total 45,455\nPB1 (10%) 4,545\nRounding 0\nTotal 50,000\nCard Payment 50,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 673.7760830000043,
+          "providerMs": 673.7129580000037,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 85,
+            "total_tokens": 1345,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 740.4409580000065,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "45,455",
+                "evidence": "Sub Total 45,455",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "4,545",
+                "evidence": "PB1 (10%) 4,545",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "50,000",
+                "evidence": "Total 50,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 737.8869169999962,
+          "providerMs": 737.8125839999993,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 276,
+            "candidatesTokenCount": 81,
+            "totalTokenCount": 357,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 276
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1411.6630000000005,
+        "medianWaitMs": 705.8315000000002,
+        "p95WaitMs": 737.8869169999962
+      },
+      "requestLog": [
+        {
+          "id": "ff7019e4-1cdf-4ae1-8be8-a2fb9c49cdc7",
+          "at": 1792318959553,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "d3ecca33-f050-45fc-96f5-0de9cd14178a",
+          "result": "network",
+          "waitMs": 737.8869169999962,
+          "usedPrefetch": false,
+          "providerMs": 737.8125839999993
+        },
+        {
+          "id": "1e721ec8-b159-487a-887f-8eca1c3d6365",
+          "at": 1792318959553,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "d3ecca33-f050-45fc-96f5-0de9cd14178a",
+          "result": "completed",
+          "providerMs": 737.8125839999993,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 276,
+            "candidatesTokenCount": 81,
+            "totalTokenCount": 357,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 276
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "aa1e2039-2a49-4310-840a-a403ac34d015",
+          "at": 1792318958815,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "d3ecca33-f050-45fc-96f5-0de9cd14178a",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "33ba5879-cf5d-445a-8809-47ff22e37049",
+          "at": 1792318957311,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "d3ecca33-f050-45fc-96f5-0de9cd14178a",
+          "result": "network",
+          "waitMs": 673.7760830000043,
+          "usedPrefetch": false,
+          "providerMs": 673.7129580000037
+        },
+        {
+          "id": "770399ae-2afd-4c81-80a9-647f43fdd722",
+          "at": 1792318957311,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "d3ecca33-f050-45fc-96f5-0de9cd14178a",
+          "result": "completed",
+          "providerMs": 673.7129580000037,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 85,
+            "total_tokens": 1345,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "021a10f2-806d-446e-87af-75481a39e753",
+          "at": 1792318956638,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "d3ecca33-f050-45fc-96f5-0de9cd14178a",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-008-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2252.8877090000024,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 749.1438329999946,
+          "result": {
+            "text": "[REG] BLACK SAKURA 45,455\nCOOKIE DOH SAUCES 0\nNATA DE COCO 0\nSub Total 45,455\nPB1 (10%) 4,545\nRounding 0\nTotal 50,000\nCard Payment 50,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 746.3605830000015,
+          "providerMs": 746.3067089999968,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 82,
+            "total_tokens": 1342,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 3.4376249999913853,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "45,455",
+                "evidence": "Sub Total 45,455",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "4,545",
+                "evidence": "PB1 (10%) 4,545",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "50,000",
+                "evidence": "Total 50,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.11999999999534339,
+          "providerMs": 935.0849579999922,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 272,
+            "candidatesTokenCount": 143,
+            "totalTokenCount": 415,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 272
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 746.4805829999968,
+        "medianWaitMs": 373.2402914999984,
+        "p95WaitMs": 746.3605830000015
+      },
+      "requestLog": [
+        {
+          "id": "257711ca-e76d-4880-b784-03c935616db8",
+          "at": 1792318981828,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "da21671b-a618-4105-8b8f-7df3b365a734",
+          "result": "cache",
+          "waitMs": 0.11999999999534339,
+          "usedPrefetch": true,
+          "providerMs": 935.0849579999922
+        },
+        {
+          "id": "6044e451-24c4-409a-937c-51c3f26e0a08",
+          "at": 1792318981258,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "da21671b-a618-4105-8b8f-7df3b365a734",
+          "result": "completed",
+          "providerMs": 935.0849579999922,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 272,
+            "candidatesTokenCount": 143,
+            "totalTokenCount": 415,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 272
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "0693306f-cfd8-4a09-aa71-4652183c5255",
+          "at": 1792318980323,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "da21671b-a618-4105-8b8f-7df3b365a734",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "8c1b6882-7e3b-4882-97c2-c6ba2ea5d9cc",
+          "at": 1792318980323,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "da21671b-a618-4105-8b8f-7df3b365a734",
+          "result": "network",
+          "waitMs": 746.3605830000015,
+          "usedPrefetch": false,
+          "providerMs": 746.3067089999968
+        },
+        {
+          "id": "eb909548-e7f6-4031-9536-e613cfe34773",
+          "at": 1792318980323,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "da21671b-a618-4105-8b8f-7df3b365a734",
+          "result": "completed",
+          "providerMs": 746.3067089999968,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 82,
+            "total_tokens": 1342,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "89c0a03e-8e9e-4b6d-928f-5fdc17068339",
+          "at": 1792318979577,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "da21671b-a618-4105-8b8f-7df3b365a734",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-006-unexpected-summary",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2972.359040999989,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 681.5022500000196,
+          "result": {
+            "text": "1 EGG TART 13,000\n2 CHOCO CUSARD PASTRY 24,000\n1 REDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 678.3655830000062,
+          "providerMs": 678.2997920000053,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "clientWaitMs": 789.762584000011,
+          "result": {
+            "summary": "Receipt for a bakery purchase including one egg tart, two choco custard pastries, and one redbean bread totaling 46,000, paid with 50,000 cash, leaving 4,000 in change."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 786.2755419999885,
+          "providerMs": 786.1542499999923,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 125,
+            "candidatesTokenCount": 60,
+            "totalTokenCount": 185,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 125
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 1,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1464.6411249999946,
+        "medianWaitMs": 732.3205624999973,
+        "p95WaitMs": 786.2755419999885
+      },
+      "requestLog": [
+        {
+          "id": "566a264d-5b65-43ce-af2d-293d905c994f",
+          "at": 1792319004819,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "12911a6c-9365-406c-9a0d-00c2b96e1cf9",
+          "result": "network",
+          "waitMs": 786.2755419999885,
+          "usedPrefetch": false,
+          "providerMs": 786.1542499999923
+        },
+        {
+          "id": "d0d5a678-6b3d-4309-a922-cbccf9eb4006",
+          "at": 1792319004819,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "12911a6c-9365-406c-9a0d-00c2b96e1cf9",
+          "result": "completed",
+          "providerMs": 786.1542499999923,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 125,
+            "candidatesTokenCount": 60,
+            "totalTokenCount": 185,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 125
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "82a0ad17-9613-4d4d-aad5-cda438822991",
+          "at": 1792319004033,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "12911a6c-9365-406c-9a0d-00c2b96e1cf9",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "0138b60f-7e09-4eca-98fc-abd087200d6a",
+          "at": 1792319003407,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "12911a6c-9365-406c-9a0d-00c2b96e1cf9",
+          "result": "completed",
+          "providerMs": 879.9076249999925,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 263,
+            "candidatesTokenCount": 75,
+            "totalTokenCount": 338,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 263
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "3b55a9ca-98c9-41b3-b18c-b40a1efa3e38",
+          "at": 1792319002527,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "12911a6c-9365-406c-9a0d-00c2b96e1cf9",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "b49ae2f6-b198-4f11-99c9-2b8520b863af",
+          "at": 1792319002527,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "12911a6c-9365-406c-9a0d-00c2b96e1cf9",
+          "result": "network",
+          "waitMs": 678.3655830000062,
+          "usedPrefetch": false,
+          "providerMs": 678.2997920000053
+        },
+        {
+          "id": "9a030ba1-d9e1-4ec6-8e07-d755efa16464",
+          "at": 1792319002527,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "12911a6c-9365-406c-9a0d-00c2b96e1cf9",
+          "result": "completed",
+          "providerMs": 678.2997920000053,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "48f90589-7b85-450f-8137-1b214ec92040",
+          "at": 1792319001848,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "12911a6c-9365-406c-9a0d-00c2b96e1cf9",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-006-unexpected-summary",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 2705.184290999983,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 553.7277920000197,
+          "result": {
+            "text": "1 EGG TART 13,000\n2 CHOCO CUSARD PASTRY 24,000\n1 REDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 551.650250000006,
+          "providerMs": 551.5982079999812,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "clientWaitMs": 649.8137920000008,
+          "result": {
+            "summary": "Receipt for a bakery purchase including egg tart, choco custard pastry, and red bean bread totaling 46,000, paid with 50,000 cash with 4,000 change."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 646.1351250000007,
+          "providerMs": 645.9760409999872,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 125,
+            "candidatesTokenCount": 55,
+            "totalTokenCount": 180,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 125
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1197.7853750000068,
+        "medianWaitMs": 598.8926875000034,
+        "p95WaitMs": 646.1351250000007
+      },
+      "requestLog": [
+        {
+          "id": "0b0d4341-283b-4afd-8370-d3b2aaee5f21",
+          "at": 1792319027545,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "6d89db47-ad4c-43d9-9cfc-8c0792c1170a",
+          "result": "network",
+          "waitMs": 646.1351250000007,
+          "usedPrefetch": false,
+          "providerMs": 645.9760409999872
+        },
+        {
+          "id": "d4c86f6b-27cc-4e41-b7ed-5c84169a5ac8",
+          "at": 1792319027545,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "6d89db47-ad4c-43d9-9cfc-8c0792c1170a",
+          "result": "completed",
+          "providerMs": 645.9760409999872,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 125,
+            "candidatesTokenCount": 55,
+            "totalTokenCount": 180,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 125
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "983c46de-7758-4035-8afd-dd279cb048df",
+          "at": 1792319026899,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "6d89db47-ad4c-43d9-9cfc-8c0792c1170a",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "c59cddc5-94f7-419a-8e8b-0d21f8f3b74f",
+          "at": 1792319025394,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "6d89db47-ad4c-43d9-9cfc-8c0792c1170a",
+          "result": "network",
+          "waitMs": 551.650250000006,
+          "usedPrefetch": false,
+          "providerMs": 551.5982079999812
+        },
+        {
+          "id": "2890cb7c-8654-467a-9ae3-66f5a393c6fb",
+          "at": 1792319025394,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "6d89db47-ad4c-43d9-9cfc-8c0792c1170a",
+          "result": "completed",
+          "providerMs": 551.5982079999812,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "b18e3e96-f651-43f2-ba9e-0bfd14ff9341",
+          "at": 1792319024842,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "6d89db47-ad4c-43d9-9cfc-8c0792c1170a",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-006-extract",
+      "repetition": 2,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2194.165290999983,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 691.5067080000008,
+          "result": {
+            "text": "EGG TART 13,000\nCHOCO CUSARD PASTRY 24,000\nREDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 688.4838339999842,
+          "providerMs": 688.4189579999947,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 70,
+            "total_tokens": 1330,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 1.0551250000135042,
+          "result": {
+            "fields": [
+              {
+                "name": "total",
+                "value": "46,000",
+                "evidence": "TOTAL 46,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.03299999999580905,
+          "providerMs": 1000.9283750000177,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 262,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 316,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 262
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 688.51683399998,
+        "medianWaitMs": 344.25841699999,
+        "p95WaitMs": 688.4838339999842
+      },
+      "requestLog": [
+        {
+          "id": "04c7e230-877f-4417-b816-5fa78ee6eb55",
+          "at": 1792319049763,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "1750aa77-df8c-4ba4-9b0a-851cf10aa018",
+          "result": "cache",
+          "waitMs": 0.03299999999580905,
+          "usedPrefetch": true,
+          "providerMs": 1000.9283750000177
+        },
+        {
+          "id": "44e97651-ad73-42c0-b4ea-fb442f3a0883",
+          "at": 1792319049259,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "1750aa77-df8c-4ba4-9b0a-851cf10aa018",
+          "result": "completed",
+          "providerMs": 1000.9283750000177,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 262,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 316,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 262
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "f2920f5f-94df-430e-b4bd-e54923616331",
+          "at": 1792319048258,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "1750aa77-df8c-4ba4-9b0a-851cf10aa018",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "38502b46-2889-4bf6-b369-def79dbd3a6a",
+          "at": 1792319048258,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "1750aa77-df8c-4ba4-9b0a-851cf10aa018",
+          "result": "network",
+          "waitMs": 688.4838339999842,
+          "usedPrefetch": false,
+          "providerMs": 688.4189579999947
+        },
+        {
+          "id": "4380fe4a-9dc7-439b-84d0-412456b5bd7e",
+          "at": 1792319048258,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "1750aa77-df8c-4ba4-9b0a-851cf10aa018",
+          "result": "completed",
+          "providerMs": 688.4189579999947,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 70,
+            "total_tokens": 1330,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "728cfb0f-347d-4a59-83b5-d117818bcc87",
+          "at": 1792319047569,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "1750aa77-df8c-4ba4-9b0a-851cf10aa018",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-006-extract",
+      "repetition": 2,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 116839.11729100003,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 583.8363749999844,
+          "result": {
+            "text": "1 EGG TART 13,000\n2 CHOCO CUSARD PASTRY 24,000\n1 REDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 581.8316669999913,
+          "providerMs": 581.7741249999963,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 1034.919542000047,
+          "result": {
+            "fields": [
+              {
+                "name": "total",
+                "value": "46,000",
+                "evidence": "TOTAL 46,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1026.2281669999938,
+          "providerMs": 1026.0829580000136,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 263,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 317,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 263
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1608.0598339999851,
+        "medianWaitMs": 804.0299169999926,
+        "p95WaitMs": 1026.2281669999938
+      },
+      "requestLog": [
+        {
+          "id": "6e8e862d-152b-4fe1-a36e-bf3967d79c11",
+          "at": 1792319186624,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "ec42941d-5b0a-4d27-8375-16572007b2cd",
+          "result": "network",
+          "waitMs": 1026.2281669999938,
+          "usedPrefetch": false,
+          "providerMs": 1026.0829580000136
+        },
+        {
+          "id": "ac29640e-67b2-48c4-b33e-d913ff422a2a",
+          "at": 1792319186624,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "ec42941d-5b0a-4d27-8375-16572007b2cd",
+          "result": "completed",
+          "providerMs": 1026.0829580000136,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 263,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 317,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 263
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "5c9397cd-ff05-4d51-801a-087c8a8b5b86",
+          "at": 1792319185598,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "ec42941d-5b0a-4d27-8375-16572007b2cd",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "f8045c75-1e20-4944-b765-658ba1339609",
+          "at": 1792319070370,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "ec42941d-5b0a-4d27-8375-16572007b2cd",
+          "result": "network",
+          "waitMs": 581.8316669999913,
+          "usedPrefetch": false,
+          "providerMs": 581.7741249999963
+        },
+        {
+          "id": "b85cf9dd-1bd2-4faa-9584-102f49c0a90d",
+          "at": 1792319070370,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "ec42941d-5b0a-4d27-8375-16572007b2cd",
+          "result": "completed",
+          "providerMs": 581.7741249999963,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "b439b767-ab23-469b-a5cf-a438a816c4b0",
+          "at": 1792319069788,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "ec42941d-5b0a-4d27-8375-16572007b2cd",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-007-extract",
+      "repetition": 2,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 3885.400459000026,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 1015.917666000023,
+          "result": {
+            "text": "Kupon 15 100,000\nADD CHICKEN BOX 909\nSubtotal 100,909\nPBI (10%) 10,091\nTotal 111,000\nCash Rp. 111,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1014.3394579999731,
+          "providerMs": 1014.296624999959,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 1368.137875000015,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "100,909",
+                "evidence": "Subtotal 100,909",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "10,091",
+                "evidence": "PBI (10%) 10,091",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "111,000",
+                "evidence": "Total 111,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1364.703582999995,
+          "providerMs": 1364.5780410000007,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 2379.043040999968,
+        "medianWaitMs": 1189.521520499984,
+        "p95WaitMs": 1364.703582999995
+      },
+      "requestLog": [
+        {
+          "id": "630529cc-19bb-42cf-8068-19d93dd1eae4",
+          "at": 1792319210535,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "1f4c700f-d243-4f1d-ae76-4d11c04615f9",
+          "result": "network",
+          "waitMs": 1364.703582999995,
+          "usedPrefetch": false,
+          "providerMs": 1364.5780410000007
+        },
+        {
+          "id": "f5b6cde0-49e1-4057-a40a-5fcffd379d61",
+          "at": 1792319210535,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "1f4c700f-d243-4f1d-ae76-4d11c04615f9",
+          "result": "completed",
+          "providerMs": 1364.5780410000007,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "982f3bc6-d669-42f3-9882-4029c391be37",
+          "at": 1792319209170,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "1f4c700f-d243-4f1d-ae76-4d11c04615f9",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "bc55503e-4a48-4b78-a828-3b247f13e7dd",
+          "at": 1792319207666,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "1f4c700f-d243-4f1d-ae76-4d11c04615f9",
+          "result": "network",
+          "waitMs": 1014.3394579999731,
+          "usedPrefetch": false,
+          "providerMs": 1014.296624999959
+        },
+        {
+          "id": "2005f50f-5d4c-4e98-8133-d4585c0c2a8d",
+          "at": 1792319207666,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "1f4c700f-d243-4f1d-ae76-4d11c04615f9",
+          "result": "completed",
+          "providerMs": 1014.296624999959,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "b98866d3-3b21-4255-91ce-f4296365480f",
+          "at": 1792319206652,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "1f4c700f-d243-4f1d-ae76-4d11c04615f9",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-007-extract",
+      "repetition": 2,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 918607.2552080001,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 792.5274159999681,
+          "result": {
+            "text": "Kupon 15 100,000\nADD CHICKEN BOX 909\nSubtotal 100,909\nPBI (10%) 10,091\nTotal 111,000\nCash Rp. 111,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 791.3265409999876,
+          "providerMs": 791.2961660000146,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 1255.5316669999156,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "100,909",
+                "evidence": "Subtotal 100,909",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "10,091",
+                "evidence": "PBI (10%) 10,091",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "111,000",
+                "evidence": "Total 111,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1240.4370409999974,
+          "providerMs": 1240.3604579998646,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 1,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 2031.763581999985,
+        "medianWaitMs": 1015.8817909999925,
+        "p95WaitMs": 1240.4370409999974
+      },
+      "requestLog": [
+        {
+          "id": "255df3e1-4110-421e-a5b2-e157113d8c2c",
+          "at": 1792320149164,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "2bba3a71-a95c-448e-81a3-ccff59ae22dd",
+          "result": "network",
+          "waitMs": 1240.4370409999974,
+          "usedPrefetch": false,
+          "providerMs": 1240.3604579998646
+        },
+        {
+          "id": "68db0cfb-83da-44ca-946c-32eec5ec96a8",
+          "at": 1792320149164,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "2bba3a71-a95c-448e-81a3-ccff59ae22dd",
+          "result": "completed",
+          "providerMs": 1240.3604579998646,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "4b8f6a87-7112-40d0-83ad-00adf3f1189f",
+          "at": 1792320147923,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "2bba3a71-a95c-448e-81a3-ccff59ae22dd",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "783f616c-492b-4058-aed5-01fcd8f8a28a",
+          "at": 1792319232244,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "2bba3a71-a95c-448e-81a3-ccff59ae22dd",
+          "result": "completed",
+          "providerMs": 894.9972909999778,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "22cd6b38-220b-4ab2-9eda-f786b58e283c",
+          "at": 1792319231349,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "2bba3a71-a95c-448e-81a3-ccff59ae22dd",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "81899e0c-5413-471e-8dfd-70a6c300748d",
+          "at": 1792319231349,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "2bba3a71-a95c-448e-81a3-ccff59ae22dd",
+          "result": "network",
+          "waitMs": 791.3265409999876,
+          "usedPrefetch": false,
+          "providerMs": 791.2961660000146
+        },
+        {
+          "id": "9a8d936d-dc53-4cfb-b8ae-083ce62ab7d0",
+          "at": 1792319231349,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "2bba3a71-a95c-448e-81a3-ccff59ae22dd",
+          "result": "completed",
+          "providerMs": 791.2961660000146,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "4aad5c68-dae8-4fce-b3d3-2c57913b79bf",
+          "at": 1792319230557,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "2bba3a71-a95c-448e-81a3-ccff59ae22dd",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-008-extract",
+      "repetition": 2,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2119.6119160000235,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 617.2716670001391,
+          "result": {
+            "text": "1 [REG] BLACK SAKURA 45,455\n1 COOKIE DOH SAUCES 0\n1 NATA DE COCO 0\nSub Total 45,455\nPB1 (10%) 4,545\nRounding 0\nTotal 50,000\nCard Payment 50,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 615.251292000059,
+          "providerMs": 615.203167000087,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 85,
+            "total_tokens": 1345,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 1.0583339999429882,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "45,455",
+                "evidence": "Sub Total 45,455",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "4,545",
+                "evidence": "PB1 (10%) 4,545",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "50,000",
+                "evidence": "Total 50,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.02870899997651577,
+          "providerMs": 1285.3033749999013,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 276,
+            "candidatesTokenCount": 143,
+            "totalTokenCount": 419,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 276
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 615.2800010000356,
+        "medianWaitMs": 307.6400005000178,
+        "p95WaitMs": 615.251292000059
+      },
+      "requestLog": [
+        {
+          "id": "d39f16c7-b1f6-45c7-98c5-3bd9123634f5",
+          "at": 1792320346754,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "b51a2dd9-5196-4257-8bfd-3d8276ed0858",
+          "result": "cache",
+          "waitMs": 0.02870899997651577,
+          "usedPrefetch": true,
+          "providerMs": 1285.3033749999013
+        },
+        {
+          "id": "54bd3b51-7934-41e2-b8b6-fb94c82ce44e",
+          "at": 1792320346536,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "b51a2dd9-5196-4257-8bfd-3d8276ed0858",
+          "result": "completed",
+          "providerMs": 1285.3033749999013,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 276,
+            "candidatesTokenCount": 143,
+            "totalTokenCount": 419,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 276
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "77bfa666-b1e1-483c-8342-817d98edc484",
+          "at": 1792320345251,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "b51a2dd9-5196-4257-8bfd-3d8276ed0858",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "48a0c151-1078-4b3e-8573-de0c27521852",
+          "at": 1792320345251,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "b51a2dd9-5196-4257-8bfd-3d8276ed0858",
+          "result": "network",
+          "waitMs": 615.251292000059,
+          "usedPrefetch": false,
+          "providerMs": 615.203167000087
+        },
+        {
+          "id": "0996a7ef-4737-4a6d-827b-12e7f9fb2286",
+          "at": 1792320345251,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "b51a2dd9-5196-4257-8bfd-3d8276ed0858",
+          "result": "completed",
+          "providerMs": 615.203167000087,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 85,
+            "total_tokens": 1345,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "144c84ae-ecdf-4b37-9b39-0e1a3e880965",
+          "at": 1792320344636,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "b51a2dd9-5196-4257-8bfd-3d8276ed0858",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-008-extract",
+      "repetition": 2,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 3766.109375,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 1241.6522920001298,
+          "result": {
+            "text": "[REG] BLACK SAKURA 45,455\nCOOKIE DOH SAUCES 0\nNATA DE COCO 0\nSub Total 45,455\nPB1 (10%) 4,545\nRounding 0\nTotal 50,000\nCard Payment 50,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1239.6841669999994,
+          "providerMs": 1239.6325829999987,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 82,
+            "total_tokens": 1342,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 1023.7323750001378,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "45,455",
+                "evidence": "Sub Total 45,455",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "4,545",
+                "evidence": "PB1 (10%) 4,545",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "50,000",
+                "evidence": "Total 50,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1021.2652079998516,
+          "providerMs": 1021.1719579999335,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 272,
+            "candidatesTokenCount": 143,
+            "totalTokenCount": 415,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 272
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 2260.949374999851,
+        "medianWaitMs": 1130.4746874999255,
+        "p95WaitMs": 1239.6841669999994
+      },
+      "requestLog": [
+        {
+          "id": "ef23996a-afab-481a-b2e7-7f1e50d6b530",
+          "at": 1792320370536,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "2e7166a3-07db-4afa-8477-d7b784031f4e",
+          "result": "network",
+          "waitMs": 1021.2652079998516,
+          "usedPrefetch": false,
+          "providerMs": 1021.1719579999335
+        },
+        {
+          "id": "95f46edd-8c7f-450a-9919-1919b61cd726",
+          "at": 1792320370536,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "2e7166a3-07db-4afa-8477-d7b784031f4e",
+          "result": "completed",
+          "providerMs": 1021.1719579999335,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 272,
+            "candidatesTokenCount": 143,
+            "totalTokenCount": 415,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 272
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "a4a27a4e-39e5-4715-bf7c-368dc35346d5",
+          "at": 1792320369515,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "2e7166a3-07db-4afa-8477-d7b784031f4e",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "d3b57442-01a4-41b1-9eb6-dbc2619bea02",
+          "at": 1792320368012,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "2e7166a3-07db-4afa-8477-d7b784031f4e",
+          "result": "network",
+          "waitMs": 1239.6841669999994,
+          "usedPrefetch": false,
+          "providerMs": 1239.6325829999987
+        },
+        {
+          "id": "627ec867-76f2-4a48-9766-70c9caa5183d",
+          "at": 1792320368012,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "2e7166a3-07db-4afa-8477-d7b784031f4e",
+          "result": "completed",
+          "providerMs": 1239.6325829999987,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 82,
+            "total_tokens": 1342,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "a94f17d6-0518-4eef-986d-470708f62aa7",
+          "at": 1792320366772,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "2e7166a3-07db-4afa-8477-d7b784031f4e",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-006-unexpected-summary",
+      "repetition": 2,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 3095.035750000039,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 625.5399579999503,
+          "result": {
+            "text": "1 EGG TART 13,000\n2 CHOCO CUSARD PASTRY 24,000\n1 REDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 623.7630000000354,
+          "providerMs": 623.7069580000825,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "clientWaitMs": 968.003542000195,
+          "result": {
+            "summary": "Receipt for a purchase of bakery items including an egg tart, two choco custard pastries, and a red bean bread for a total of 46,000, paid with 50,000 cash, leaving 4,000 in change."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 964.6120829998981,
+          "providerMs": 964.2660419999156,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 125,
+            "candidatesTokenCount": 65,
+            "totalTokenCount": 190,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 125
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1588.3750829999335,
+        "medianWaitMs": 794.1875414999668,
+        "p95WaitMs": 964.6120829998981
+      },
+      "requestLog": [
+        {
+          "id": "15fc62da-858e-480f-991d-35793de0b9be",
+          "at": 1792320393655,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "c382ed55-e77b-4772-99be-608f3c48a559",
+          "result": "network",
+          "waitMs": 964.6120829998981,
+          "usedPrefetch": false,
+          "providerMs": 964.2660419999156
+        },
+        {
+          "id": "c785ba54-6fdf-41f8-a936-fa98fc01c9ad",
+          "at": 1792320393655,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "c382ed55-e77b-4772-99be-608f3c48a559",
+          "result": "completed",
+          "providerMs": 964.2660419999156,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 125,
+            "candidatesTokenCount": 65,
+            "totalTokenCount": 190,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 125
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "6d948708-fd2c-4ed1-b1a2-76c5a830808a",
+          "at": 1792320392690,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "c382ed55-e77b-4772-99be-608f3c48a559",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "698f441e-4dc2-493c-ac0c-e6ecbb0e522a",
+          "at": 1792320391185,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "c382ed55-e77b-4772-99be-608f3c48a559",
+          "result": "network",
+          "waitMs": 623.7630000000354,
+          "usedPrefetch": false,
+          "providerMs": 623.7069580000825
+        },
+        {
+          "id": "e0463f6e-e5d2-420a-a7e3-73278518a9c6",
+          "at": 1792320391185,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "c382ed55-e77b-4772-99be-608f3c48a559",
+          "result": "completed",
+          "providerMs": 623.7069580000825,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 73,
+            "total_tokens": 1333,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "45a245bb-9782-4fec-9a3d-29e5029fb630",
+          "at": 1792320390562,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "c382ed55-e77b-4772-99be-608f3c48a559",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-006-unexpected-summary",
+      "repetition": 2,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2833.9424169999547,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 570.1002909999806,
+          "result": {
+            "text": "EGG TART 13,000\nCHOCO CUSTARD PASTRY 24,000\nREDBEAN BREAD 9,000\nTOTAL 46,000\nCASH 50,000\nCHANGE 4,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 568.1546660000458,
+          "providerMs": 568.099708000198,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 70,
+            "total_tokens": 1330,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "clientWaitMs": 762.377208000049,
+          "result": {
+            "summary": "A receipt for bakery items including egg tarts, choco custard pastry, and red bean bread totaling 46,000, paid with 50,000 cash and 4,000 change."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 759.1498749998864,
+          "providerMs": 759.038916000165,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 124,
+            "candidatesTokenCount": 52,
+            "totalTokenCount": 176,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 124
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 1,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1327.3045409999322,
+        "medianWaitMs": 663.6522704999661,
+        "p95WaitMs": 759.1498749998864
+      },
+      "requestLog": [
+        {
+          "id": "5f80d80c-25af-4d77-acb5-2b3d9298277a",
+          "at": 1792320416511,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "93dcdbe4-b9db-494f-99ee-a00b0068ed07",
+          "result": "network",
+          "waitMs": 759.1498749998864,
+          "usedPrefetch": false,
+          "providerMs": 759.038916000165
+        },
+        {
+          "id": "1f566a0a-4dc6-4b24-8260-21c316a16afe",
+          "at": 1792320416511,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "93dcdbe4-b9db-494f-99ee-a00b0068ed07",
+          "result": "completed",
+          "providerMs": 759.038916000165,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 124,
+            "candidatesTokenCount": 52,
+            "totalTokenCount": 176,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 124
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "a50127ff-53f9-4a77-866a-379c848f22c5",
+          "at": 1792320415752,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "93dcdbe4-b9db-494f-99ee-a00b0068ed07",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "9cb71755-e8e3-4e30-9ed4-adab5dcec298",
+          "at": 1792320414916,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "93dcdbe4-b9db-494f-99ee-a00b0068ed07",
+          "result": "completed",
+          "providerMs": 668.9430829999037,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 262,
+            "candidatesTokenCount": 54,
+            "totalTokenCount": 316,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 262
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "7abf3e5a-b82c-4b89-a1a8-bc453911d9df",
+          "at": 1792320414247,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "93dcdbe4-b9db-494f-99ee-a00b0068ed07",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "ee869c29-3e10-4575-9697-1398ca54e4a0",
+          "at": 1792320414247,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "93dcdbe4-b9db-494f-99ee-a00b0068ed07",
+          "result": "network",
+          "waitMs": 568.1546660000458,
+          "usedPrefetch": false,
+          "providerMs": 568.099708000198
+        },
+        {
+          "id": "1c1c7368-d07d-4ce0-a55a-d45fd7940b79",
+          "at": 1792320414247,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "93dcdbe4-b9db-494f-99ee-a00b0068ed07",
+          "result": "completed",
+          "providerMs": 568.099708000198,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1260,
+            "completion_tokens": 70,
+            "total_tokens": 1330,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "e320809b-5799-43b6-9508-270a67a2325d",
+          "at": 1792320413679,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "93dcdbe4-b9db-494f-99ee-a00b0068ed07",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    }
+  ]
+}

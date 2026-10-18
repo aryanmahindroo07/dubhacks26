@@ -9,7 +9,7 @@ const isOverview = window.location.pathname.replace(/\/+$/, '') === '/overview';
 const isAI = window.location.pathname.replace(/\/+$/, '') === '/ai';
 const Page = isAI ? AIWorkspace : isOverview ? Overview : App;
 
-document.title = isAI ? 'RequestFlow · AI inbox' : isOverview ? 'Requestflow · Live overview' : 'RequestFlow';
+document.title = isAI ? 'RequestFlow · Receipt inbox' : isOverview ? 'Requestflow · Live overview' : 'RequestFlow';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

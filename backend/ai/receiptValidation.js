@@ -12,9 +12,29 @@ function amountToken(value) {
   return match?.[1] ?? null;
 }
 function tokensIn(line) {
-  line=line.replace(/\b(?:qty|quantity|items?)\s*[:=]?\s*\d+(?:[.,]\d+)*/gi,'').replace(/\bPB[-\s]?1\b/gi,'PB');
+  line=line
+    // "Qty 2" / "Qty: 2.00" are counts, never money.
+    .replace(/\b(?:qty|quantity)\s*[:=]?\s*\d+(?:[.,]\d+)*/gi,'')
+    // "Items 3" / "Items: 3" are counts only when the number is a whole number;
+    // "ITEMS 13.20" keeps its amount.
+    .replace(/\bitems?\s*[:=]?\s*\d+(?![.,]?\d)/gi,'')
+    // "3 items" / "2 pcs"
+    .replace(/\b\d+\s*(?:items?|pcs)\b/gi,'')
+    .replace(/\bPB[-\s]?1\b/gi,'PB');
   return [...line.matchAll(/[-+]?\d+(?:[.,]\d+)*/g)].filter(m=>!/^\s*%/.test(line.slice(m.index+m[0].length))).map(m=>m[0]);
 }
+const isLabelLine=line=>Object.keys(LABELS).some(key=>matchesLabel(key,line));
+// OCR often puts a right-aligned amount on the line after its label
+// ("TOTAL" then "13.20"). Join such pairs so the amount stays tied to its label.
+function withJoinedLines(lines) {
+  const joined=[];
+  lines.forEach((line,i)=>{
+    const next=lines[i+1];
+    if(next&&isLabelLine(line)&&tokensIn(line).length===0&&amountToken(next))joined.push(`${line} ${next}`);
+  });
+  return {all:[...lines,...joined],joined:new Set(joined)};
+}
+const ocrLines=text=>String(text||'').split(/\r?\n/).map(normalize).filter(Boolean);
 function matchesLabel(name,line) {
   if(!LABELS[name].test(line))return false;
   return name!=='total'||!(/\b(?:sub\s*total|subttl|total\s+(?:items?|qty|quantity|tax|vat|ppn|disc(?:ount)?))\b/i.test(line));
@@ -27,12 +47,14 @@ function canonicalName(name) {
   return name.trim();
 }
 function validateReceiptFields(fields,text) {
-  const lines=String(text).split(/\r?\n/).map(normalize).filter(Boolean);
+  const lines=ocrLines(text);
+  const {all:candidates,joined}=withJoinedLines(lines);
   const issues=[];
   const checked=fields.map(field=>{
     const name=canonicalName(field.name);const key=name.toLowerCase();const evidence=normalize(field.evidence);
     let reason;
-    const line=lines.find(line=>evidence&&line===evidence)||lines.find(line=>evidence&&line.includes(evidence)&&(!LABELS[key]||matchesLabel(key,line)));
+    const fits=line=>!LABELS[key]||matchesLabel(key,line);
+    const line=evidence&&([...joined].find(line=>line.includes(evidence)&&fits(line))||candidates.find(line=>line===evidence&&fits(line))||candidates.find(line=>line.includes(evidence)&&fits(line))||lines.find(line=>line===evidence));
     const notStated=field.value===null&&LABELS[key]&&key!=='total'&&!lines.some(line=>matchesLabel(key,line));
     if(notStated) {}
     else if(field.value===null)reason='Value was not readable or not stated in OCR.';
@@ -41,7 +63,7 @@ function validateReceiptFields(fields,text) {
       const token=amountToken(field.value);
       if(!token)reason='Expected a printed amount, not a label or percentage.';
       else if(!matchesLabel(key,line))reason='OCR evidence does not identify this amount field.';
-      else if(!tokensIn(evidence).includes(token))reason='Amount is not present in the quoted OCR evidence.';
+      else if(!tokensIn(evidence).includes(token)&&!(joined.has(line)&&tokensIn(line).includes(token)))reason='Amount is not present in the quoted OCR evidence.';
     } else if(!normalize(evidence).includes(normalize(field.value)))reason='Value is not present in the quoted OCR evidence.';
     if(reason)issues.push({field:name,reason});
     return {name,value:reason?null:field.value,evidence:line?field.evidence:'',reason,...(reason&&field.value!==null?{proposedValue:field.value}:{}),status:notStated?'not-stated':reason?'needs-review':'supported-by-ocr'};
@@ -61,6 +83,6 @@ function validateReceiptFields(fields,text) {
   return {fields:checked,validation:{requiresReview:issues.length>0,issues,note:'Checked against OCR text only. Verify important amounts against the image.'}};
 }
 function hasReadableTotal(text) {
-  return String(text||'').split(/\r?\n/).some(line=>matchesLabel('total',line)&&tokensIn(line).length>0);
+  return withJoinedLines(ocrLines(text)).all.some(line=>matchesLabel('total',line)&&tokensIn(line).length>0);
 }
 module.exports={validateReceiptFields,amountToken,hasReadableTotal};
