@@ -1,0 +1,1131 @@
+{
+  "metadata": {
+    "createdAt": "2026-10-18T08:37:40.298Z",
+    "dwellMs": 5000,
+    "repetitions": 1,
+    "trialGapMs": 15000,
+    "method": "Actual provider-backed API. Fresh backend AI session/cache/seed model for each trial. OFF and ON use identical synthetic image inputs and scripts; ordinary caching enabled in both. Alternating paired order. Final background work drained for usage accounting. No artificial latency. Authored scenarios, not real-user prediction accuracy. Images contain synthetic text.",
+    "scenarios": [
+      {
+        "name": "receipt-extraction",
+        "type": "RECEIPT",
+        "image": "receipt",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ]
+      },
+      {
+        "name": "receipt-unexpected-summary",
+        "type": "RECEIPT",
+        "image": "receipt",
+        "actions": [
+          "READ_TEXT",
+          "SUMMARIZE"
+        ]
+      },
+      {
+        "name": "whiteboard-tasks",
+        "type": "WHITEBOARD",
+        "image": "whiteboard",
+        "actions": [
+          "READ_TEXT",
+          "MAKE_TASKS"
+        ]
+      }
+    ]
+  },
+  "trials": [
+    {
+      "scenario": "receipt-extraction",
+      "repetition": 1,
+      "mode": "OFF",
+      "journeyMs": 6577.878708,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "result": {
+            "text": "NORTHSTAR SUPPLIES - DEMO RECEIPT\nDate: 2026-10-17\nReceipt: DEMO-1042\nNotebook $8.00\nPens $4.00\nSubtotal $12.00\nTax $1.20\nTotal $13.20\nSynthetic demo input - not a real transaction or meeting"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 571.5351249999994,
+          "providerMs": 571.4339590000009,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 91,
+            "total_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "result": {
+            "fields": [
+              {
+                "name": "Date",
+                "value": "2026-10-17"
+              },
+              {
+                "name": "Receipt",
+                "value": "DEMO-1042"
+              },
+              {
+                "name": "Subtotal",
+                "value": "$12.00"
+              },
+              {
+                "name": "Tax",
+                "value": "$1.20"
+              },
+              {
+                "name": "Total",
+                "value": "$13.20"
+              }
+            ]
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1000.4850829999996,
+          "providerMs": 1000.3921249999985,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 163,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 312,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 163
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1572.020207999999,
+        "medianWaitMs": 786.0101039999995,
+        "p95WaitMs": 1000.4850829999996
+      },
+      "requestLog": [
+        {
+          "id": "77fd8bcc-1e72-4060-89c6-822a9b026187",
+          "at": 1792312666911,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "92226a9c-c67c-4965-86a6-826d4eca13a4",
+          "result": "network",
+          "waitMs": 1000.4850829999996,
+          "usedPrefetch": false,
+          "providerMs": 1000.3921249999985
+        },
+        {
+          "id": "e020ad2c-3215-4cf8-86d5-affe13472ad6",
+          "at": 1792312666911,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "92226a9c-c67c-4965-86a6-826d4eca13a4",
+          "result": "completed",
+          "providerMs": 1000.3921249999985,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 163,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 312,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 163
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "781a9cdf-9f75-4daf-96d8-5f25c9ac2e6d",
+          "at": 1792312665910,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "92226a9c-c67c-4965-86a6-826d4eca13a4",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "617990dc-5292-4ab5-8336-952ba658170b",
+          "at": 1792312660907,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "92226a9c-c67c-4965-86a6-826d4eca13a4",
+          "result": "network",
+          "waitMs": 571.5351249999994,
+          "usedPrefetch": false,
+          "providerMs": 571.4339590000009
+        },
+        {
+          "id": "5a52e61e-2c54-4302-a62c-edbe79c40aad",
+          "at": 1792312660907,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "92226a9c-c67c-4965-86a6-826d4eca13a4",
+          "result": "completed",
+          "providerMs": 571.4339590000009,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 91,
+            "total_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "9ff74d6b-2c4b-4cbd-a58c-f454b7abf069",
+          "at": 1792312660335,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "92226a9c-c67c-4965-86a6-826d4eca13a4",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "receipt-extraction",
+      "repetition": 1,
+      "mode": "ON",
+      "journeyMs": 5580.542375000001,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "result": {
+            "text": "NORTHSTAR SUPPLIES - DEMO RECEIPT\nDate: 2026-10-17\nReceipt: DEMO-1042\nNotebook $8.00\nPens $4.00\nSubtotal $12.00\nTax $1.20\nTotal $13.20\nSynthetic demo input - not a real transaction or meeting"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 572.0613329999978,
+          "providerMs": 571.9866250000014,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 91,
+            "total_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "result": {
+            "fields": [
+              {
+                "name": "date",
+                "value": "2026-10-17"
+              },
+              {
+                "name": "receipt_number",
+                "value": "DEMO-1042"
+              },
+              {
+                "name": "subtotal",
+                "value": "$12.00"
+              },
+              {
+                "name": "tax",
+                "value": "$1.20"
+              },
+              {
+                "name": "total",
+                "value": "$13.20"
+              },
+              {
+                "name": "merchant_name",
+                "value": "NORTHSTAR SUPPLIES"
+              }
+            ]
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.09800000000541331,
+          "providerMs": 888.3343749999985,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 163,
+            "candidatesTokenCount": 89,
+            "totalTokenCount": 252,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 163
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 572.1593330000032,
+        "medianWaitMs": 286.0796665000016,
+        "p95WaitMs": 572.0613329999978
+      },
+      "requestLog": [
+        {
+          "id": "93db3339-ac7a-44af-ace7-226c1631fcec",
+          "at": 1792312687519,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "69cec288-5ffc-49f0-b191-89511fd57d68",
+          "result": "cache",
+          "waitMs": 0.09800000000541331,
+          "usedPrefetch": true,
+          "providerMs": 888.3343749999985
+        },
+        {
+          "id": "036a489d-9043-482f-8da4-a320d3afbf55",
+          "at": 1792312683401,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "69cec288-5ffc-49f0-b191-89511fd57d68",
+          "result": "completed",
+          "providerMs": 888.3343749999985,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 163,
+            "candidatesTokenCount": 89,
+            "totalTokenCount": 252,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 163
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "49b896c3-1a30-4f50-a617-3742ac9bc9d4",
+          "at": 1792312682512,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "69cec288-5ffc-49f0-b191-89511fd57d68",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "7a98f278-aecd-40c3-b502-e8a27ebdefe9",
+          "at": 1792312682512,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "69cec288-5ffc-49f0-b191-89511fd57d68",
+          "result": "network",
+          "waitMs": 572.0613329999978,
+          "usedPrefetch": false,
+          "providerMs": 571.9866250000014
+        },
+        {
+          "id": "a80caaa9-f2f7-40e4-a1b8-024b686c5d30",
+          "at": 1792312682512,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "69cec288-5ffc-49f0-b191-89511fd57d68",
+          "result": "completed",
+          "providerMs": 571.9866250000014,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 91,
+            "total_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "6f2388d0-bce4-4ba7-8397-3473e895735e",
+          "at": 1792312681940,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "69cec288-5ffc-49f0-b191-89511fd57d68",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "receipt-unexpected-summary",
+      "repetition": 1,
+      "mode": "OFF",
+      "journeyMs": 6362.631999999998,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "result": {
+            "text": "NORTHSTAR SUPPLIES - DEMO RECEIPT\nDate: 2026-10-17\nReceipt: DEMO-1042\nNotebook $8.00\nPens $4.00\nSubtotal $12.00\nTax $1.20\nTotal $13.20\nSynthetic demo input - not a real transaction or meeting"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 622.3611670000028,
+          "providerMs": 622.2750830000004,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 91,
+            "total_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "result": {
+            "summary": "Receipt from Northstar Supplies dated October 17, 2026, for a total of $13.20 including a notebook, pens, subtotal, and tax."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 732.8442500000019,
+          "providerMs": 732.7042500000025,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 145,
+            "candidatesTokenCount": 48,
+            "totalTokenCount": 193,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 145
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1355.2054170000047,
+        "medianWaitMs": 677.6027085000023,
+        "p95WaitMs": 732.8442500000019
+      },
+      "requestLog": [
+        {
+          "id": "64050706-4c45-4a44-b80d-64c5fc96d24a",
+          "at": 1792312708900,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "da4a54b3-38e9-436d-afef-b5a4f82cfeba",
+          "result": "network",
+          "waitMs": 732.8442500000019,
+          "usedPrefetch": false,
+          "providerMs": 732.7042500000025
+        },
+        {
+          "id": "3da06d91-131e-4207-a618-775ab6f33f6f",
+          "at": 1792312708900,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "da4a54b3-38e9-436d-afef-b5a4f82cfeba",
+          "result": "completed",
+          "providerMs": 732.7042500000025,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 145,
+            "candidatesTokenCount": 48,
+            "totalTokenCount": 193,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 145
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "3a925f58-2a25-4e41-9d35-899233007b07",
+          "at": 1792312708167,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "da4a54b3-38e9-436d-afef-b5a4f82cfeba",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "c976cbfb-71d6-4819-985d-0b1b494b1d83",
+          "at": 1792312703162,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "da4a54b3-38e9-436d-afef-b5a4f82cfeba",
+          "result": "network",
+          "waitMs": 622.3611670000028,
+          "usedPrefetch": false,
+          "providerMs": 622.2750830000004
+        },
+        {
+          "id": "1287e5e1-2517-4dac-87bb-20c909611115",
+          "at": 1792312703162,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "da4a54b3-38e9-436d-afef-b5a4f82cfeba",
+          "result": "completed",
+          "providerMs": 622.2750830000004,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 91,
+            "total_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "063754b2-e3fd-4871-9135-48246fedc495",
+          "at": 1792312702539,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "da4a54b3-38e9-436d-afef-b5a4f82cfeba",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "receipt-unexpected-summary",
+      "repetition": 1,
+      "mode": "ON",
+      "journeyMs": 6270.673124999994,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "result": {
+            "text": "NORTHSTAR SUPPLIES - DEMO RECEIPT\nDate: 2026-10-17\nReceipt: DEMO-1042\nNotebook $8.00\nPens $4.00\nSubtotal $12.00\nTax $1.20\nTotal $13.20\nSynthetic demo input - not a real transaction or meeting"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 570.6937909999979,
+          "providerMs": 570.6118330000027,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 91,
+            "total_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "result": {
+            "summary": "A demo receipt from Northstar Supplies dated October 17, 2026, totaling $13.20 for a notebook and pens."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 692.2127080000064,
+          "providerMs": 692.0720419999998,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 145,
+            "candidatesTokenCount": 41,
+            "totalTokenCount": 186,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 145
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 1,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1262.9064990000043,
+        "medianWaitMs": 631.4532495000021,
+        "p95WaitMs": 692.2127080000064
+      },
+      "requestLog": [
+        {
+          "id": "6328c394-74e2-449b-a980-49d8c1c9337e",
+          "at": 1792312730189,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "87b3e59d-b2be-4b00-b174-27db9cf5f1c9",
+          "result": "network",
+          "waitMs": 692.2127080000064,
+          "usedPrefetch": false,
+          "providerMs": 692.0720419999998
+        },
+        {
+          "id": "f5e5635c-d30a-486c-998b-f8c43ac4ab1c",
+          "at": 1792312730189,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "87b3e59d-b2be-4b00-b174-27db9cf5f1c9",
+          "result": "completed",
+          "providerMs": 692.0720419999998,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 145,
+            "candidatesTokenCount": 41,
+            "totalTokenCount": 186,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 145
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "2523d135-f79a-43b1-87c9-ab33f678752c",
+          "at": 1792312729497,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "87b3e59d-b2be-4b00-b174-27db9cf5f1c9",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "01788f3e-d8eb-4c3e-a551-63f098928878",
+          "at": 1792312725247,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "87b3e59d-b2be-4b00-b174-27db9cf5f1c9",
+          "result": "completed",
+          "providerMs": 755.697542000009,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 163,
+            "candidatesTokenCount": 74,
+            "totalTokenCount": 237,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 163
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "585d1935-f1db-47a7-bd5a-8b11a3f1948e",
+          "at": 1792312724492,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "87b3e59d-b2be-4b00-b174-27db9cf5f1c9",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "f40082ea-8d6a-4dbc-9c72-fbb3172b1f5c",
+          "at": 1792312724491,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "87b3e59d-b2be-4b00-b174-27db9cf5f1c9",
+          "result": "network",
+          "waitMs": 570.6937909999979,
+          "usedPrefetch": false,
+          "providerMs": 570.6118330000027
+        },
+        {
+          "id": "40f88ad5-875a-461e-ad86-9d8eb7d023de",
+          "at": 1792312724491,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "87b3e59d-b2be-4b00-b174-27db9cf5f1c9",
+          "result": "completed",
+          "providerMs": 570.6118330000027,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 91,
+            "total_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "9e5a28fa-0c88-439f-b619-953c2ab4d587",
+          "at": 1792312723921,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "87b3e59d-b2be-4b00-b174-27db9cf5f1c9",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "whiteboard-tasks",
+      "repetition": 1,
+      "mode": "OFF",
+      "journeyMs": 6283.282624999993,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "result": {
+            "text": "LAUNCH CHECKLIST - DEMO WHITEBOARD\nAlex: Finish landing page by Friday\nSam: Test checkout before launch\nMaya: Ask designer for updated logo\nReview the launch plan on Monday\nOpen question: Who owns analytics?"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 497.59945799999696,
+          "providerMs": 497.5047499999928,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 52,
+            "total_tokens": 976,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "MAKE_TASKS",
+          "result": {
+            "tasks": [
+              {
+                "task": "Finish landing page",
+                "owner": "Alex",
+                "due": "Friday"
+              },
+              {
+                "task": "Test checkout before launch",
+                "owner": "Sam",
+                "due": ""
+              },
+              {
+                "task": "Ask designer for updated logo",
+                "owner": "Maya",
+                "due": ""
+              },
+              {
+                "task": "Review the launch plan",
+                "owner": "",
+                "due": "Monday"
+              }
+            ]
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 777.8736670000071,
+          "providerMs": 777.7179170000018,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 134,
+            "candidatesTokenCount": 138,
+            "totalTokenCount": 272,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 134
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1275.473125000004,
+        "medianWaitMs": 637.736562500002,
+        "p95WaitMs": 777.8736670000071
+      },
+      "requestLog": [
+        {
+          "id": "64f5b53e-5c07-4da5-aa93-b596595d4553",
+          "at": 1792312751494,
+          "kind": "navigation",
+          "action": "MAKE_TASKS",
+          "itemId": "d6fac7fa-9a66-4b6c-9d78-c02db7bc2a91",
+          "result": "network",
+          "waitMs": 777.8736670000071,
+          "usedPrefetch": false,
+          "providerMs": 777.7179170000018
+        },
+        {
+          "id": "b7d1741d-ab94-49dc-97d0-a993235f24c2",
+          "at": 1792312751494,
+          "kind": "provider",
+          "action": "MAKE_TASKS",
+          "itemId": "d6fac7fa-9a66-4b6c-9d78-c02db7bc2a91",
+          "result": "completed",
+          "providerMs": 777.7179170000018,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 134,
+            "candidatesTokenCount": 138,
+            "totalTokenCount": 272,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 134
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "3be90eb6-5f7d-47ae-83e7-2cca556c5485",
+          "at": 1792312750716,
+          "kind": "provider",
+          "action": "MAKE_TASKS",
+          "itemId": "d6fac7fa-9a66-4b6c-9d78-c02db7bc2a91",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "43d89cb9-11b3-4ce4-b40a-ec6a0cc63432",
+          "at": 1792312745711,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "d6fac7fa-9a66-4b6c-9d78-c02db7bc2a91",
+          "result": "network",
+          "waitMs": 497.59945799999696,
+          "usedPrefetch": false,
+          "providerMs": 497.5047499999928
+        },
+        {
+          "id": "df524ac9-7406-4545-b073-32b27c9d3359",
+          "at": 1792312745710,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "d6fac7fa-9a66-4b6c-9d78-c02db7bc2a91",
+          "result": "completed",
+          "providerMs": 497.5047499999928,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 52,
+            "total_tokens": 976,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "266dae5d-924f-4c91-98c6-4faed009e3f4",
+          "at": 1792312745213,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "d6fac7fa-9a66-4b6c-9d78-c02db7bc2a91",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "whiteboard-tasks",
+      "repetition": 1,
+      "mode": "ON",
+      "journeyMs": 5552.128333000001,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "result": {
+            "text": "LAUNCH CHECKLIST - DEMO WHITEBOARD\nAlex: Finish landing page by Friday\nSam: Test checkout before launch\nMaya: Ask designer for updated logo\nReview the launch plan on Monday\nOpen question: Who owns analytics?"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 544.1222500000003,
+          "providerMs": 544.039042000004,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 52,
+            "total_tokens": 976,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "MAKE_TASKS",
+          "result": {
+            "tasks": [
+              {
+                "task": "Finish landing page",
+                "owner": "Alex",
+                "due": "Friday"
+              },
+              {
+                "task": "Test checkout before launch",
+                "owner": "Sam",
+                "due": ""
+              },
+              {
+                "task": "Ask designer for updated logo",
+                "owner": "Maya",
+                "due": ""
+              },
+              {
+                "task": "Review the launch plan",
+                "owner": "",
+                "due": "Monday"
+              }
+            ]
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.09179200000653509,
+          "providerMs": 770.4079159999965,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 134,
+            "candidatesTokenCount": 138,
+            "totalTokenCount": 272,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 134
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 544.2140420000069,
+        "medianWaitMs": 272.10702100000344,
+        "p95WaitMs": 544.1222500000003
+      },
+      "requestLog": [
+        {
+          "id": "c5d9060d-9d64-4a35-9cb8-a3c84fd41a80",
+          "at": 1792312772073,
+          "kind": "navigation",
+          "action": "MAKE_TASKS",
+          "itemId": "3801e999-380d-4231-ad9c-545402cd0a95",
+          "result": "cache",
+          "waitMs": 0.09179200000653509,
+          "usedPrefetch": true,
+          "providerMs": 770.4079159999965
+        },
+        {
+          "id": "528499d5-602a-4a39-8445-627fcc1fe43f",
+          "at": 1792312767838,
+          "kind": "prefetch",
+          "action": "MAKE_TASKS",
+          "itemId": "3801e999-380d-4231-ad9c-545402cd0a95",
+          "result": "completed",
+          "providerMs": 770.4079159999965,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 134,
+            "candidatesTokenCount": 138,
+            "totalTokenCount": 272,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 134
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "56a91663-63a2-48bd-aecf-27bca25de0b4",
+          "at": 1792312767067,
+          "kind": "prefetch",
+          "action": "MAKE_TASKS",
+          "itemId": "3801e999-380d-4231-ad9c-545402cd0a95",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "288dbfa2-d962-4e7a-9b29-698f365bd894",
+          "at": 1792312767067,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "3801e999-380d-4231-ad9c-545402cd0a95",
+          "result": "network",
+          "waitMs": 544.1222500000003,
+          "usedPrefetch": false,
+          "providerMs": 544.039042000004
+        },
+        {
+          "id": "7d454ac4-9492-4830-b8f3-2791bbbc97ec",
+          "at": 1792312767067,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "3801e999-380d-4231-ad9c-545402cd0a95",
+          "result": "completed",
+          "providerMs": 544.039042000004,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 924,
+            "completion_tokens": 52,
+            "total_tokens": 976,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "8db236d7-13d3-4995-ac4d-62b09f71585e",
+          "at": 1792312766523,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "3801e999-380d-4231-ad9c-545402cd0a95",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    }
+  ]
+}

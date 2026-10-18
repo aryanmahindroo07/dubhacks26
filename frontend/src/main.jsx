@@ -2,12 +2,14 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import Overview from './pages/Overview/Overview.jsx';
+import AIWorkspace from './pages/AIWorkspace/AIWorkspace.jsx';
 import './index.css';
 
 const isOverview = window.location.pathname.replace(/\/+$/, '') === '/overview';
-const Page = isOverview ? Overview : App;
+const isAI = window.location.pathname.replace(/\/+$/, '') === '/ai';
+const Page = isAI ? AIWorkspace : isOverview ? Overview : App;
 
-document.title = isOverview ? 'Requestflow · Live overview' : 'RequestFlow';
+document.title = isAI ? 'RequestFlow · AI inbox' : isOverview ? 'Requestflow · Live overview' : 'RequestFlow';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

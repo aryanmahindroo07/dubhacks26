@@ -1,12 +1,17 @@
+// Node >=22.12 loads local credentials without adding a dependency.
+const path = require("node:path");
+try { require("node:process").loadEnvFile(path.join(__dirname, ".env")); }
+catch (error) { if (error.code !== "ENOENT") throw error; }
 const express = require("express");
 const cors = require("cors");
 const { customers } = require("./data");
 const { predictNext, recordTransition, getHistory } = require("./prediction/engine");
 const { registerInboxRoutes } = require("./inbox/routes");
+const { registerAIRoutes } = require("./ai/routes");
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "8mb" }));
 
 // ---- Latency config -------------------------------------------------------
 // Default delay for every endpoint, plus per-endpoint overrides.
@@ -102,6 +107,14 @@ app.post("/api/config/delays", (req, res) => {
 
 // ---- AI inbox (dummy data, simulated AI latency) --------------------------
 registerInboxRoutes(app);
+
+// Live provider-backed workspace; existing simulated inbox routes stay separate.
+registerAIRoutes(app);
+app.use((error, req, res, next) => {
+  if (error.type === "entity.too.large") return res.status(413).json({ error: "Image is too large. Use an image under 5 MB." });
+  if (error.type === "entity.parse.failed") return res.status(400).json({ error: "Invalid JSON request." });
+  next(error);
+});
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));

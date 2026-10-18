@@ -43,6 +43,7 @@ function Sidebar({ enabled }) {
           <Icon name="chart" />
           Live overview
         </a>
+        <a className={styles.navItem} href="/ai"><Icon name="sparkles" />AI inbox</a>
       </nav>
       <div className={styles.sidebarBottom}>
         <div className={styles.workspaceNote}>

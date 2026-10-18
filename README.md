@@ -91,3 +91,7 @@ runs it early. Everything lives in `backend/inbox/`:
 `npm run inbox:eval` (in `backend/`) tests the model on unseen journeys; results
 are in [docs/inbox-model-results.md](docs/inbox-model-results.md).
 
+
+## Live Gemini + Perceptron AI inbox
+
+The separate `/ai` workspace supports image OCR through Perceptron and text transformations through Gemini, with optional Markov-driven speculative calls. It requires backend API keys and has no simulated AI fallback. See [setup, demo and actual-provider benchmarks](docs/ai-inbox-setup.md) before enabling potentially billable prefetches. Existing customer and overview screens remain available.
