@@ -198,31 +198,55 @@
   border: 0;
 }
 
-.metric-grid {
+.results-layout {
   max-width: 1200px;
   margin: 24px auto 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: start;
   gap: 20px;
+}
+
+.metric-grid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
 }
 
 .metric-card {
   background: #ffffff;
   border: 1px solid #dde6e0;
-  border-radius: 24px;
-  padding: 28px;
+  border-radius: 16px;
+  padding: 16px;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(31, 53, 47, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metric-card {
+    transition: none;
+  }
+
+  .metric-card:hover {
+    transform: none;
+  }
 }
 
 .metric-label {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 500;
   color: #5a6b66;
 }
 
 .metric-value {
-  margin: 28px 0 8px;
-  font-size: 2.5rem;
+  margin: 12px 0 6px;
+  font-size: 1.75rem;
   font-weight: 700;
   line-height: 1;
   color: #1f2a30;
@@ -232,6 +256,17 @@
   margin: 0;
   font-size: 0.95rem;
   color: #5a6b66;
+}
+
+.metric-card .metric-note {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 800px) {
+  .results-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
@@ -262,8 +297,9 @@
 }
 
 .search-demo {
-  max-width: 1200px;
-  margin: 24px auto;
+  min-width: 0;
+  align-self: stretch;
+  margin: 0;
   padding: 28px;
   border: 1px solid #dde6e0;
   border-radius: 24px;
@@ -272,4 +308,5 @@
 .search-demo h2 { margin-top: 0; }
 .search-bar button:disabled { opacity: 0.65; cursor: wait; }
 .search-results { list-style: none; padding: 0; }
-.search-results li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid #dde6e0; }
+.search-results li { 
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid #dde6e0; color: #247B65}

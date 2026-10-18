@@ -98,41 +98,43 @@ function App() {
         </label>
       </section>
 
-      <section className="search-demo" aria-labelledby="search-heading">
-        <h2 id="search-heading">Search results</h2>
-        {!loading && !error && !searched && (
-          <p>Use the search above to find a customer. Try “Acme”, or search with an empty field to see everyone.</p>
-        )}
-        <div id="search-results" role="status" aria-live="polite" aria-busy={loading}>
-          {loading && <p>Searching customers…</p>}
-          {error && <p role="alert">{error}</p>}
-          {searched && (
-            <p>{results.length} customer{results.length === 1 ? '' : 's'} found{submittedQuery ? ` for “${submittedQuery}”` : ''}.</p>
+      <div className="results-layout">
+        <section className="search-demo" aria-labelledby="search-heading">
+          <h2 id="search-heading">Search results</h2>
+          {!loading && !error && !searched && (
+            <p>Use the search above to find a customer. Try “Acme”, or search with an empty field to see everyone.</p>
           )}
-          {searched && results.length === 0 && <p>Try a different customer name or leave the search empty to see everyone.</p>}
-          {results.length > 0 && (
-            <ul className="search-results">
-              {results.map((customer) => (
-                <li key={customer.id}>
-                  <strong>{customer.name}</strong>
-                  <span>{customer.plan} · ${customer.mrr.toLocaleString()} monthly revenue</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        <p className="metric-note">Search results come from the running backend. The metrics below are sample data; prediction and prefetching are not connected yet.</p>
-      </section>
+          <div id="search-results" role="status" aria-live="polite" aria-busy={loading}>
+            {loading && <p>Searching customers…</p>}
+            {error && <p role="alert">{error}</p>}
+            {searched && (
+              <p>{results.length} customer{results.length === 1 ? '' : 's'} found{submittedQuery ? ` for “${submittedQuery}”` : ''}.</p>
+            )}
+            {searched && results.length === 0 && <p>Try a different customer name or leave the search empty to see everyone.</p>}
+            {results.length > 0 && (
+              <ul className="search-results">
+                {results.map((customer) => (
+                  <li key={customer.id}>
+                    <strong>{customer.name}</strong>
+                    <span>{customer.plan} · ${customer.mrr.toLocaleString()} monthly revenue</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <p className="metric-note">Search results come from the running backend. Metrics shown are sample data; prediction and prefetching are not connected yet.</p>
+        </section>
 
-      <section className="metric-grid">
-        {metrics.map(({ label, value, note }) => (
-          <article className="metric-card" key={label}>
-            <h3 className="metric-label">{label}</h3>
-            <p className="metric-value">{value}</p>
-            <p className="metric-note">{note}</p>
-          </article>
-        ))}
-      </section>
+        <section className="metric-grid" aria-label="Sample API metrics">
+          {metrics.map(({ label, value, note }) => (
+            <article className="metric-card" key={label}>
+              <h3 className="metric-label">{label}</h3>
+              <p className="metric-value">{value}</p>
+              <p className="metric-note">{note}</p>
+            </article>
+          ))}
+        </section>
+      </div>
     </main>
     </>
   );
