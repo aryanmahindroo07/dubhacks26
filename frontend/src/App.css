@@ -21,6 +21,26 @@
   margin: 100px 100px 0px 100px;
 }
 
+.title-accent {
+  position: relative;
+  display: inline-block;
+  color: #247b65;
+}
+
+.title-underline {
+  position: absolute;
+  left: 0;
+  bottom: 0.1em;
+  width: calc(100% + 0.4em);
+  height: 0.32em;
+  fill: none;
+  stroke: #b7dca9;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
 .search-bar {
   display: flex;
   align-items: center;
