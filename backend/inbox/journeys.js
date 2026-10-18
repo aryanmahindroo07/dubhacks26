@@ -62,7 +62,8 @@ function seededRandom(seed) {
 }
 
 function pick(weights, rand) {
-  let r = rand();
+  // Weights need not sum to 1 (e.g. after dropping actions already run).
+  let r = rand() * Object.values(weights).reduce((a, b) => a + b, 0);
   for (const [key, weight] of Object.entries(weights)) {
     r -= weight;
     if (r < 0) return key;
@@ -70,15 +71,27 @@ function pick(weights, rand) {
   return Object.keys(weights).at(-1);
 }
 
+// The habits after `step`, without actions already run on this item (their
+// results are already on screen, so nobody runs them again).
+function nextOptions(type, step, done) {
+  return Object.fromEntries(
+    Object.entries(TRANSITIONS[type][step]).filter(([action]) => !done.has(action)),
+  );
+}
+
 // One journey: open an item, run actions, and end with DONE. DONE is kept so
 // the model learns how often people stop (it is never a prefetch candidate).
 function generateJourney(rand, type = pick(TYPE_MIX, rand)) {
   const journey = [typed(type, "OPEN")];
+  const done = new Set();
   let step = "OPEN";
   for (let i = 0; i < MAX_ACTIONS; i++) {
-    const next = pick(TRANSITIONS[type][step], rand);
+    const options = nextOptions(type, step, done);
+    if (Object.keys(options).length === 0) break;
+    const next = pick(options, rand);
     if (next === "DONE") break;
     journey.push(typed(type, next));
+    done.add(next);
     step = next;
   }
   journey.push(typed(type, "DONE"));
