@@ -1,0 +1,54 @@
+{
+  "description": "Three public photographed CORD receipts, plus a deliberately unexpected summary action. Authored workflows, not observed user behavior. Fixed 1500 ms review interval in both modes. Read-ahead OFF.",
+  "source": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+  "scenarios": [
+    {
+      "name": "cord-test-006-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-006.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-006"
+    },
+    {
+      "name": "cord-test-007-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-007.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-007"
+    },
+    {
+      "name": "cord-test-008-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-008.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-008"
+    },
+    {
+      "name": "cord-test-006-unexpected-summary",
+      "type": "RECEIPT",
+      "imagePath": "test-006.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "SUMMARIZE"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-006"
+    }
+  ]
+}

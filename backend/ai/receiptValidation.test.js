@@ -54,3 +54,23 @@ test('quantities and numeric tax labels are not monetary evidence',()=>{
  const r=check([{name:'tax',value:'1',evidence:'PB1 (10%)'}],'PB1 (10%)\nTOTAL');
  assert.equal(r.fields[0].value,null);
 });
+
+test('an amount after the word ITEMS is still money; whole-number item counts are not',()=>{
+ assert.equal(check([{name:'total',value:'13.20',evidence:'TOTAL 3 ITEMS 13.20'}],'TOTAL 3 ITEMS 13.20').fields[0].value,'13.20');
+ assert.equal(hasReadableTotal('TOTAL 3 ITEMS 13.20'),true);
+ assert.equal(check([{name:'total',value:'3',evidence:'Items 3 Total 45.000'}],'Items 3 Total 45.000').fields[0].value,null);
+ assert.equal(check([{name:'total',value:'2',evidence:'TOTAL 2 pcs 45.000'}],'TOTAL 2 pcs 45.000').fields[0].value,null);
+});
+
+test('a total whose amount is on the next OCR line is recognized',()=>{
+ const text='Notebook 8.00\nTOTAL\n13.20\nCASH\n20.00';
+ assert.equal(hasReadableTotal(text),true);
+ for(const evidence of ['TOTAL 13.20','13.20','TOTAL']){
+  const r=check([{name:'total',value:'13.20',evidence}],text);
+  assert.equal(r.fields[0].value,'13.20',evidence);assert.equal(r.validation.requiresReview,false,evidence);
+ }
+ // The next line's amount belongs to the label above it, not to another label.
+ assert.equal(check([{name:'total',value:'20.00',evidence:'TOTAL 20.00'}],text).fields[0].value,null);
+ // A label followed by another labelled line is not joined.
+ assert.equal(hasReadableTotal('TOTAL\nCASH 20.00'),false);
+});

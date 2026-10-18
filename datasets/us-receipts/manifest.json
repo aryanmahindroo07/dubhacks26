@@ -1,0 +1,61 @@
+{
+  "description": "Three public US receipt photographs with USD amounts. Selected for US locations, readable totals, and documented reuse terms; not by provider success. Not a representative accuracy dataset.",
+  "downloadedAt": "2026-10-18T10:58:15.320060+00:00",
+  "referenceMethod": "Amounts manually transcribed from the displayed source photographs; not independent dataset annotations. References are never provider inputs.",
+  "samples": [
+    {
+      "id": "us-family-dollar",
+      "title": "Family Dollar \u00b7 Oklahoma",
+      "country": "US",
+      "currency": "USD",
+      "image": "us-family-dollar.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Family_Dollar_store_receipt.jpg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Family_Dollar_store_receipt.jpg",
+      "author": "Corn cheese; enhanced by Ubcule",
+      "license": "CC-BY-SA-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sha256": "23ef0d0031ad5c74e61c1d0fcb7130212e0bbffdeb5650eaaff684747a7ae65f",
+      "changes": "Original Wikimedia image bytes; filename changed only.",
+      "expected": {
+        "total": "2.18",
+        "subtotal": "2.00",
+        "tax": "0.18"
+      }
+    },
+    {
+      "id": "us-walmart",
+      "title": "Walmart \u00b7 Cameron, Missouri",
+      "country": "US",
+      "currency": "USD",
+      "image": "us-walmart.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg/1280px-OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg",
+      "author": "Cryptogoth",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "ce0f504ee78446a5c5963626a10bedcb6393afa386560f573bf610d1e34a34a8",
+      "changes": "Wikimedia 1280px thumbnail rotated 90 degrees clockwise and center-cropped to 440 \u00d7 1280 to remove background. Entire receipt retained; no text or amounts rewritten. JPEG re-encoded using macOS sips.",
+      "expected": {
+        "total": "191.13"
+      }
+    },
+    {
+      "id": "us-cameron-market",
+      "title": "Cameron Market \u00b7 Cameron, Missouri",
+      "country": "US",
+      "currency": "USD",
+      "image": "us-cameron-market.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:OSE_Food_Receipt_-_Cameron_Market_21_July_2021.jpeg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f3/OSE_Food_Receipt_-_Cameron_Market_21_July_2021.jpeg",
+      "author": "Cryptogoth",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "9ca0426047ba998ec27bcba9b6af192aa69c336e8fcd9c9c92a447921f069f78",
+      "changes": "Original Wikimedia image bytes; filename changed only.",
+      "expected": {
+        "total": "87.79",
+        "tax": "5.98"
+      }
+    }
+  ]
+}

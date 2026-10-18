@@ -1,0 +1,49 @@
+{
+  "description": "Three public US receipt photographs with USD amounts. Selected for US locations, readable totals, and documented reuse terms; not by provider success. Not a representative accuracy dataset. Authored actions, matched 1500 ms review time, not real-user behavior.",
+  "scenarios": [
+    {
+      "name": "us-family-dollar-extract",
+      "type": "RECEIPT",
+      "imagePath": "../../frontend/public/real-receipts/us-family-dollar.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500
+    },
+    {
+      "name": "us-walmart-extract",
+      "type": "RECEIPT",
+      "imagePath": "../../frontend/public/real-receipts/us-walmart.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500
+    },
+    {
+      "name": "us-cameron-market-extract",
+      "type": "RECEIPT",
+      "imagePath": "../../frontend/public/real-receipts/us-cameron-market.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500
+    },
+    {
+      "name": "us-family-dollar-unexpected-summary",
+      "type": "RECEIPT",
+      "imagePath": "../../frontend/public/real-receipts/us-family-dollar.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "SUMMARIZE"
+      ],
+      "dwellMs": 1500
+    }
+  ]
+}

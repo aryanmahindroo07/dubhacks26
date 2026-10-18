@@ -33,14 +33,49 @@ function toHistory(type, actions) {
 // Score each candidate with that action's own latency: a slow action is worth
 // prefetching at a lower likelihood than a fast one. Actions already run on
 // this item are skipped: their results are on screen already.
+function scoreAction(prediction, config) {
+  const action = untyped(prediction.endpoint);
+  const [scored] = scorePredictions([prediction], { ...config, latencyMs: config.latencyByAction?.[action] ?? ACTIONS[action].latencyMs });
+  return { ...scored, action, label: ACTIONS[action].label, model: ACTIONS[action].model, latencyMs: ACTIONS[action].latencyMs };
+}
+
 function predictNextAction(type, actions, config = {}, predictor = model) {
   const candidates = candidatesFor(type).filter((state) => !actions.includes(untyped(state)));
   const predictions = predictor.predict(toHistory(type, actions), candidates);
   return predictions
+    .map((prediction) => scoreAction(prediction, config))
+    .sort((a, b) => b.expectedValue - a.expectedValue);
+}
+
+// ---- Personal habits -------------------------------------------------------
+// A small model trained only on one user's own choices. Light smoothing so a
+// few observations count; it falls back to the shared model's context rules.
+const PERSONAL_PRIOR_STRENGTH = 4;
+
+function createPersonalModel() {
+  return new MarkovPredictor([], 0.01, 1);
+}
+
+// Blend the shared model with the user's own model:
+//   p = (n * personal + k * shared) / (n + k)
+// n = how many times this user was in this exact situation, k = how many
+// observations the shared model is "worth". With k = 4, two consistent
+// choices are enough to change the top prediction.
+function predictBlended(type, actions, config = {}, shared = model, personal = null, k = PERSONAL_PRIOR_STRENGTH) {
+  const candidates = candidatesFor(type).filter((state) => !actions.includes(untyped(state)));
+  const history = toHistory(type, actions);
+  const base = shared.predict(history, candidates);
+  const mine = personal ? personal.predict(history, candidates) : [];
+  const n = mine[0]?.observations ?? 0;
+  const mineBy = Object.fromEntries(mine.map((p) => [p.endpoint, p.probability]));
+  return base
     .map((prediction) => {
-      const action = untyped(prediction.endpoint);
-      const [scored] = scorePredictions([prediction], { ...config, latencyMs: config.latencyByAction?.[action] ?? ACTIONS[action].latencyMs });
-      return { ...scored, action, label: ACTIONS[action].label, model: ACTIONS[action].model, latencyMs: ACTIONS[action].latencyMs };
+      const probability = n ? (n * (mineBy[prediction.endpoint] ?? 0) + k * prediction.probability) / (n + k) : prediction.probability;
+      return {
+        ...scoreAction({ ...prediction, probability }, config),
+        startingProbability: prediction.probability,
+        personalObservations: n,
+      };
     })
     .sort((a, b) => b.expectedValue - a.expectedValue);
 }
@@ -87,6 +122,9 @@ module.exports = {
   createInboxModel,
   resetInboxModel,
   predictNextAction,
+  predictBlended,
+  createPersonalModel,
+  PERSONAL_PRIOR_STRENGTH,
   openItem,
   recordAction,
   getModel,

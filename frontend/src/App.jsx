@@ -66,7 +66,7 @@ function App() {
         <a className="active" href="#metrics" aria-current="page">Metrics</a>
         <a href="#customers">Customers</a>
         <a href="/overview">Live overview</a>
-        <a href="/ai">AI inbox</a>
+        <a href="/ai">Receipt inbox</a>
       </nav>
     </header>
     <main className="app">
