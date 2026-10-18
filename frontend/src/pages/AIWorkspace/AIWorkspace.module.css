@@ -76,3 +76,6 @@
 .waitTrack {height:22px;background:#f1f4f2;border-radius:5px;overflow:hidden;}
 .offBar,.onBar {height:100%;border-radius:5px;}
 .offBar {background:#82918a;}.onBar {background:#276b57;}
+.warning p {margin:0 0 10px;}
+.typed {margin-top:14px;}
+.typed textarea {width:100%;padding:10px;border:1px solid #cbdace;border-radius:8px;font:inherit;resize:vertical;}
