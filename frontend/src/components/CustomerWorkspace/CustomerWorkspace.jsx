@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { requestEndpoint, getPrefetchMetrics } from '../../services/prefetch.js';
+import './CustomerWorkspace.css';
 
 export default function CustomerWorkspace() {
   const [customers, setCustomers] = useState([]);
@@ -62,7 +63,8 @@ export default function CustomerWorkspace() {
       <p>Cache hits: {metrics.hits} · Reused running requests: {metrics.reused} · Misses: {metrics.misses} · Hit rate: {(metrics.hitRate * 100).toFixed(1)}% · Served without a new request: {(metrics.servedRate * 100).toFixed(1)}%</p>
       <p>Prefetch started: {metrics.started} · Completed: {metrics.completed} · Failed: {metrics.failed} · In flight: {metrics.inFlightRequests}</p>
       {metrics.lastRequest && <p>Latest: {metrics.lastRequest.stateId} · {metrics.lastRequest.cacheHit ? 'Cache hit' : metrics.lastRequest.inFlightReuse ? 'Reused running request' : 'Network request'} · Wait: {metrics.lastRequest.latencyMs.toFixed(1)} ms</p>}
-      <p className="metric-note">Estimated waiting saved: {metrics.totalEstimatedSavedMs.toFixed(1)} ms against the fixed 1,200 ms baseline. This is not an OFF/ON benchmark. Search above and the sample overview are separate from these metrics.</p>
+      <p>Prefetch is {metrics.prefetchEnabled ? "on" : "paused"} · Useful prefetches: {metrics.usefulPrefetches} · Unused: {metrics.unusedPrefetches}</p>
+      <p className="metric-note">Estimated waiting saved: {metrics.totalEstimatedSavedMs.toFixed(1)} ms against the fixed 1,200 ms baseline. For measured OFF/ON results, run scripts/benchmark_prefetch.py. The customer search above is separate from these metrics.</p>
     </section>
   );
 }
