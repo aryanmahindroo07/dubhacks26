@@ -353,3 +353,18 @@ test('image problems are not retried; the item records why it failed',async()=>{
   await assert.rejects(t.service.perform(t.session,other.id,'READ_TEXT'));
   assert.deepEqual([t.service.snapshot(t.session).items[0].error.recovery,t.service.snapshot(t.session).items[0].error.attempts],['retry',3]);
 });
+
+test('the learning panel names the same action the next prefetch will run',async()=>{
+  const f=fixture({delayMs:150});f.service.setEnabled(f.session,true);
+  for(let i=0;i<2;i++){
+    const board=f.service.upload(f.session,{type:'WHITEBOARD',name:`board-${i}.png`,image:IMAGE});
+    await f.service.perform(f.session,board.id,'READ_TEXT');await f.service.idle(f.session);
+    await f.service.perform(f.session,board.id,'SUMMARIZE');await f.service.idle(f.session);
+  }
+  const board=f.service.upload(f.session,{type:'WHITEBOARD',name:'board-2.png',image:IMAGE});
+  f.service.open(f.session,board.id);
+  const panel=f.service.snapshot(f.session).learning.find(l=>l.type==='WHITEBOARD').nowPrefetch;
+  f.calls.length=0;
+  await f.service.perform(f.session,board.id,'READ_TEXT');await f.service.idle(f.session);
+  assert.equal(f.calls[1]?.action,panel,'panel and real prefetch agree');
+});

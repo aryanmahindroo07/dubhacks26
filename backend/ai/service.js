@@ -166,9 +166,14 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
       }
     }
   }
+  // Measured provider time per action this session; the scoring falls back to
+  // the placeholder in actions.js for actions not run yet. The learning panel
+  // uses the same numbers, so it always names what prefetch will really do.
+  function measuredLatency(s) {
+    return Object.fromEntries(Object.entries(s.latencySamples).map(([action,sample])=>[action,sample.total/sample.count]));
+  }
   function predict(s,doc,history) {
-    const latencyByAction = Object.fromEntries(Object.entries(s.latencySamples).map(([action,sample])=>[action,sample.total/sample.count]));
-    return predictBlended(doc.type, history, {latencyByAction}, s.model, s.personal)
+    return predictBlended(doc.type, history, {latencyByAction:measuredLatency(s)}, s.model, s.personal)
       .filter(p=>SUPPORTED_ACTIONS.includes(p.action))
       .map(p=>({ action:p.action,label:p.label,probability:p.probability,startingProbability:p.startingProbability,personalObservations:p.personalObservations,contextOrder:p.contextOrder,
         shouldPrefetch:p.shouldPrefetch,expectedValue:p.expectedValue,
@@ -293,10 +298,11 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
   // predictions after "Read text" for each kind of item, starting vs now.
   function learning(s) {
     return LIVE_TYPES.map(type => {
-      const now = predictBlended(type, ['READ_TEXT'], {}, s.model, s.personal).filter(p => SUPPORTED_ACTIONS.includes(p.action));
+      const config = { latencyByAction: measuredLatency(s) };
+      const now = predictBlended(type, ['READ_TEXT'], config, s.model, s.personal).filter(p => SUPPORTED_ACTIONS.includes(p.action));
       const pick = list => list.find(p => p.shouldPrefetch)?.action ?? null;
       const starting = [...now].sort((a, b) => b.startingProbability - a.startingProbability);
-      const startingPick = pick(predictBlended(type, ['READ_TEXT'], {}, s.model, null).filter(p => SUPPORTED_ACTIONS.includes(p.action)));
+      const startingPick = pick(predictBlended(type, ['READ_TEXT'], config, s.model, null).filter(p => SUPPORTED_ACTIONS.includes(p.action)));
       return {
         type, after: 'READ_TEXT', finishedItems: s.learned[type], observations: now[0]?.personalObservations ?? 0,
         startingPrefetch: startingPick, nowPrefetch: pick(now),
