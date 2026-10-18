@@ -22,6 +22,7 @@ function registerAIRoutes(app, { service=createAIService({providers:createProvid
   }));
   app.post('/api/ai/items',handle(req=>service.upload(session(req),req.body)));
   app.post('/api/ai/items/:id/open',handle(req=>service.open(session(req),req.params.id)));
+  app.post('/api/ai/items/:id/text',handle(req=>service.setText(session(req),req.params.id,req.body?.text)));
   app.post('/api/ai/items/:id/actions/:action',handle(req=>service.perform(session(req),req.params.id,req.params.action)));
   return service;
 }

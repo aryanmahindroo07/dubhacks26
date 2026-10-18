@@ -121,3 +121,6 @@
 .evidenceDetails > section {box-shadow:none;border:0;border-top:1px solid var(--border);border-radius:0;padding:24px 0 0;}
 @container ai-workspace (max-width:800px){.learningGrid{grid-template-columns:1fr}}
 @media(max-width:420px){.chips{justify-content:flex-start}.toggleRow{flex-wrap:wrap}.prefireStatus strong{font-size:19px}}
+.warning p {margin:0 0 10px;}
+.typed {margin-top:14px;}
+.typed textarea {width:100%;padding:10px;border:1px solid #cbdace;border-radius:8px;font:inherit;resize:vertical;}

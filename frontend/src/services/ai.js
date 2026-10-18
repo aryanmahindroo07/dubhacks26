@@ -34,3 +34,4 @@ export async function resetAIRun(){
 export async function restartExpiredAIRun(){sessionId=undefined;pendingSession=undefined;return getAISession();}
 export async function setAIReadAhead(readAhead){await getAISession();return request('/session',{method:'PATCH',body:JSON.stringify({readAhead})});}
 export async function openAIItem(itemId){await getAISession();return request(`/items/${encodeURIComponent(itemId)}/open`,{method:'POST',body:'{}'});}
+export async function setAIText(itemId,text){await getAISession();return request(`/items/${encodeURIComponent(itemId)}/text`,{method:'POST',body:JSON.stringify({text})});}

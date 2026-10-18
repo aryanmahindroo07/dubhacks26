@@ -11,6 +11,29 @@ const CACHE_TTL = 5 * 60 * 1000;
 const MAX_SESSIONS = 20;
 const MAX_ITEMS = 10;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+// What to do about a failed provider call, decided by the kind of error:
+//   retry - temporary (timeout, network, server error, garbled reply):
+//           Read text retries automatically, up to twice (three attempts),
+//           except after a timeout: that already waited AI_TIMEOUT_MS, and
+//           three of them would leave the user waiting over a minute
+//           before being offered Retry or typed text
+//   image - the image itself (no readable text, reply cut off): retrying the
+//           same image gives the same result; use a better photo or type it
+//   wait  - rate limit or quota: no automatic retry; try again later
+//   setup - wrong key, no access or wrong model: stop; fix backend/.env
+// Typing the text by hand is offered for every kind.
+const OCR_RETRY_DELAYS_MS = [1000, 2000];
+function recoveryFor(error) {
+  switch (error?.code) {
+    case 'MISSING_API_KEY': return 'setup';
+    case 'EMPTY_PROVIDER_RESPONSE':
+    case 'INCOMPLETE_PROVIDER_RESPONSE': return 'image';
+    case 'PROVIDER_REJECTED':
+      if (error.providerStatus === 429) return 'wait';
+      return error.providerStatus >= 500 ? 'retry' : 'setup';
+    default: return 'retry';
+  }
+}
 
 function validateImage(image) {
   if (typeof image !== 'string') throw new AIError('Choose a PNG, JPEG, or WebP image.');
@@ -25,7 +48,7 @@ function validateImage(image) {
   return hash(bytes);
 }
 
-function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env = process.env, speculationPolicy = 'markov' } = {}) {
+function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env = process.env, speculationPolicy = 'markov', ocrRetryDelaysMs = OCR_RETRY_DELAYS_MS } = {}) {
   if(!['markov','fixed'].includes(speculationPolicy))throw new Error('Unsupported speculation policy.');
   const sessions = new Map();
   const prefetchLimit = Math.max(0, Math.min(10, Number(env.AI_PREFETCH_LIMIT_PER_ITEM ?? 3) || 0));
@@ -52,7 +75,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const imageHash = validateImage(image);
     const storedBytes = [...s.docs.values()].reduce((sum, doc) => sum + doc.image.length, 0);
     if (storedBytes + image.length > 12 * 1024 * 1024) throw new AIError("Image memory limit reached. Start a fresh run.");
-    const item = { id: randomUUID(), name: typeof name === 'string' ? name.slice(0,120) : 'Uploaded image', type, image, imageHash, text: null, history: [], prefires: 0, facts: null, duplicateOf: null };
+    const item = { id: randomUUID(), name: typeof name === 'string' ? name.slice(0,120) : 'Uploaded image', type, image, imageHash, text: null, textSource: null, history: [], prefires: 0, facts: null, duplicateOf: null, lastError: null, backgroundFailed: new Set() };
     // Duplicate receipts matter for expenses; other images are not flagged.
     const sameImage = type === 'RECEIPT' && [...s.docs.values()].find(doc => doc.type === 'RECEIPT' && doc.imageHash === imageHash);
     if (sameImage) item.duplicateOf = { id: sameImage.id, name: sameImage.name, reason: 'Same image was already uploaded.' };
@@ -72,6 +95,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const ocr = actionStates.READ_TEXT;
     return { id: doc.id, name: doc.name, type: doc.type, active: s.activeItem === doc.id, read: Boolean(doc.text),
       textReady: Boolean(doc.text) || ocr?.status === 'ready', textPending: ocr?.status === 'pending', duplicateOf: doc.duplicateOf,
+      textSource: doc.textSource, error: doc.lastError,
       actionStates, prefires: doc.prefires, predictions: (doc.predictions || []).map(p => ({...p})) };
   }
   // Switching to another item means the user finished the previous one: record
@@ -118,7 +142,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const startTime = performance.now();
     kind ||= speculative ? 'prefetch' : 'provider';
     event(s,{ kind, action, itemId: doc.id, result: 'started', model: providers.identity(action).model });
-    entry.promise = Promise.resolve().then(() => providers.run(action,{...doc})).then(output => {
+    entry.promise = Promise.resolve().then(() => runWithRetries(s, doc, action, kind)).then(output => {
       entry.status = 'ready'; entry.expiresAt = now()+cacheTtl;
       entry.output = output; entry.providerMs = performance.now()-startTime;
       const sample = s.latencySamples[action] ||= { total: 0, count: 0 };
@@ -128,14 +152,36 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     }).catch(error => {
       entry.status = 'failed'; s.metrics.failures++;
       s.cache.delete(key);
+      // Background calls are never retried automatically; a click retries.
+      if (speculative) doc.backgroundFailed.add(action);
       event(s,{kind,action,itemId:doc.id,result:'failed',message:error.message});
       throw error;
     }).finally(()=>{s.running--;});
     return entry;
   }
+  async function runWithRetries(s, doc, action, kind) {
+    const delays = action === 'READ_TEXT' ? ocrRetryDelaysMs : [];
+    for (let attempt = 0; ; attempt++) {
+      try { return await providers.run(action, { ...doc }); }
+      catch (error) {
+        if (attempt >= delays.length || recoveryFor(error) !== 'retry' || error.code === 'PROVIDER_TIMEOUT') {
+          error.attempts = attempt + 1;
+          if (attempt > 0 && error instanceof AIError) error.message = `${error.message} (gave up after ${attempt + 1} attempts)`;
+          throw error;
+        }
+        event(s, { kind, action, itemId: doc.id, result: `retry ${attempt + 1} of ${delays.length}`, message: error.message });
+        await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+      }
+    }
+  }
+  // Measured provider time per action this session; the scoring falls back to
+  // the placeholder in actions.js for actions not run yet. The learning panel
+  // uses the same numbers, so it always names what prefetch will really do.
+  function measuredLatency(s) {
+    return Object.fromEntries(Object.entries(s.latencySamples).map(([action,sample])=>[action,sample.total/sample.count]));
+  }
   function predict(s,doc,history) {
-    const latencyByAction = Object.fromEntries(Object.entries(s.latencySamples).map(([action,sample])=>[action,sample.total/sample.count]));
-    return predictBlended(doc.type, history, {latencyByAction}, s.model, s.personal)
+    return predictBlended(doc.type, history, {latencyByAction:measuredLatency(s)}, s.model, s.personal)
       .filter(p=>SUPPORTED_ACTIONS.includes(p.action))
       .map(p=>({ action:p.action,label:p.label,probability:p.probability,startingProbability:p.startingProbability,personalObservations:p.personalObservations,contextOrder:p.contextOrder,
         shouldPrefetch:p.shouldPrefetch,expectedValue:p.expectedValue,
@@ -150,7 +196,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const fixedAction=doc.type==='RECEIPT'?'EXTRACT_FIELDS':'MAKE_TASKS';
     const prediction = speculationPolicy==='fixed'
       ? (doc.text&&!doc.history.includes(fixedAction)&&providers.available(fixedAction)&&!(doc.type==='RECEIPT'&&!hasReadableTotal(doc.text))&&!cached(s,keyFor(doc,fixedAction))?{action:fixedAction}:null)
-      : predictions.find(p=>p.shouldPrefetch && p.eligible && !cached(s,keyFor(doc,p.action)));
+      : predictions.find(p=>p.shouldPrefetch && p.eligible && !doc.backgroundFailed.has(p.action) && !cached(s,keyFor(doc,p.action)));
     if (!prediction) return;
     // No new operations are invented: only the registered read-only actions.
     track(s, start(s,doc,prediction.action,true));
@@ -170,7 +216,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const from = s.order.indexOf(s.activeItem);
     const nextId = s.order.slice(from + 1).find(id => {
       const doc = s.docs.get(id);
-      return !doc.text && !cached(s, keyFor(doc, 'READ_TEXT')) && doc.prefires < prefetchLimit;
+      return !doc.text && !doc.lastError && !doc.backgroundFailed.has('READ_TEXT') && !cached(s, keyFor(doc, 'READ_TEXT')) && doc.prefires < prefetchLimit;
     });
     if (!nextId) return;
     const doc = s.docs.get(nextId);
@@ -181,7 +227,11 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
   async function perform(id,itemId,action) {
     const s = getSession(id), doc=docFor(s,itemId);
     if (!SUPPORTED_ACTIONS.includes(action)) throw new AIError('Unsupported action.');
-    if (!providers.available(action)) throw new AIError(`Configure ${action==='READ_TEXT'?'PERCEPTRON_API_KEY':'GEMINI_API_KEY'} in backend/.env and restart the backend.`,503,'MISSING_API_KEY');
+    if (!providers.available(action)) {
+      const error=new AIError(`Configure ${action==='READ_TEXT'?'PERCEPTRON_API_KEY':'GEMINI_API_KEY'} in backend/.env and restart the backend.`,503,'MISSING_API_KEY');
+      doc.lastError={action,message:error.message,recovery:'setup',attempts:0};
+      throw error;
+    }
     if (action !== 'READ_TEXT' && !doc.text) throw new AIError('Run Read text successfully first.',409,'OCR_REQUIRED');
     focus(s, doc);
     const startTime=performance.now();
@@ -194,12 +244,14 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     catch (error) {
       const waitMs=performance.now()-startTime;
       s.waits.push(waitMs);s.metrics.failedActions++;
+      doc.lastError={action,message:error.message,recovery:recoveryFor(error),attempts:error.attempts||1};
       event(s,{kind:'navigation',action,itemId:doc.id,result:'failed',source,waitMs,message:error.message});
       throw error;
     }
     const usedPrefetch=entry.speculative && !entry.used;
     if (usedPrefetch) entry.used=true;
-    if (action==='READ_TEXT') doc.text=output.result.text;
+    doc.lastError=null;
+    if (action==='READ_TEXT') { doc.text=output.result.text; doc.textSource='ocr'; }
     const waitMs=performance.now()-startTime;
     s.metrics.navigations++;s.waits.push(waitMs);
     event(s,{kind:'navigation',action,itemId:doc.id,result:source,waitMs,usedPrefetch,providerMs:entry.providerMs});
@@ -215,6 +267,24 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     readAhead(s);
     return { action,result:output.result,provider:output.provider,model:output.model,promptVersion:output.promptVersion,usage:output.usage,
       source,waitMs,providerMs:entry.providerMs,usedPrefetch,predictions,duplicateOf:doc.duplicateOf,simulated:false };
+  }
+  // When OCR fails, the user can type or paste the text instead. It counts as
+  // "text read" for learning and unlocks the Gemini actions; no provider call.
+  function setText(id,itemId,text) {
+    const s=getSession(id), doc=docFor(s,itemId);
+    if (typeof text!=='string' || !text.trim()) throw new AIError('Enter the text from the image.');
+    if (text.length>20000) throw new AIError('Text is too long (20,000 characters maximum).');
+    focus(s,doc);
+    doc.text=text.trim(); doc.textSource='manual'; doc.lastError=null;
+    event(s,{kind:'navigation',action:'READ_TEXT',itemId:doc.id,result:'typed by user',waitMs:0});
+    if(!doc.history.includes('READ_TEXT')) {
+      doc.history.push('READ_TEXT');
+      s.personal.recordTransition(toHistory(doc.type,doc.history));
+    }
+    const predictions=predict(s,doc,doc.history);s.predictions=predictions;
+    prefetch(s,doc,predictions);
+    readAhead(s);
+    return { action:'READ_TEXT', result:{ text:doc.text, manual:true }, provider:'you', model:'typed text', source:'manual', waitMs:0, providerMs:0, usedPrefetch:false, predictions, simulated:false };
   }
   function setEnabled(id,enabled) {
     if (typeof enabled !== 'boolean') throw new AIError('enabled must be true or false.');
@@ -239,10 +309,11 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
   // predictions after "Read text" for each kind of item, starting vs now.
   function learning(s) {
     return LIVE_TYPES.map(type => {
-      const now = predictBlended(type, ['READ_TEXT'], {}, s.model, s.personal).filter(p => SUPPORTED_ACTIONS.includes(p.action));
+      const config = { latencyByAction: measuredLatency(s) };
+      const now = predictBlended(type, ['READ_TEXT'], config, s.model, s.personal).filter(p => SUPPORTED_ACTIONS.includes(p.action));
       const pick = list => list.find(p => p.shouldPrefetch)?.action ?? null;
       const starting = [...now].sort((a, b) => b.startingProbability - a.startingProbability);
-      const startingPick = pick(predictBlended(type, ['READ_TEXT'], {}, s.model, null).filter(p => SUPPORTED_ACTIONS.includes(p.action)));
+      const startingPick = pick(predictBlended(type, ['READ_TEXT'], config, s.model, null).filter(p => SUPPORTED_ACTIONS.includes(p.action)));
       return {
         type, after: 'READ_TEXT', finishedItems: s.learned[type], observations: now[0]?.personalObservations ?? 0,
         startingPrefetch: startingPick, nowPrefetch: pick(now),
@@ -277,6 +348,6 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     if(s.running)throw new AIError('Wait for running calls to finish before clearing this run.',409);
     sessions.delete(id);
   }
-  return {createSession,upload,open,perform,setEnabled,setReadAhead,snapshot,idle,remove};
+  return {createSession,upload,open,perform,setText,setEnabled,setReadAhead,snapshot,idle,remove};
 }
-module.exports={createAIService,validateImage};
+module.exports={createAIService,validateImage,recoveryFor};

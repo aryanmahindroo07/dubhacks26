@@ -19,7 +19,7 @@ function configuration(env = process.env) {
 
 function createProviders({ env = process.env, fetchImpl = globalThis.fetch } = {}) {
   const config = configuration(env);
-  const timeout = Math.min(120000, Math.max(1000, Number(env.AI_TIMEOUT_MS) || 60000));
+  const timeout = Math.min(120000, Math.max(1000, Number(env.AI_TIMEOUT_MS) || 15000));
   async function post(url, headers, body, provider) {
     let response;
     try {
@@ -28,14 +28,19 @@ function createProviders({ env = process.env, fetchImpl = globalThis.fetch } = {
         body: JSON.stringify(body), signal: AbortSignal.timeout(timeout),
       });
     } catch (error) {
-      throw new AIError(`${provider} request failed or timed out. Check the connection and retry.`, 502, 'PROVIDER_UNAVAILABLE');
+      // Kept separate from other network failures: a timeout has already
+      // waited the full limit, so it is not retried automatically.
+      if (error?.name === 'TimeoutError') throw new AIError(`${provider} did not answer within ${timeout / 1000} s. Retry, or type the text.`, 502, 'PROVIDER_TIMEOUT');
+      throw new AIError(`${provider} request failed. Check the connection and retry.`, 502, 'PROVIDER_UNAVAILABLE');
     }
     if (!response.ok) {
       // Never relay provider bodies: they can contain request text or credentials.
       const message = response.status === 429 ? 'rate limit or quota reached' :
         response.status === 401 || response.status === 403 ? 'credentials or model access rejected' :
         response.status === 404 ? 'model or endpoint not found; check the backend model setting' : `HTTP ${response.status}`;
-      throw new AIError(`${provider}: ${message}.`, 502, 'PROVIDER_REJECTED');
+      const rejected = new AIError(`${provider}: ${message}.`, 502, 'PROVIDER_REJECTED');
+      rejected.providerStatus = response.status;
+      throw rejected;
     }
     try { return await response.json(); }
     catch { throw new AIError(`${provider} returned an invalid response.`, 502, 'INVALID_PROVIDER_RESPONSE'); }
