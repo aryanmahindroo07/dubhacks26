@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {getAISession,setAIPrefetch,setAIReadAhead,uploadAIImage,openAIItem,runAIAction,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
 import styles from './AIWorkspace.module.css';
+import PolicyEvidence from './PolicyEvidence.jsx';
 import {PrefireStatus,ComparisonPanel,DemoGuide} from './DemoEvidence.jsx';
 
 const ACTIONS=[['READ_TEXT','Read text','Perceptron'],['EXTRACT_FIELDS','Extract fields','Gemini'],['SUMMARIZE','Summarize','Gemini'],['MAKE_TASKS','Turn into tasks','Gemini']];
@@ -171,6 +172,7 @@ export default function AIWorkspace(){
         <p className={styles.small}>Predictions start from 500 generated journeys, not real-user data, then adapt to your own choices in this run. Your choices count more as they repeat: two or three consistent choices change what gets prefetched.</p>
         <div className={styles.learningGrid}>{session.learning.map(entry=><LearningCard key={entry.type} entry={entry}/>)}</div>
       </section>}
+      <PolicyEvidence/>
       <ComparisonPanel/>
       <section className={styles.panel} aria-labelledby="metrics-heading"><div className={styles.sectionHeading}><h2 id="metrics-heading">This run · measured activity</h2><button disabled={!session||Boolean(busy)||Boolean(metrics?.running)} onClick={download}>Export measurements</button></div>
         {metrics&&<><div className={styles.metrics}><div><strong>{metrics.navigations}</strong><span>Completed actions</span></div><div><strong>{metrics.hits} / {metrics.reused}</strong><span>Cache hits / in-flight joins</span></div><div><strong>{metrics.usedPrefetches} / {metrics.unusedPrefetches}</strong><span>Used / unused prefetches so far</span></div><div><strong>{milliseconds(metrics.medianWaitMs)}</strong><span>Median observed wait</span></div></div><p>Provider calls: {metrics.demandCalls} demand + {metrics.speculativeCalls} speculative (prefetch and read-ahead) · Pending: {metrics.pendingPrefetches} · Failed background calls: {metrics.failedPrefetches} · Failed actions: {metrics.failedActions ?? 0} · Total action wait (including failures): {(metrics.totalWaitMs/1000).toFixed(2)} s</p></>}

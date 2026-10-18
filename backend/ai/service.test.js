@@ -241,3 +241,15 @@ test('duplicate receipts are flagged: same image, or same total and date',async(
   const flagged=service.snapshot(session).items.find(i=>i.id===b.id).duplicateOf;
   assert.equal(flagged.id,a.id);assert.match(flagged.reason,/13\.20.*2026-10-17/);
 });
+
+// Evaluation-only policy injection; HTTP sessions retain the default Markov policy.
+test('fixed baseline extracts after OCR and never speculates a different receipt action',async()=>{
+ const f=fixture({speculationPolicy:'fixed'});f.service.setEnabled(f.session,true);
+ await f.service.perform(f.session,f.item.id,'READ_TEXT');await f.service.idle(f.session);
+ const summary=await f.service.perform(f.session,f.item.id,'SUMMARIZE');await f.service.idle(f.session);
+ assert.equal(summary.usedPrefetch,false);
+ assert.deepEqual(f.calls.map(x=>x.action),['READ_TEXT','EXTRACT_FIELDS','SUMMARIZE']);
+ assert.equal(f.service.snapshot(f.session).metrics.unusedPrefetches,1);
+ const fields=await f.service.perform(f.session,f.item.id,'EXTRACT_FIELDS');
+ assert.equal(fields.usedPrefetch,true);
+});

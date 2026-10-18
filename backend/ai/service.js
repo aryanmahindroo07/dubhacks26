@@ -25,7 +25,8 @@ function validateImage(image) {
   return hash(bytes);
 }
 
-function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env = process.env } = {}) {
+function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env = process.env, speculationPolicy = 'markov' } = {}) {
+  if(!['markov','fixed'].includes(speculationPolicy))throw new Error('Unsupported speculation policy.');
   const sessions = new Map();
   const prefetchLimit = Math.max(0, Math.min(10, Number(env.AI_PREFETCH_LIMIT_PER_ITEM ?? 3) || 0));
   function cleanup() {
@@ -139,7 +140,10 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
   }
   function prefetch(s,doc,predictions) {
     if (!s.enabled || doc.prefires >= prefetchLimit || s.attempts.some(e=>e.status==='pending')) return;
-    const prediction = predictions.find(p=>p.shouldPrefetch && p.eligible && !cached(s,keyFor(doc,p.action)));
+    const fixedAction=doc.type==='RECEIPT'?'EXTRACT_FIELDS':'MAKE_TASKS';
+    const prediction = speculationPolicy==='fixed'
+      ? (doc.text&&!doc.history.includes(fixedAction)&&providers.available(fixedAction)&&!(doc.type==='RECEIPT'&&!hasReadableTotal(doc.text))&&!cached(s,keyFor(doc,fixedAction))?{action:fixedAction}:null)
+      : predictions.find(p=>p.shouldPrefetch && p.eligible && !cached(s,keyFor(doc,p.action)));
     if (!prediction) return;
     // No new operations are invented: only the registered read-only actions.
     track(s, start(s,doc,prediction.action,true));
