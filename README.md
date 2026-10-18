@@ -1,10 +1,14 @@
-# RequestFlow
+# Mise
 
-Hackathon project for DubHacks '26.
+**AI that’s ready before you ask.**
+
+Mise takes its name from *mise en place*, a culinary term meaning **“everything in its place.”** Just as a chef prepares ingredients before cooking, Mise predicts your next step and prepares likely API or AI results while you review the current one. The response can be ready before you click.
+
+Built for the cooking theme at DubHacks '26.
 
 ## What this project does
 
-RequestFlow predicts which registered API action a user is likely to request next and starts an eligible read-only request while the user reviews the current result. First- and second-order Markov models estimate next-action probabilities; a confidence and expected-value policy decides whether to speculate. A matching click reuses the completed response or joins the running request. Incorrect predictions can consume extra provider calls, so waiting, reuse, failures and unused prefires are measured alongside benefits.
+Mise predicts which registered API action a user is likely to request next and starts an eligible read-only request while the user reviews the current result. First- and second-order Markov models estimate next-action probabilities; a confidence and expected-value policy decides whether to speculate. A matching click reuses the completed response or joins the running request. Incorrect predictions can consume extra provider calls, so waiting, reuse, failures and unused prefires are measured alongside benefits.
 
 The core machine-learning task is **sequential categorical next-action prediction**. Its outputs are action probabilities and a prefetch decision. Latency is an evaluation metric, not a continuous target learned by a regression model.
 
@@ -21,9 +25,9 @@ AI output remains subject to human review. Receipt evidence checks establish con
 
 See the [real-data evaluation protocol](docs/real-data-evaluation.md), [receipt correctness checks](docs/receipt-correctness.md), and [AI setup guide](docs/ai-inbox-setup.md) for evidence and limitations. These descriptions document intended behavior; they are not a compliance certification or a determination of legal applicability.
 
-## Frontend starter
+## Frontend
 
-The barebones React + CSS starter lives in [`frontend/`](frontend/).
+The React + CSS interface lives in [`frontend/`](frontend/).
 
 With Node.js 24 LTS installed:
 
@@ -95,7 +99,7 @@ waiting time, useful and unused prefetches, and extra API calls.
 
 ## AI inbox (dummy data)
 
-The next version of RequestFlow predicts which AI action a user will run next
+The synthetic Mise inbox predicts which AI action a user will run next
 on an inbox item (read text, extract fields, turn into tasks, caption…) and
 runs it early. Everything lives in `backend/inbox/`:
 

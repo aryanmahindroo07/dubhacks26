@@ -1,7 +1,7 @@
 # Receipt inbox: learning, read-ahead and duplicates
 
 The `/ai` page is now a receipt inbox for bookkeepers and small teams. Three
-features show what RequestFlow does that a fixed rule ("always extract after
+features show what Mise does that a fixed rule ("always extract after
 reading a receipt") cannot.
 
 ## It learns each user's habits
@@ -12,8 +12,8 @@ small model of the current user's own choices:
     p = (n × personal + k × shared) / (n + k),  k = 4
 
 `n` is how often this user was in the same situation. Two or three consistent
-choices change what gets prefetched. The "What RequestFlow has learned about
-you" panel shows each item type's next-action likelihoods, starting model vs
+choices change what gets prefetched. The "It learns your next move"
+panel shows each item type's next-action likelihoods, starting model vs
 now, and when the prefetch choice changes.
 
 Demo (prefetch ON): add four demo whiteboards. On the first three, Read text

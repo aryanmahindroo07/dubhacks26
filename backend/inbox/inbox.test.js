@@ -81,7 +81,7 @@ test("never predicts an action already run on the item", () => {
 test("on unseen journeys the model beats simple prefetch strategies", () => {
   const r = evaluate();
   const byName = Object.fromEntries(r.rows.map((row) => [row.name, row]));
-  const ours = byName["RequestFlow (Markov + 35% threshold)"];
+  const ours = byName["Mise (Markov + 35% threshold)"];
   assert.ok(r.top1Accuracy > 0.7, `accuracy ${r.top1Accuracy}`);
   assert.ok(ours.savedShare > 0.6, `saved ${ours.savedShare}`);
   assert.ok(ours.savedMs > byName["Always prefetch the most common action"].savedMs);

@@ -1,6 +1,6 @@
-# Frontend
+# Mise frontend
 
-A barebones React starter using JavaScript, plain CSS, and Vite.
+Mise's React interface uses JavaScript, plain CSS, and Vite. It includes the home customer workspace (`/`), live overview (`/overview`), and receipt inbox (`/ai`).
 
 ## Run locally
 
@@ -17,13 +17,13 @@ Open the URL printed in your terminal. Saving a file updates the page automatica
 
 ```text
 frontend/
-├── public/              # Static files served as-is, such as favicon.ico
+├── public/              # Favicon, sample images, and recorded benchmark data
 ├── src/
 │   ├── assets/          # Images and files imported by components
 │   ├── components/      # Reusable UI components
-│   ├── pages/           # Page components as the app grows
-│   ├── services/        # API calls when you're ready to connect a backend
-│   ├── App.jsx          # Start building your UI here
+│   ├── pages/           # Live overview and AI workspace pages
+│   ├── services/        # API calls, caching, and prefetch coordination
+│   ├── App.jsx          # Home page and customer search
 │   ├── App.css          # Styles for App
 │   ├── index.css        # Global styles
 │   └── main.jsx         # Mounts React into index.html
@@ -34,11 +34,9 @@ frontend/
 └── vite.config.js       # Vite + React configuration
 ```
 
-Empty folders contain `.gitkeep` so Git can track them. Remove those placeholder files once you add real files.
-
 ## Start editing
 
-Edit `src/App.jsx` for content and `src/App.css` for styling. Add reusable components to `src/components/` when you need them. The other folders are empty placeholders; no routing or backend is configured.
+Edit `src/App.jsx` and `src/App.css` for the home page. The other pages live in `src/pages/`; the shared sidebar and top bar live in `src/components/AppLayout/`. `src/main.jsx` selects the page from the URL. Start the Express backend in `../backend/` for API features; see the [project README](../README.md) and [AI setup guide](../docs/ai-inbox-setup.md).
 
 ## Other commands
 

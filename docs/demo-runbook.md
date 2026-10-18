@@ -1,8 +1,8 @@
-# RequestFlow demo runbook
+# Mise demo runbook
 
 ## What we claim
 
-RequestFlow predicts the next registered API operation from workflow history and starts a worthwhile read-only request while the user reviews the current result. A matching click shares that request or reuses its completed result. It does not make the underlying AI model run faster, predict arbitrary prompts, or execute physical actions. Markov prediction is established technology; this project's contribution is its integration with cost-aware speculation, request sharing, instrumentation and two working applications.
+Mise predicts the next registered API operation from workflow history and starts a worthwhile read-only request while the user reviews the current result. A matching click shares that request or reuses its completed result. It does not make the underlying AI model run faster, predict arbitrary prompts, or execute physical actions. Markov prediction is established technology; this project's contribution is its integration with cost-aware speculation, request sharing, instrumentation and two working applications.
 
 ## Before recording
 
@@ -18,7 +18,7 @@ Open `/`. Load customers, select one, then open Orders. For the ON run allow the
 
 ## Demo 2: visual AI workspace
 
-Open `/ai`. OFF: Demo receipt → Read text → review for five seconds → Extract fields. Show the output and measured waiting. Export. Fresh run; enable prefetch; repeat exactly. Explain that Perceptron transcribes the image and Gemini performs extraction, while RequestFlow predicts and schedules that extraction. Show the speculative event followed by either a completed cache hit or an in-flight join. Export.
+Open `/ai`. OFF: Demo receipt → Read text → review for five seconds → Extract fields. Show the output and measured waiting. Export. Fresh run; enable prefetch; repeat exactly. Explain that Perceptron transcribes the image and Gemini performs extraction, while Mise predicts and schedules that extraction. Show the speculative event followed by either a completed cache hit or an in-flight join. Export.
 
 For variety, use the whiteboard → Read text → Turn into tasks. For the cost tradeoff, use receipt → Read text → Summarize: extraction may be prefetched but unused. Keep the unused call in the reported totals. Don't prefire every action to manufacture hits.
 

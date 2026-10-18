@@ -1,4 +1,4 @@
-# RequestFlow demo and evidence protocol
+# Mise demo and evidence protocol
 
 ## 1. Show actual input and actual provider output
 
@@ -11,9 +11,11 @@ Source URLs, hashes and manually transcribed reference amounts are recorded in
 photo is rotated upright and cropped to remove background; the full receipt
 and its original printed amounts remain intact. References are not an independent dataset ground truth.
 
-The recorded benchmark in the comparison panel still uses the previous
-Indonesian CORD receipts. It is explicitly labelled CORD and must not be
-presented as a US-receipt result. To measure the new inputs, substitute
+The top recorded benchmark uses US receipts and compares OFF, a fixed rule,
+and Markov prefetch. Its source is `frontend/public/demo-evidence/us-policy-results.json`.
+Under **Benchmark evidence**, the separate historical OFF/ON comparison uses
+Indonesian CORD receipts; it is explicitly labelled CORD and must not be
+presented as a US-receipt result. To measure the US inputs with that runner, substitute
 `--manifest datasets/us-receipts/evaluation.json` in the benchmark command below.
 No US provider accuracy or latency claim is established merely by adding images.
 
@@ -109,6 +111,7 @@ of adaptation under an authored sequence, not a real-user accuracy measurement.
   changed prefire choice and a consumed summary prefire on the fourth image.
 
 Recorded results are historical, dated evidence, not metrics for the currently
-open browser session. The UI does not automatically load them or mix them with
-live counters. Review the measured extra calls and wrong-action cases as well
+open browser session. The US comparison loads automatically at the top; the
+CORD comparison is loaded on demand under **Benchmark evidence**. Both remain
+separate from live counters. Review the measured extra calls and wrong-action cases as well
 as the waiting reduction before selecting any pitch claim.

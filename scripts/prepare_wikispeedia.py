@@ -33,6 +33,7 @@ def main():
             for line in rows:
                 cols=line.split('\t');group=cols[0];path=visits(cols[3])
                 if not path:invalid+=1;continue
+                # Keep the historical seed: changing it would change the published train/test split.
                 is_test=int.from_bytes(hashlib.sha256(('requestflow-eval-42:'+group).encode()).digest()[:4],'big')%5==0
                 bucket='test' if is_test else 'train';groups[bucket].add(group)
                 (test if is_test else train).append(path+['__STOP__'])

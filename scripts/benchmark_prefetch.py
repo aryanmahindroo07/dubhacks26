@@ -34,24 +34,24 @@ JOURNEYS = [
     ("Soylent Co", ["Analytics"]),
 ]
 
-METRICS = "() => window.__requestflow.getPrefetchMetrics()"
+METRICS = "() => window.__mise.getPrefetchMetrics()"
 
 
 def run_mode(browser, base, prefetch_on, think_ms):
     page = browser.new_page()
     page.goto(base + "/overview")
-    page.wait_for_function("() => !!window.__requestflow")
+    page.wait_for_function("() => !!window.__mise")
     button = page.get_by_role("button", name="Pause prefetch")
     if not prefetch_on:
         button.click()
-    enabled = page.evaluate("() => window.__requestflow.isPrefetchEnabled()")
+    enabled = page.evaluate("() => window.__mise.isPrefetchEnabled()")
     assert enabled == prefetch_on, "pause button did not set the prefetch mode"
     ws = page.locator("#customers")
 
     def navigate(click):
         count = page.evaluate(METRICS)["navigations"]
         click()
-        page.wait_for_function(f"() => window.__requestflow.getPrefetchMetrics().navigations > {count}")
+        page.wait_for_function(f"() => window.__mise.getPrefetchMetrics().navigations > {count}")
         page.wait_for_function("() => document.querySelector('#customers [aria-busy]').getAttribute('aria-busy') === 'false'")
         page.wait_for_timeout(think_ms)
 
