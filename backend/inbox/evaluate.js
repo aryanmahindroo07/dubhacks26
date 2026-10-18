@@ -46,7 +46,7 @@ function evaluate({ trainCount = 500, testCount = 200, trainSeed = 42, testSeed 
     "No prefetch": () => [],
     "Always prefetch the most common action": (p) => [globalTop].filter(notRun(p)),
     "Prefetch every possible action": (p) => candidatesFor(p.type).map(untyped).filter(notRun(p)),
-    "RequestFlow (Markov + 35% threshold)": (p) =>
+    "Mise (Markov + 35% threshold)": (p) =>
       predictNextAction(p.type, p.history, {}, model)
         .filter((x) => x.shouldPrefetch)
         .slice(0, 1)
