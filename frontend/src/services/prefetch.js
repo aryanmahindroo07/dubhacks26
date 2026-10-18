@@ -8,12 +8,20 @@ const REQUEST_BUDGET = 1;
 // Tracks what the user actually visits
 const history = [];
 
+const sessionId = crypto.randomUUID();
+let pendingNavigation = null;
+
 // Tracks prefetching statistics
 const prefetchMetrics = {
   started: 0,
   completed: 0,
   failed: 0
 };
+
+const BASELINE_MS = 1200;
+
+let lastRequest = null;
+let totalEstimatedSavedMs = 0;
 
 // Make an HTTP request and return JSON
 async function fetchData(url) {
@@ -28,12 +36,18 @@ async function fetchData(url) {
 
 // Ask the backend to predict what the user will visit next
 async function getPredictions() {
+  const stateId = pendingNavigation;
+    pendingNavigation = null;
   const response = await fetch(API_BASE + "/api/predict", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ history })
+    body: JSON.stringify({
+      history,
+      sessionId,
+      stateId
+})
   });
 
   if (!response.ok) {
@@ -76,28 +90,55 @@ export async function prefetchNext(customerId) {
 }
 
 // Called when the user actually navigates to a page
+
 export async function requestEndpoint(stateId, customerId) {
+  const start = performance.now();
   const url = resolveEndpoint(stateId, customerId);
 
-  // Record actual navigation, not predicted navigation
+  // Record actual user navigation
   history.push(stateId);
+  pendingNavigation = stateId;
 
-  // Check whether the response was prefetched
+  // Check browser cache
   const cachedData = responseCache.get(url);
+  const cacheHit = cachedData !== undefined;
+
+  // Check whether a prefetch is already running
+  const inFlightReuse =
+    !cacheHit && responseCache.inFlight.has(url);
 
   let data;
 
-  if (cachedData !== undefined) {
+  if (cacheHit) {
     data = cachedData;
   } else {
-    // Reuse an in-flight prefetch if one exists
     data = await responseCache.fetchOnce(
       url,
       () => fetchData(url)
     );
   }
 
-  // Start predicting the next request in the background
+  // Measure how long the user waited for data
+  const latencyMs = performance.now() - start;
+
+  // Estimate time saved relative to the 1200ms baseline
+  const estimatedSavedMs =
+    cacheHit || inFlightReuse
+      ? Math.max(0, BASELINE_MS - latencyMs)
+      : 0;
+
+  totalEstimatedSavedMs += estimatedSavedMs;
+
+  lastRequest = {
+    stateId,
+    url,
+    cacheHit,
+    inFlightReuse,
+    latencyMs,
+    estimatedSavedMs
+  };
+
+  // Record navigation on backend and predict the next request
   prefetchNext(customerId).catch(error => {
     console.error("Prediction failed:", error);
   });
@@ -105,10 +146,13 @@ export async function requestEndpoint(stateId, customerId) {
   return data;
 }
 
+
 // Return statistics for the dashboard
 export function getPrefetchMetrics() {
   return {
     ...responseCache.getMetrics(),
-    ...prefetchMetrics
+    ...prefetchMetrics,
+    lastRequest,
+    totalEstimatedSavedMs
   };
 }
