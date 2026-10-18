@@ -108,18 +108,16 @@ export async function requestEndpoint(stateId, customerId) {
   });
   const safePredictions = navigationQueue;
 
-  // Check browser cache
-  const cachedData = responseCache.get(url);
-  const cacheHit = cachedData !== undefined;
-
-  // Check whether a prefetch is already running
-  const inFlightReuse =
-    !cacheHit && responseCache.inFlight.has(url);
+  // Check the cache, then any request already running (usually a prefetch).
+  // lookup() counts each user request once as a hit, reuse or miss.
+  const lookup = responseCache.lookup(url);
+  const cacheHit = lookup.status === "hit";
+  const inFlightReuse = lookup.status === "reused";
 
   let data;
 
   if (cacheHit) {
-    data = cachedData;
+    data = lookup.data;
   } else {
     data = await responseCache.fetchOnce(
       url,

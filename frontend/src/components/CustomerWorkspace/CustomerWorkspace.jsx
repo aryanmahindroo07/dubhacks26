@@ -59,7 +59,7 @@ export default function CustomerWorkspace() {
         {data && view === 'ANALYTICS' && <><p>Health: {data.healthScore}/100 · Churn risk: {data.churnRisk}</p><ul>{data.monthlyUsage.map(month => <li key={month.month}>{month.month}: {month.activeUsers} active users · {month.apiCalls.toLocaleString()} API calls</li>)}</ul></>}
       </div>
       <h3>Live workspace metrics</h3>
-      <p>Cache hits: {metrics.hits} · Misses: {metrics.misses} · Hit rate: {(metrics.hitRate * 100).toFixed(1)}%</p>
+      <p>Cache hits: {metrics.hits} · Reused running requests: {metrics.reused} · Misses: {metrics.misses} · Hit rate: {(metrics.hitRate * 100).toFixed(1)}% · Served without a new request: {(metrics.servedRate * 100).toFixed(1)}%</p>
       <p>Prefetch started: {metrics.started} · Completed: {metrics.completed} · Failed: {metrics.failed} · In flight: {metrics.inFlightRequests}</p>
       {metrics.lastRequest && <p>Latest: {metrics.lastRequest.stateId} · {metrics.lastRequest.cacheHit ? 'Cache hit' : metrics.lastRequest.inFlightReuse ? 'Reused running request' : 'Network request'} · Wait: {metrics.lastRequest.latencyMs.toFixed(1)} ms</p>}
       <p className="metric-note">Estimated waiting saved: {metrics.totalEstimatedSavedMs.toFixed(1)} ms against the fixed 1,200 ms baseline. This is not an OFF/ON benchmark. Search above and the sample overview are separate from these metrics.</p>

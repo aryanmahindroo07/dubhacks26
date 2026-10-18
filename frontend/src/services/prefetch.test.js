@@ -56,3 +56,19 @@ test('cache expiry and concurrent duplicate suppression', async () => {
   await assert.rejects(cache.fetchOnce('bad', () => Promise.reject(new Error('failed'))));
   assert.equal(cache.inFlight.has('bad'), false);
 });
+
+test('hit-rate metrics count in-flight reuse separately from misses', async () => {
+  const cache = new ResponseCache();
+  let release;
+  const running = cache.fetchOnce('orders', () => new Promise(r => { release = r; }));
+  assert.equal(cache.lookup('orders').status, 'reused');
+  await tick();
+  release({ ok: true });
+  await running;
+  assert.equal(cache.lookup('orders').status, 'hit');
+  assert.equal(cache.lookup('support').status, 'miss');
+  const m = cache.getMetrics();
+  assert.deepEqual([m.hits, m.reused, m.misses], [1, 1, 1]);
+  assert.equal(m.hitRate, 1 / 3);
+  assert.equal(m.servedRate, 2 / 3);
+});
