@@ -1,0 +1,201 @@
+{
+  "source": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+  "selection": "Consecutive test rows 6\u20138; selected before provider calls; not selected by outcome.",
+  "scoring": "Exact normalized amount match for total/subtotal/tax only. Fixed English/Indonesian field aliases; ambiguous, missing or failed outputs are incorrect. This is not a full OCR metric or prediction-accuracy metric. Each mode is a separate output on the same image, not an independent document.",
+  "rows": [
+    {
+      "sample": "cord-test-006",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "46,000",
+          "predicted": [
+            "46,000"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 1,
+      "expected": 1
+    },
+    {
+      "sample": "cord-test-006",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "46,000",
+          "predicted": [
+            "46,000"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 1,
+      "expected": 1
+    },
+    {
+      "sample": "cord-test-007",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "111,000",
+          "predicted": [
+            "Total"
+          ],
+          "correct": false
+        },
+        {
+          "field": "subtotal",
+          "expected": "100,909",
+          "predicted": [
+            "Subtotal"
+          ],
+          "correct": false
+        },
+        {
+          "field": "tax",
+          "expected": "10,091",
+          "predicted": [
+            "10%)"
+          ],
+          "correct": false
+        }
+      ],
+      "correct": 0,
+      "expected": 3
+    },
+    {
+      "sample": "cord-test-007",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "111,000",
+          "predicted": [
+            "15"
+          ],
+          "correct": false
+        },
+        {
+          "field": "subtotal",
+          "expected": "100,909",
+          "predicted": [
+            "15"
+          ],
+          "correct": false
+        },
+        {
+          "field": "tax",
+          "expected": "10,091",
+          "predicted": [
+            "10%"
+          ],
+          "correct": false
+        }
+      ],
+      "correct": 0,
+      "expected": 3
+    },
+    {
+      "sample": "cord-test-008",
+      "mode": "OFF",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "50,000",
+          "predicted": [
+            "50,000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "45,455",
+          "predicted": [
+            "45,455"
+          ],
+          "correct": true
+        },
+        {
+          "field": "tax",
+          "expected": "4,545",
+          "predicted": [
+            "4,545"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 3,
+      "expected": 3
+    },
+    {
+      "sample": "cord-test-008",
+      "mode": "ON",
+      "completed": true,
+      "checks": [
+        {
+          "field": "total",
+          "expected": "50,000",
+          "predicted": [
+            "50,000"
+          ],
+          "correct": true
+        },
+        {
+          "field": "subtotal",
+          "expected": "45,455",
+          "predicted": [
+            "45,455"
+          ],
+          "correct": true
+        },
+        {
+          "field": "tax",
+          "expected": "4,545",
+          "predicted": [
+            "4,545"
+          ],
+          "correct": true
+        }
+      ],
+      "correct": 3,
+      "expected": 3
+    }
+  ],
+  "latencyPairs": [
+    {
+      "sample": "cord-test-006",
+      "dwellMs": 0,
+      "offWaitMs": 1640.8928329999999,
+      "onWaitMs": 1226.2603329999984,
+      "savedMs": 414.6325000000015
+    },
+    {
+      "sample": "cord-test-007",
+      "dwellMs": 1500,
+      "offWaitMs": 1311.4715420000066,
+      "onWaitMs": 559.4870420000007,
+      "savedMs": 751.9845000000059
+    },
+    {
+      "sample": "cord-test-008",
+      "dwellMs": 5000,
+      "offWaitMs": 2980.792874999999,
+      "onWaitMs": 561.0240409999969,
+      "savedMs": 2419.7688340000022
+    }
+  ],
+  "exploratoryPairedMeanSavedMs": 1195.46194466667,
+  "exploratoryBootstrap95IntervalMs": [
+    414.6325000000015,
+    2419.7688340000022
+  ]
+}

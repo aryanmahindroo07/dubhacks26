@@ -1,0 +1,72 @@
+{
+  "dataset": "naver-clova-ix/cord-v2",
+  "revision": "7f0115a4b758a71d6473b8d085751692da2fef98",
+  "source": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+  "license": "CC-BY-4.0",
+  "attribution": "NAVER CLOVA; Park et al., CORD: A Consolidated Receipt Dataset for Post-OCR Parsing, 2019",
+  "selection": "First six test rows, indices 0\u20135; selected before provider calls; not selected by outcome.",
+  "downloadedAt": "2026-10-18T08:51:34.523478+00:00",
+  "samples": [
+    {
+      "id": "cord-test-000",
+      "image": "test-000.jpg",
+      "annotation": "test-000.json",
+      "sha256": "4e13b815b540420a4d68229494bd6259768c226a595114609970edae9a620aa9",
+      "expected": {
+        "total": "60.000",
+        "subtotal": "60.000",
+        "tax": "5.455"
+      }
+    },
+    {
+      "id": "cord-test-001",
+      "image": "test-001.jpg",
+      "annotation": "test-001.json",
+      "sha256": "636284664cfc357e05f7b10d67ddb380f828a1be0a20809514f9e7fc0c611a9f",
+      "expected": {
+        "total": "91000"
+      }
+    },
+    {
+      "id": "cord-test-002",
+      "image": "test-002.jpg",
+      "annotation": "test-002.json",
+      "sha256": "bcf0c175181bfc6b2352ab8f452704b8f18e27fa51f2278bc5c41f6765179edb",
+      "expected": {
+        "total": "28,000",
+        "subtotal": "28,000"
+      }
+    },
+    {
+      "id": "cord-test-003",
+      "image": "test-003.jpg",
+      "annotation": "test-003.json",
+      "sha256": "175fdc716afc51e67bcb79954c3dad4b54633299ec124780e5af04a8e8305333",
+      "expected": {
+        "total": "11,000",
+        "subtotal": "11,000"
+      }
+    },
+    {
+      "id": "cord-test-004",
+      "image": "test-004.jpg",
+      "annotation": "test-004.json",
+      "sha256": "b4261949b52af19e53c27526fc8c4230b10eed207101bf51741c428b4c055c01",
+      "expected": {
+        "total": "174,600",
+        "subtotal": "194,000"
+      }
+    },
+    {
+      "id": "cord-test-005",
+      "image": "test-005.jpg",
+      "annotation": "test-005.json",
+      "sha256": "02032d7f74a5b74b2a85bd868b433fa57fe77bb997186a0cf33d182cce42fb84",
+      "expected": {
+        "total": "31.000",
+        "subtotal": "28.182",
+        "tax": "2.818"
+      }
+    }
+  ]
+}

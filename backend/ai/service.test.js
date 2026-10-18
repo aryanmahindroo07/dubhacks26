@@ -118,6 +118,7 @@ test('HTTP provider adapters use the documented payloads and validate output',as
   assert.ok(requests[1].url.includes(':generateContent'));
   const body=JSON.parse(requests[1].body);assert.equal(body.generationConfig.responseMimeType,'application/json');
   assert.ok(!requests[1].body.includes(IMAGE),'Gemini receives OCR text, not the image');
+  assert.equal(body.contents[0].parts[0].text,'OCR output','OCR is document data, not a wrapper object that can be extracted instead');
   const failed=createProviders({env:{GEMINI_API_KEY:'fake-test-only'},fetchImpl:async()=>({ok:false,status:403,json:async()=>({secret:'never return this'})})});
   await assert.rejects(failed.run('SUMMARIZE',{text:'source'}),e=>e.code==='PROVIDER_REJECTED'&&!e.message.includes('secret'));
 });

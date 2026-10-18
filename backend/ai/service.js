@@ -148,7 +148,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     }
     const predictions=predict(s,doc,doc.history);s.predictions=predictions;
     prefetch(s,doc,predictions);
-    return { action,result:output.result,provider:output.provider,model:output.model,usage:output.usage,
+    return { action,result:output.result,provider:output.provider,model:output.model,promptVersion:output.promptVersion,usage:output.usage,
       source,waitMs,providerMs:entry.providerMs,usedPrefetch,predictions,simulated:false };
   }
   function setEnabled(id,enabled) {

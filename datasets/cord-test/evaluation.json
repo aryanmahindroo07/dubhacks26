@@ -1,0 +1,126 @@
+{
+  "description": "Real CORD-v2 test receipt photographs; scripted actions, not observed user behavior. Six extraction pairs with 0/1500/5000 ms review intervals, two unexpected-summary pairs and two stop pairs.",
+  "source": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+  "scenarios": [
+    {
+      "name": "cord-test-000-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-000.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 0,
+      "sampleId": "cord-test-000"
+    },
+    {
+      "name": "cord-test-001-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-001.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-001"
+    },
+    {
+      "name": "cord-test-002-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-002.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 5000,
+      "sampleId": "cord-test-002"
+    },
+    {
+      "name": "cord-test-003-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-003.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 0,
+      "sampleId": "cord-test-003"
+    },
+    {
+      "name": "cord-test-004-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-004.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-004"
+    },
+    {
+      "name": "cord-test-005-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-005.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 5000,
+      "sampleId": "cord-test-005"
+    },
+    {
+      "name": "cord-test-000-unexpected-summary",
+      "type": "RECEIPT",
+      "imagePath": "test-000.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "SUMMARIZE"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-000"
+    },
+    {
+      "name": "cord-test-001-unexpected-summary",
+      "type": "RECEIPT",
+      "imagePath": "test-001.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "SUMMARIZE"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-001"
+    },
+    {
+      "name": "cord-test-002-stop",
+      "type": "RECEIPT",
+      "imagePath": "test-002.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT"
+      ],
+      "dwellMs": 0,
+      "stopAfterMs": 1500,
+      "sampleId": "cord-test-002"
+    },
+    {
+      "name": "cord-test-003-stop",
+      "type": "RECEIPT",
+      "imagePath": "test-003.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT"
+      ],
+      "dwellMs": 0,
+      "stopAfterMs": 1500,
+      "sampleId": "cord-test-003"
+    }
+  ]
+}

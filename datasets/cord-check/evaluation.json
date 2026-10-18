@@ -1,0 +1,42 @@
+{
+  "description": "Post-fix check on three additional real CORD test receipts (indices 6\u20138), selected before changing the extraction prompt. One pair per image; scripted actions, not user behavior. Review intervals vary by image but match within each pair.",
+  "source": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+  "scenarios": [
+    {
+      "name": "cord-test-006-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-006.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 0,
+      "sampleId": "cord-test-006"
+    },
+    {
+      "name": "cord-test-007-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-007.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 1500,
+      "sampleId": "cord-test-007"
+    },
+    {
+      "name": "cord-test-008-extract",
+      "type": "RECEIPT",
+      "imagePath": "test-008.jpg",
+      "mime": "image/jpeg",
+      "actions": [
+        "READ_TEXT",
+        "EXTRACT_FIELDS"
+      ],
+      "dwellMs": 5000,
+      "sampleId": "cord-test-008"
+    }
+  ]
+}

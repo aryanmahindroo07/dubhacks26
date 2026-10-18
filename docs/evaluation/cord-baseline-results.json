@@ -1,0 +1,3519 @@
+{
+  "metadata": {
+    "createdAt": "2026-10-18T08:52:37.570Z",
+    "dwellMs": 1500,
+    "repetitions": 1,
+    "trialGapMs": 15000,
+    "inputDescription": "Real CORD-v2 test receipt photographs; scripted actions, not observed user behavior. Six extraction pairs with 0/1500/5000 ms review intervals, two unexpected-summary pairs and two stop pairs.",
+    "manifestSource": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+    "method": "Actual provider-backed API. Fresh backend AI session/cache/seed model for each trial. OFF and ON use identical image inputs and scripts; ordinary caching enabled in both. Alternating paired order. Final background work drained for usage accounting. No artificial latency. Authored scenarios, not real-user prediction accuracy. Input provenance is specified separately in inputDescription.",
+    "scenarios": [
+      {
+        "name": "cord-test-000-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-000.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 0,
+        "sampleId": "cord-test-000"
+      },
+      {
+        "name": "cord-test-001-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-001.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 1500,
+        "sampleId": "cord-test-001"
+      },
+      {
+        "name": "cord-test-002-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-002.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 5000,
+        "sampleId": "cord-test-002"
+      },
+      {
+        "name": "cord-test-003-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-003.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 0,
+        "sampleId": "cord-test-003"
+      },
+      {
+        "name": "cord-test-004-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-004.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 1500,
+        "sampleId": "cord-test-004"
+      },
+      {
+        "name": "cord-test-005-extract",
+        "type": "RECEIPT",
+        "imagePath": "test-005.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 5000,
+        "sampleId": "cord-test-005"
+      },
+      {
+        "name": "cord-test-000-unexpected-summary",
+        "type": "RECEIPT",
+        "imagePath": "test-000.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "SUMMARIZE"
+        ],
+        "dwellMs": 1500,
+        "sampleId": "cord-test-000"
+      },
+      {
+        "name": "cord-test-001-unexpected-summary",
+        "type": "RECEIPT",
+        "imagePath": "test-001.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "SUMMARIZE"
+        ],
+        "dwellMs": 1500,
+        "sampleId": "cord-test-001"
+      },
+      {
+        "name": "cord-test-002-stop",
+        "type": "RECEIPT",
+        "imagePath": "test-002.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT"
+        ],
+        "dwellMs": 0,
+        "stopAfterMs": 1500,
+        "sampleId": "cord-test-002"
+      },
+      {
+        "name": "cord-test-003-stop",
+        "type": "RECEIPT",
+        "imagePath": "test-003.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT"
+        ],
+        "dwellMs": 0,
+        "stopAfterMs": 1500,
+        "sampleId": "cord-test-003"
+      }
+    ]
+  },
+  "trials": [
+    {
+      "scenario": "cord-test-000-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 0,
+      "journeyMs": 1508.563041,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 708.230542,
+          "result": {
+            "text": "901016 -TICKET CP\n2 60.000 60.000\nTOTAL DISC $ -60.000\nTAX 5.455\nSubtotal 60.000\nTOTAL (Qty 2.00 60.000\n- EDC CIMB NIAGA No: xx7730 60.000\nCUSTOMER INFO"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 704.597917000001,
+          "providerMs": 704.4612910000014,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 104,
+            "total_tokens": 440,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 798.895292,
+          "result": {
+            "fields": [
+              {
+                "name": "total",
+                "value": "60.000"
+              },
+              {
+                "name": "tax",
+                "value": "5.455"
+              },
+              {
+                "name": "subtotal",
+                "value": "60.000"
+              }
+            ]
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 795.5131250000013,
+          "providerMs": 795.3752910000003,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 175,
+            "candidatesTokenCount": 93,
+            "totalTokenCount": 268,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 175
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1500.1110420000023,
+        "medianWaitMs": 750.0555210000011,
+        "p95WaitMs": 795.5131250000013
+      },
+      "requestLog": [
+        {
+          "id": "03f25290-9e56-4722-a730-994e7f510fbf",
+          "at": 1792313559109,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "8fa79a77-0266-433a-b7b5-a3c63114c853",
+          "result": "network",
+          "waitMs": 795.5131250000013,
+          "usedPrefetch": false,
+          "providerMs": 795.3752910000003
+        },
+        {
+          "id": "62fbbef2-7bc0-4aca-9642-daa90ce4a8eb",
+          "at": 1792313559109,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "8fa79a77-0266-433a-b7b5-a3c63114c853",
+          "result": "completed",
+          "providerMs": 795.3752910000003,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 175,
+            "candidatesTokenCount": 93,
+            "totalTokenCount": 268,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 175
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "0597fb33-2092-405a-8baf-ccb5b6d33ba5",
+          "at": 1792313558313,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "8fa79a77-0266-433a-b7b5-a3c63114c853",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "19480491-4e19-4c44-a1db-4d4a13bc63c8",
+          "at": 1792313558307,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "8fa79a77-0266-433a-b7b5-a3c63114c853",
+          "result": "network",
+          "waitMs": 704.597917000001,
+          "usedPrefetch": false,
+          "providerMs": 704.4612910000014
+        },
+        {
+          "id": "2d73e062-2f04-432c-baa1-7e1aed533fb5",
+          "at": 1792313558307,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "8fa79a77-0266-433a-b7b5-a3c63114c853",
+          "result": "completed",
+          "providerMs": 704.4612910000014,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 104,
+            "total_tokens": 440,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "c8cdf2c0-e3fa-41ad-b33f-8dd40494cfd2",
+          "at": 1792313557603,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "8fa79a77-0266-433a-b7b5-a3c63114c853",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-000-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 0,
+      "journeyMs": 1440.886208,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 620.599000000002,
+          "result": {
+            "text": "901016 -TICKET CP\n2 60.000 60.000\nTOTAL DISC $ -60.000\nTAX 5.455\nSubtotal 60.000\nTOTAL (Qty 2.00 60.000\n- EDC CIMB NIAGA No: xx7730 60.000\nCUSTOMER INFO"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 617.7027080000007,
+          "providerMs": 617.6342919999988,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 104,
+            "total_tokens": 440,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 818.9285830000008,
+          "result": {
+            "fields": [
+              {
+                "name": "TOTAL",
+                "value": "60.000"
+              },
+              {
+                "name": "TAX",
+                "value": "5.455"
+              },
+              {
+                "name": "Subtotal",
+                "value": "60.000"
+              }
+            ]
+          },
+          "source": "in-flight",
+          "usedPrefetch": true,
+          "waitMs": 815.5562500000015,
+          "providerMs": 820.4247499999983,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 175,
+            "candidatesTokenCount": 93,
+            "totalTokenCount": 268,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 175
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 1,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1433.2589580000022,
+        "medianWaitMs": 716.6294790000011,
+        "p95WaitMs": 815.5562500000015
+      },
+      "requestLog": [
+        {
+          "id": "ce57bc3f-b263-470b-8c49-e14d3e4fffdb",
+          "at": 1792313575571,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "bedae3f5-71b0-48dd-a1d4-d12d0683a58d",
+          "result": "in-flight",
+          "waitMs": 815.5562500000015,
+          "usedPrefetch": true,
+          "providerMs": 820.4247499999983
+        },
+        {
+          "id": "456b1a2b-d9be-44f7-bca6-c3812729f70c",
+          "at": 1792313575571,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "bedae3f5-71b0-48dd-a1d4-d12d0683a58d",
+          "result": "completed",
+          "providerMs": 820.4247499999983,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 175,
+            "candidatesTokenCount": 93,
+            "totalTokenCount": 268,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 175
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "873db521-fa47-4f97-94f6-df15c47afdcd",
+          "at": 1792313574751,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "bedae3f5-71b0-48dd-a1d4-d12d0683a58d",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "059c3c1a-9a08-4aeb-8355-9a21eb7cbdf8",
+          "at": 1792313574750,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "bedae3f5-71b0-48dd-a1d4-d12d0683a58d",
+          "result": "network",
+          "waitMs": 617.7027080000007,
+          "usedPrefetch": false,
+          "providerMs": 617.6342919999988
+        },
+        {
+          "id": "6d3379a7-c144-47c6-93a4-eea3c6d2e6aa",
+          "at": 1792313574750,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "bedae3f5-71b0-48dd-a1d4-d12d0683a58d",
+          "result": "completed",
+          "providerMs": 617.6342919999988,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 104,
+            "total_tokens": 440,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "1ab3d4f0-d6f8-472e-8541-33284f2238c8",
+          "at": 1792313574133,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "bedae3f5-71b0-48dd-a1d4-d12d0683a58d",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-001-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2148.2755000000034,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 643.9979160000003,
+          "result": {
+            "text": "J.STB PROMO 17500\nY.B.BAT 46000\nY.BASO PROM 27500\nTOTAL 91000\nCASH 91000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 641.3567500000063,
+          "providerMs": 641.2749160000021,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1256,
+            "completion_tokens": 54,
+            "total_tokens": 1310,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 3.1430830000026617,
+          "result": {
+            "fields": [
+              {
+                "name": "J.STB PROMO",
+                "value": "17500"
+              },
+              {
+                "name": "Y.B.BAT",
+                "value": "46000"
+              },
+              {
+                "name": "Y.BASO PROM",
+                "value": "27500"
+              },
+              {
+                "name": "TOTAL",
+                "value": "91000"
+              },
+              {
+                "name": "CASH",
+                "value": "91000"
+              }
+            ]
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.11891599999944447,
+          "providerMs": 824.1581660000011,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 128,
+            "candidatesTokenCount": 78,
+            "totalTokenCount": 206,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 128
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 641.4756660000057,
+        "medianWaitMs": 320.73783300000287,
+        "p95WaitMs": 641.3567500000063
+      },
+      "requestLog": [
+        {
+          "id": "0eeb939b-700a-489b-9305-aaeffaa90f49",
+          "at": 1792313592742,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "378a35c6-eb57-4126-ba6e-7f3a1c9a742c",
+          "result": "cache",
+          "waitMs": 0.11891599999944447,
+          "usedPrefetch": true,
+          "providerMs": 824.1581660000011
+        },
+        {
+          "id": "eea92720-7bfa-402f-bdbb-0712ffa040a9",
+          "at": 1792313592061,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "378a35c6-eb57-4126-ba6e-7f3a1c9a742c",
+          "result": "completed",
+          "providerMs": 824.1581660000011,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 128,
+            "candidatesTokenCount": 78,
+            "totalTokenCount": 206,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 128
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "457e3f55-2a37-4deb-9349-fc84fe0ee1b7",
+          "at": 1792313591237,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "378a35c6-eb57-4126-ba6e-7f3a1c9a742c",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "06652acf-879c-4233-bf47-ed1c24a5662d",
+          "at": 1792313591237,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "378a35c6-eb57-4126-ba6e-7f3a1c9a742c",
+          "result": "network",
+          "waitMs": 641.3567500000063,
+          "usedPrefetch": false,
+          "providerMs": 641.2749160000021
+        },
+        {
+          "id": "609ebbca-9006-4ebe-b46f-30fbc66b2fa8",
+          "at": 1792313591237,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "378a35c6-eb57-4126-ba6e-7f3a1c9a742c",
+          "result": "completed",
+          "providerMs": 641.2749160000021,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1256,
+            "completion_tokens": 54,
+            "total_tokens": 1310,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "4ab19783-0da2-4823-9229-2d6747c64473",
+          "at": 1792313590596,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "378a35c6-eb57-4126-ba6e-7f3a1c9a742c",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-001-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 2917.642457999995,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 584.4990000000034,
+          "result": {
+            "text": "J.STB PROMO 17500\nY.B.BAT 46000\nY.BASO PROM 27500\nTOTAL 91000\nCASH 91000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 582.3058329999985,
+          "providerMs": 582.2299579999963,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1256,
+            "completion_tokens": 54,
+            "total_tokens": 1310,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 832.6033749999988,
+          "result": {
+            "fields": [
+              {
+                "name": "J.STB PROMO",
+                "value": "17500"
+              },
+              {
+                "name": "Y.B.BAT",
+                "value": "46000"
+              },
+              {
+                "name": "Y.BASO PROM",
+                "value": "27500"
+              },
+              {
+                "name": "TOTAL",
+                "value": "91000"
+              },
+              {
+                "name": "CASH",
+                "value": "91000"
+              }
+            ]
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 828.8405419999981,
+          "providerMs": 828.6972920000044,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 128,
+            "candidatesTokenCount": 156,
+            "totalTokenCount": 284,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 128
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1411.1463749999966,
+        "medianWaitMs": 705.5731874999983,
+        "p95WaitMs": 828.8405419999981
+      },
+      "requestLog": [
+        {
+          "id": "fe85b851-d333-45d0-a966-5fc869c251ed",
+          "at": 1792313610678,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "d8abf2c4-8a71-4731-9021-46fd6239a168",
+          "result": "network",
+          "waitMs": 828.8405419999981,
+          "usedPrefetch": false,
+          "providerMs": 828.6972920000044
+        },
+        {
+          "id": "50fd3c17-2ed4-4924-bcf2-cb391961fd6a",
+          "at": 1792313610678,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "d8abf2c4-8a71-4731-9021-46fd6239a168",
+          "result": "completed",
+          "providerMs": 828.6972920000044,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 128,
+            "candidatesTokenCount": 156,
+            "totalTokenCount": 284,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 128
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "b87e9214-07f5-4d7f-8eed-c1bcf70048e0",
+          "at": 1792313609849,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "d8abf2c4-8a71-4731-9021-46fd6239a168",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "564a2adb-8174-4205-b776-110ee82a1e41",
+          "at": 1792313608345,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "d8abf2c4-8a71-4731-9021-46fd6239a168",
+          "result": "network",
+          "waitMs": 582.3058329999985,
+          "usedPrefetch": false,
+          "providerMs": 582.2299579999963
+        },
+        {
+          "id": "c63afd1a-ff24-4974-9f80-b841c59b51a3",
+          "at": 1792313608345,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "d8abf2c4-8a71-4731-9021-46fd6239a168",
+          "result": "completed",
+          "providerMs": 582.2299579999963,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1256,
+            "completion_tokens": 54,
+            "total_tokens": 1310,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "24b495ad-5b55-4095-9170-e879feda7636",
+          "at": 1792313607763,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "d8abf2c4-8a71-4731-9021-46fd6239a168",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-002-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 5000,
+      "journeyMs": 6905.002334000004,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 1138.446041999996,
+          "result": {
+            "text": "1 JASMINE MT ( L ) 24.000\nCOCONUT JELLY ( L ) 4.000\nSUB TOTAL 28.000\nTOTAL SALES 28.000\nTOTAL ITEMS 1\nCASH 100.000\nCHANGE 72.000\nQueue No: 102"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1136.395583000005,
+          "providerMs": 1136.3258330000099,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 89,
+            "total_tokens": 1225,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 765.7811660000007,
+          "result": {
+            "fields": [
+              {
+                "name": "total",
+                "value": "28.000"
+              },
+              {
+                "name": "cash",
+                "value": "100.000"
+              },
+              {
+                "name": "change",
+                "value": "72.000"
+              }
+            ]
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 761.4489999999932,
+          "providerMs": 761.3155410000036,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 164,
+            "candidatesTokenCount": 94,
+            "totalTokenCount": 258,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 164
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1897.8445829999982,
+        "medianWaitMs": 948.9222914999991,
+        "p95WaitMs": 1136.395583000005
+      },
+      "requestLog": [
+        {
+          "id": "306ccdff-ad99-4275-bb01-435bf97f61f3",
+          "at": 1792313632605,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "9a945fae-8599-4a61-86fb-0068a7587590",
+          "result": "network",
+          "waitMs": 761.4489999999932,
+          "usedPrefetch": false,
+          "providerMs": 761.3155410000036
+        },
+        {
+          "id": "f9384e9a-2587-4dd7-aff2-3e3211ad2aab",
+          "at": 1792313632605,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "9a945fae-8599-4a61-86fb-0068a7587590",
+          "result": "completed",
+          "providerMs": 761.3155410000036,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 164,
+            "candidatesTokenCount": 94,
+            "totalTokenCount": 258,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 164
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "fb04667f-7c43-4f79-a6a7-1b90ebf69d22",
+          "at": 1792313631844,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "9a945fae-8599-4a61-86fb-0068a7587590",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "815af979-0f7e-4705-aa55-e3c621620fe7",
+          "at": 1792313626838,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "9a945fae-8599-4a61-86fb-0068a7587590",
+          "result": "network",
+          "waitMs": 1136.395583000005,
+          "usedPrefetch": false,
+          "providerMs": 1136.3258330000099
+        },
+        {
+          "id": "94d9c674-e984-4ef4-be6f-8e7d2c462fd5",
+          "at": 1792313626838,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "9a945fae-8599-4a61-86fb-0068a7587590",
+          "result": "completed",
+          "providerMs": 1136.3258330000099,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 89,
+            "total_tokens": 1225,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "24626149-8e4e-4f0e-9655-2256e6b8d92f",
+          "at": 1792313625702,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "9a945fae-8599-4a61-86fb-0068a7587590",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-002-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 5000,
+      "journeyMs": 5537.567916999993,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 532.1764160000021,
+          "result": {
+            "text": "1 JASMINE MT ( L ) 24.000\nCOCONUT JELLY ( L ) 4.000\nSUB TOTAL 28.000\nTOTAL SALES 28.000\nTOTAL ITEMS 1\nCASH 100.000\nCHANGE 72.000\nQueue No: 102"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 529.4189579999947,
+          "providerMs": 529.3525829999999,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 89,
+            "total_tokens": 1225,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 3.8484170000010636,
+          "result": {
+            "fields": [
+              {
+                "name": "TOTAL SALES",
+                "value": "28.000"
+              },
+              {
+                "name": "TOTAL ITEMS",
+                "value": "1"
+              },
+              {
+                "name": "CASH",
+                "value": "100.000"
+              },
+              {
+                "name": "CHANGE",
+                "value": "72.000"
+              }
+            ]
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.09612500001094304,
+          "providerMs": 792.3707499999873,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 164,
+            "candidatesTokenCount": 55,
+            "totalTokenCount": 219,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 164
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 529.5150830000057,
+        "medianWaitMs": 264.75754150000284,
+        "p95WaitMs": 529.4189579999947
+      },
+      "requestLog": [
+        {
+          "id": "bdb28b52-b2e3-4d61-b7c2-413b2002b56e",
+          "at": 1792313653160,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "6caf480d-1a10-4e66-8e63-f7bc1f2b2ef8",
+          "result": "cache",
+          "waitMs": 0.09612500001094304,
+          "usedPrefetch": true,
+          "providerMs": 792.3707499999873
+        },
+        {
+          "id": "d672aa67-40d4-4ab1-b77b-64147de1245b",
+          "at": 1792313648946,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "6caf480d-1a10-4e66-8e63-f7bc1f2b2ef8",
+          "result": "completed",
+          "providerMs": 792.3707499999873,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 164,
+            "candidatesTokenCount": 55,
+            "totalTokenCount": 219,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 164
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "dcad3bc1-2499-4309-882e-2f8d445521c4",
+          "at": 1792313648153,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "6caf480d-1a10-4e66-8e63-f7bc1f2b2ef8",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "73bb0985-fd24-4806-b6df-7bd195d21241",
+          "at": 1792313648153,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "6caf480d-1a10-4e66-8e63-f7bc1f2b2ef8",
+          "result": "network",
+          "waitMs": 529.4189579999947,
+          "usedPrefetch": false,
+          "providerMs": 529.3525829999999
+        },
+        {
+          "id": "16352fb6-98c1-4bbe-b880-827d3e7db1f1",
+          "at": 1792313648153,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "6caf480d-1a10-4e66-8e63-f7bc1f2b2ef8",
+          "result": "completed",
+          "providerMs": 529.3525829999999,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 89,
+            "total_tokens": 1225,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "ef3d6369-2daf-4fc1-8720-9e28f1081e11",
+          "at": 1792313647624,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "6caf480d-1a10-4e66-8e63-f7bc1f2b2ef8",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-003-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 0,
+      "journeyMs": 1597.3817500000005,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 554.1852080000099,
+          "result": {
+            "text": "Bakery & Gate\nD NATURAL\n1X @11000\nDONAT GULA 11,000\n1.00xITEMs\nSUBTOTAL 11,000\nTOTAL 11,000\nCASH 11,000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 551.3917089999886,
+          "providerMs": 551.3095840000024,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 71,
+            "total_tokens": 1207,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 1041.1675419999956,
+          "result": {
+            "fields": [
+              {
+                "name": "merchant_name",
+                "value": "Bakery & Gate"
+              },
+              {
+                "name": "item_description",
+                "value": "DONAT GULA"
+              },
+              {
+                "name": "item_price",
+                "value": "11,000"
+              },
+              {
+                "name": "subtotal",
+                "value": "11,000"
+              },
+              {
+                "name": "total",
+                "value": "11,000"
+              },
+              {
+                "name": "cash",
+                "value": "11,000"
+              }
+            ]
+          },
+          "source": "in-flight",
+          "usedPrefetch": true,
+          "waitMs": 1038.318499999994,
+          "providerMs": 1043.7302500000078,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 144,
+            "candidatesTokenCount": 177,
+            "totalTokenCount": 321,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 144
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 1,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1589.7102089999826,
+        "medianWaitMs": 794.8551044999913,
+        "p95WaitMs": 1038.318499999994
+      },
+      "requestLog": [
+        {
+          "id": "d46716c8-998d-42dc-aa89-1705b96be3db",
+          "at": 1792313669778,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "83913912-bd89-4d4d-999b-823cb81de9de",
+          "result": "in-flight",
+          "waitMs": 1038.318499999994,
+          "usedPrefetch": true,
+          "providerMs": 1043.7302500000078
+        },
+        {
+          "id": "638ad66d-0bf1-44dd-8a96-d645c81f128c",
+          "at": 1792313669778,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "83913912-bd89-4d4d-999b-823cb81de9de",
+          "result": "completed",
+          "providerMs": 1043.7302500000078,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 144,
+            "candidatesTokenCount": 177,
+            "totalTokenCount": 321,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 144
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "8931b8d5-0bc7-4692-8be9-cd8d5fa3ad90",
+          "at": 1792313668735,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "83913912-bd89-4d4d-999b-823cb81de9de",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "4d3de280-6a19-4b13-b8d1-513d51eb83c4",
+          "at": 1792313668734,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "83913912-bd89-4d4d-999b-823cb81de9de",
+          "result": "network",
+          "waitMs": 551.3917089999886,
+          "usedPrefetch": false,
+          "providerMs": 551.3095840000024
+        },
+        {
+          "id": "3f13e2d6-281f-43f5-b0cb-1e82f29cf8e3",
+          "at": 1792313668734,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "83913912-bd89-4d4d-999b-823cb81de9de",
+          "result": "completed",
+          "providerMs": 551.3095840000024,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 71,
+            "total_tokens": 1207,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "153a5bed-0c1c-4fe9-b3b1-6efe90147191",
+          "at": 1792313668183,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "83913912-bd89-4d4d-999b-823cb81de9de",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-003-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 0,
+      "journeyMs": 1896.4476660000073,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 645.4202910000022,
+          "result": {
+            "text": "Bakery & Gate\nD NATURAL\n1X @11000\nDONAT GULA 11,000\n1.00xITEMs\nSUBTOTAL 11,000\nTOTAL 11,000\nCASH 11,000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 643.3009590000147,
+          "providerMs": 643.2452090000152,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 71,
+            "total_tokens": 1207,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 1249.537541999991,
+          "result": {
+            "fields": [
+              {
+                "name": "merchant_name",
+                "value": "Bakery & Gate"
+              },
+              {
+                "name": "item_description",
+                "value": "DONAT GULA"
+              },
+              {
+                "name": "item_price",
+                "value": "11,000"
+              },
+              {
+                "name": "subtotal",
+                "value": "11,000"
+              },
+              {
+                "name": "total",
+                "value": "11,000"
+              },
+              {
+                "name": "cash",
+                "value": "11,000"
+              }
+            ]
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1246.9443329999922,
+          "providerMs": 1246.864333000005,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 144,
+            "candidatesTokenCount": 177,
+            "totalTokenCount": 321,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 144
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1890.2452920000069,
+        "medianWaitMs": 945.1226460000034,
+        "p95WaitMs": 1246.9443329999922
+      },
+      "requestLog": [
+        {
+          "id": "06bdf240-7bf2-43d3-93e1-e234ca87a09f",
+          "at": 1792313686698,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "745e2f73-a8f1-4bf8-a062-17df06b8a2e6",
+          "result": "network",
+          "waitMs": 1246.9443329999922,
+          "usedPrefetch": false,
+          "providerMs": 1246.864333000005
+        },
+        {
+          "id": "ca2250f1-a376-4bc9-883a-d5b08987f47e",
+          "at": 1792313686698,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "745e2f73-a8f1-4bf8-a062-17df06b8a2e6",
+          "result": "completed",
+          "providerMs": 1246.864333000005,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 144,
+            "candidatesTokenCount": 177,
+            "totalTokenCount": 321,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 144
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "3d3dadfb-1c6c-488a-ac78-340c43333e5e",
+          "at": 1792313685451,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "745e2f73-a8f1-4bf8-a062-17df06b8a2e6",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "6ace2eaf-c1f2-4462-aba0-713bd7eaa1bf",
+          "at": 1792313685447,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "745e2f73-a8f1-4bf8-a062-17df06b8a2e6",
+          "result": "network",
+          "waitMs": 643.3009590000147,
+          "usedPrefetch": false,
+          "providerMs": 643.2452090000152
+        },
+        {
+          "id": "000f6595-7b42-4221-8425-d79e020a9033",
+          "at": 1792313685447,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "745e2f73-a8f1-4bf8-a062-17df06b8a2e6",
+          "result": "completed",
+          "providerMs": 643.2452090000152,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 71,
+            "total_tokens": 1207,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "e9be938d-1485-4728-b250-6d5c507805ab",
+          "at": 1792313684804,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "745e2f73-a8f1-4bf8-a062-17df06b8a2e6",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-004-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 3028.009250000003,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 722.5194579999952,
+          "result": {
+            "text": "ICE BLACKCOFFE 2 82,000\nAVOCADO COFFEE 1 61,000\nCHIKEN KATSU FF 1 51,000\nSUB_TOTAL 194,000\nDISCOUNT 19,400\nTOTAL 174,600\nCASH 200,000\nCHANGE 25,400"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 720.5501670000085,
+          "providerMs": 720.4945420000004,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 101,
+            "total_tokens": 1237,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 803.8463340000017,
+          "result": {
+            "fields": [
+              {
+                "name": "SUB_TOTAL",
+                "value": "194,000"
+              },
+              {
+                "name": "DISCOUNT",
+                "value": "19,400"
+              },
+              {
+                "name": "TOTAL",
+                "value": "174,600"
+              },
+              {
+                "name": "CASH",
+                "value": "200,000"
+              },
+              {
+                "name": "CHANGE",
+                "value": "25,400"
+              }
+            ]
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 800.6363330000022,
+          "providerMs": 800.5180419999815,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 176,
+            "candidatesTokenCount": 154,
+            "totalTokenCount": 330,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 176
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1521.1865000000107,
+        "medianWaitMs": 760.5932500000054,
+        "p95WaitMs": 800.6363330000022
+      },
+      "requestLog": [
+        {
+          "id": "3c974fec-7975-4f15-8ee2-c0dc43273a25",
+          "at": 1792313704752,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "13619599-08c7-4f6f-be99-259192f4be43",
+          "result": "network",
+          "waitMs": 800.6363330000022,
+          "usedPrefetch": false,
+          "providerMs": 800.5180419999815
+        },
+        {
+          "id": "5dabbd0b-6a53-4160-8757-c34892487cf9",
+          "at": 1792313704752,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "13619599-08c7-4f6f-be99-259192f4be43",
+          "result": "completed",
+          "providerMs": 800.5180419999815,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 176,
+            "candidatesTokenCount": 154,
+            "totalTokenCount": 330,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 176
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "507c5141-7311-495c-b396-73e201b6b82e",
+          "at": 1792313703952,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "13619599-08c7-4f6f-be99-259192f4be43",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "431ad2af-3f12-43db-a788-7bf1d3a523de",
+          "at": 1792313702447,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "13619599-08c7-4f6f-be99-259192f4be43",
+          "result": "network",
+          "waitMs": 720.5501670000085,
+          "usedPrefetch": false,
+          "providerMs": 720.4945420000004
+        },
+        {
+          "id": "1268f0d5-c1b1-41d4-8531-5d5c7fa274b4",
+          "at": 1792313702447,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "13619599-08c7-4f6f-be99-259192f4be43",
+          "result": "completed",
+          "providerMs": 720.4945420000004,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 101,
+            "total_tokens": 1237,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "70e9e578-8922-4e9b-90b3-3ab7156e36b8",
+          "at": 1792313701726,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "13619599-08c7-4f6f-be99-259192f4be43",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-004-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2099.812666999991,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 595.5143329999992,
+          "result": {
+            "text": "ICE BLACKCOFFE 2 82,000\nAVOCADO COFFEE 1 61,000\nCHIKEN KATSU FF 1 51,000\nSUB_TOTAL 194,000\nDISCOUNT 19,400\nTOTAL 174,600\nCASH 200,000\nCHANGE 25,400"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 592.9794589999947,
+          "providerMs": 592.9231250000012,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 101,
+            "total_tokens": 1237,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 3.0598750000062864,
+          "result": {
+            "fields": [
+              {
+                "name": "ICE BLACKCOFFE",
+                "value": "82,000"
+              },
+              {
+                "name": "AVOCADO COFFEE",
+                "value": "61,000"
+              },
+              {
+                "name": "CHIKEN KATSU FF",
+                "value": "51,000"
+              },
+              {
+                "name": "SUB_TOTAL",
+                "value": "194,000"
+              },
+              {
+                "name": "DISCOUNT",
+                "value": "19,400"
+              },
+              {
+                "name": "TOTAL",
+                "value": "174,600"
+              },
+              {
+                "name": "CASH",
+                "value": "200,000"
+              },
+              {
+                "name": "CHANGE",
+                "value": "25,400"
+              }
+            ]
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.11783299999660812,
+          "providerMs": 1119.6058749999793,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 176,
+            "candidatesTokenCount": 247,
+            "totalTokenCount": 423,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 176
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 593.0972919999913,
+        "medianWaitMs": 296.54864599999564,
+        "p95WaitMs": 592.9794589999947
+      },
+      "requestLog": [
+        {
+          "id": "cac7a2cf-bd75-41bb-8b08-69972a587e81",
+          "at": 1792313721877,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c235287b-302f-46d9-868f-74d1536bac15",
+          "result": "cache",
+          "waitMs": 0.11783299999660812,
+          "usedPrefetch": true,
+          "providerMs": 1119.6058749999793
+        },
+        {
+          "id": "92be0884-7590-495b-b0a2-b11e1246bc4a",
+          "at": 1792313721492,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c235287b-302f-46d9-868f-74d1536bac15",
+          "result": "completed",
+          "providerMs": 1119.6058749999793,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 176,
+            "candidatesTokenCount": 247,
+            "totalTokenCount": 423,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 176
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "f19505c4-3aad-4506-97bb-4534e6c77378",
+          "at": 1792313720372,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c235287b-302f-46d9-868f-74d1536bac15",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "0334c57f-5f49-4d5d-bae9-a6a586ba4c34",
+          "at": 1792313720372,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "c235287b-302f-46d9-868f-74d1536bac15",
+          "result": "network",
+          "waitMs": 592.9794589999947,
+          "usedPrefetch": false,
+          "providerMs": 592.9231250000012
+        },
+        {
+          "id": "caf0b60e-ce9b-4570-a8c1-011b82957dac",
+          "at": 1792313720372,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "c235287b-302f-46d9-868f-74d1536bac15",
+          "result": "completed",
+          "providerMs": 592.9231250000012,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 101,
+            "total_tokens": 1237,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "20f4fd79-c7b4-4809-9894-9cf5953b81bb",
+          "at": 1792313719779,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "c235287b-302f-46d9-868f-74d1536bac15",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-005-extract",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 5000,
+      "journeyMs": 6698.667458000011,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 1692.8899580000143,
+          "result": {
+            "text": "TRAD KY TOAST CARTE 28.182\nITEMS 1.00\nSUBTTL 28.182\nPB-1 10% 2.818\nTOTAL 31.000\nCASH 31.000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1690.531874999986,
+          "providerMs": 1690.4904170000227,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 9272,
+            "completion_tokens": 70,
+            "total_tokens": 9342,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 4.234333000000333,
+          "result": {
+            "fields": [
+              {
+                "name": "itemType",
+                "value": "RECEIPT"
+              },
+              {
+                "name": "SUBTTL",
+                "value": "28.182"
+              },
+              {
+                "name": "TOTAL",
+                "value": "31.000"
+              }
+            ]
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.09558300001663156,
+          "providerMs": 912.8553340000217,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 142,
+            "candidatesTokenCount": 91,
+            "totalTokenCount": 233,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 142
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1690.6274580000027,
+        "medianWaitMs": 845.3137290000013,
+        "p95WaitMs": 1690.531874999986
+      },
+      "requestLog": [
+        {
+          "id": "bbd9640d-d3f8-49a1-a1d4-efc3c1ab473a",
+          "at": 1792313743601,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4e0eb92a-d07e-421a-b50d-d73996883c17",
+          "result": "cache",
+          "waitMs": 0.09558300001663156,
+          "usedPrefetch": true,
+          "providerMs": 912.8553340000217
+        },
+        {
+          "id": "02f29804-e4cf-42f2-a181-e59a82c78706",
+          "at": 1792313739507,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4e0eb92a-d07e-421a-b50d-d73996883c17",
+          "result": "completed",
+          "providerMs": 912.8553340000217,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 142,
+            "candidatesTokenCount": 91,
+            "totalTokenCount": 233,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 142
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "3b7b822d-60d0-49ed-8797-c9ef2d45a6c1",
+          "at": 1792313738594,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4e0eb92a-d07e-421a-b50d-d73996883c17",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "6422ed3a-0dcf-4a09-8ea8-ddbd4dd2fdfe",
+          "at": 1792313738594,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "4e0eb92a-d07e-421a-b50d-d73996883c17",
+          "result": "network",
+          "waitMs": 1690.531874999986,
+          "usedPrefetch": false,
+          "providerMs": 1690.4904170000227
+        },
+        {
+          "id": "b15caa7d-6448-4178-a2eb-6199355098b6",
+          "at": 1792313738594,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "4e0eb92a-d07e-421a-b50d-d73996883c17",
+          "result": "completed",
+          "providerMs": 1690.4904170000227,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 9272,
+            "completion_tokens": 70,
+            "total_tokens": 9342,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "e0c6a0bf-431f-4fad-852f-0ef95a12a223",
+          "at": 1792313736903,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "4e0eb92a-d07e-421a-b50d-d73996883c17",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-005-extract",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 5000,
+      "journeyMs": 6966.107208000001,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 1134.6573749999807,
+          "result": {
+            "text": "TRAD KY TOAST CARTE 28.182\nITEMS 1.00\nSUBTTL 28.182\nPB-1 10% 2.818\nTOTAL 31.000\nCASH 31.000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 1132.7659170000115,
+          "providerMs": 1132.7074999999895,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 9272,
+            "completion_tokens": 70,
+            "total_tokens": 9342,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 830.1816249999974,
+          "result": {
+            "fields": [
+              {
+                "name": "itemType",
+                "value": "RECEIPT"
+              },
+              {
+                "name": "source",
+                "value": "TRAD KY TOAST CARTE 28.182\nITEMS 1.00\nSUBTTL 28.182\nPB-1 10% 2.818\nTOTAL 31.000\nCASH 31.000"
+              }
+            ]
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 824.8648749999993,
+          "providerMs": 824.719374999986,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 142,
+            "candidatesTokenCount": 126,
+            "totalTokenCount": 268,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 142
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1957.6307920000108,
+        "medianWaitMs": 978.8153960000054,
+        "p95WaitMs": 1132.7659170000115
+      },
+      "requestLog": [
+        {
+          "id": "8d33c9c3-12c3-4875-ac16-7ad0a9edca0b",
+          "at": 1792313765594,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "5f3d25d5-ebde-4c06-9bfc-46dcfe64f7dc",
+          "result": "network",
+          "waitMs": 824.8648749999993,
+          "usedPrefetch": false,
+          "providerMs": 824.719374999986
+        },
+        {
+          "id": "dcd2d553-a2f3-4a70-95a9-be480527e5fa",
+          "at": 1792313765594,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "5f3d25d5-ebde-4c06-9bfc-46dcfe64f7dc",
+          "result": "completed",
+          "providerMs": 824.719374999986,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 142,
+            "candidatesTokenCount": 126,
+            "totalTokenCount": 268,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 142
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "01757838-862b-4db7-82e5-2261a01f3456",
+          "at": 1792313764769,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "5f3d25d5-ebde-4c06-9bfc-46dcfe64f7dc",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "6d2b92d9-a195-4000-9b81-8ffa85338fcd",
+          "at": 1792313759763,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "5f3d25d5-ebde-4c06-9bfc-46dcfe64f7dc",
+          "result": "network",
+          "waitMs": 1132.7659170000115,
+          "usedPrefetch": false,
+          "providerMs": 1132.7074999999895
+        },
+        {
+          "id": "b5bfd6ee-2413-4f79-baae-fd3bbfec683a",
+          "at": 1792313759763,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "5f3d25d5-ebde-4c06-9bfc-46dcfe64f7dc",
+          "result": "completed",
+          "providerMs": 1132.7074999999895,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 9272,
+            "completion_tokens": 70,
+            "total_tokens": 9342,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "4ce2c7a7-ce7f-4a49-a922-1c52eab04cec",
+          "at": 1792313758630,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "5f3d25d5-ebde-4c06-9bfc-46dcfe64f7dc",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-000-unexpected-summary",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 2799.4697080000187,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 590.1756670000032,
+          "result": {
+            "text": "901016 -TICKET CP\n2 60.000 60.000\nTOTAL DISC $ -60.000\nTAX 5.455\nSubtotal 60.000\nTOTAL (Qty 2.00 60.000\n- EDC CIMB NIAGA No: xx7730 60.000\nCUSTOMER INFO"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 588.1970420000143,
+          "providerMs": 588.1407500000205,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 104,
+            "total_tokens": 440,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "clientWaitMs": 707.9445419999829,
+          "result": {
+            "summary": "Receipt for two items totaling 60.000 with a 60.000 discount, 5.455 tax, and payment made via EDC CIMB NIAGA card ending in 7730."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 704.707458000019,
+          "providerMs": 704.5805830000027,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 157,
+            "candidatesTokenCount": 58,
+            "totalTokenCount": 215,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 157
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1292.9045000000333,
+        "medianWaitMs": 646.4522500000166,
+        "p95WaitMs": 704.707458000019
+      },
+      "requestLog": [
+        {
+          "id": "143c5bbe-c7e6-4498-906a-ba5f2098b13b",
+          "at": 1792313783417,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "1c1fabcd-eafa-4725-abc6-4b0c5b7b962d",
+          "result": "network",
+          "waitMs": 704.707458000019,
+          "usedPrefetch": false,
+          "providerMs": 704.5805830000027
+        },
+        {
+          "id": "b8e84aff-4901-4717-8623-f3d9cfdbf552",
+          "at": 1792313783417,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "1c1fabcd-eafa-4725-abc6-4b0c5b7b962d",
+          "result": "completed",
+          "providerMs": 704.5805830000027,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 157,
+            "candidatesTokenCount": 58,
+            "totalTokenCount": 215,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 157
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "3e7a35ec-f024-4385-80ba-4b588dd08771",
+          "at": 1792313782712,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "1c1fabcd-eafa-4725-abc6-4b0c5b7b962d",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "9112f8ae-83dc-4d0e-b279-f55ecc608094",
+          "at": 1792313781208,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "1c1fabcd-eafa-4725-abc6-4b0c5b7b962d",
+          "result": "network",
+          "waitMs": 588.1970420000143,
+          "usedPrefetch": false,
+          "providerMs": 588.1407500000205
+        },
+        {
+          "id": "38b9abba-4a5d-47d7-bea6-b1e2238c1b72",
+          "at": 1792313781208,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "1c1fabcd-eafa-4725-abc6-4b0c5b7b962d",
+          "result": "completed",
+          "providerMs": 588.1407500000205,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 104,
+            "total_tokens": 440,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "f42f9a63-8e08-451f-bf7c-1e002d566c77",
+          "at": 1792313780619,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "1c1fabcd-eafa-4725-abc6-4b0c5b7b962d",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-000-unexpected-summary",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2843.248250000004,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 518.6524159999972,
+          "result": {
+            "text": "901016 -TICKET CP\n2 60.000 60.000\nTOTAL DISC $ -60.000\nTAX 5.455\nSubtotal 60.000\nTOTAL (Qty 2.00 60.000\n- EDC CIMB NIAGA No: xx7730 60.000\nCUSTOMER INFO"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 515.9228749999893,
+          "providerMs": 515.8563749999739,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 104,
+            "total_tokens": 440,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "clientWaitMs": 823.6901249999937,
+          "result": {
+            "summary": "Receipt for a ticket purchase of quantity 2 with a subtotal and total of 60.000, including a discount of -60.000, tax of 5.455, and payment made via EDC CIMB NIAGA."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 819.9651669999876,
+          "providerMs": 819.8270419999899,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 157,
+            "candidatesTokenCount": 64,
+            "totalTokenCount": 221,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 157
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 1,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1335.8880419999768,
+        "medianWaitMs": 667.9440209999884,
+        "p95WaitMs": 819.9651669999876
+      },
+      "requestLog": [
+        {
+          "id": "3a5deb97-b1c0-467e-bee6-a5ef2de7e3fa",
+          "at": 1792313801287,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "b798f972-1d3d-49b6-a917-d6fc3de36734",
+          "result": "network",
+          "waitMs": 819.9651669999876,
+          "usedPrefetch": false,
+          "providerMs": 819.8270419999899
+        },
+        {
+          "id": "1839643e-3c63-4462-b6b3-e8926089dde1",
+          "at": 1792313801287,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "b798f972-1d3d-49b6-a917-d6fc3de36734",
+          "result": "completed",
+          "providerMs": 819.8270419999899,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 157,
+            "candidatesTokenCount": 64,
+            "totalTokenCount": 221,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 157
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "56b54e5f-3863-40b2-ad93-1dfd02224997",
+          "at": 1792313800467,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "b798f972-1d3d-49b6-a917-d6fc3de36734",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "d02287c0-85e8-4e35-8633-f8792edbeb2b",
+          "at": 1792313799866,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "b798f972-1d3d-49b6-a917-d6fc3de36734",
+          "result": "completed",
+          "providerMs": 904.7369159999944,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 175,
+            "candidatesTokenCount": 120,
+            "totalTokenCount": 295,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 175
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "1e21eace-8dba-41f4-843d-3b4a3d20f62e",
+          "at": 1792313798962,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "b798f972-1d3d-49b6-a917-d6fc3de36734",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "d5026332-2173-45fd-ad3e-b90c8d9e7174",
+          "at": 1792313798961,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "b798f972-1d3d-49b6-a917-d6fc3de36734",
+          "result": "network",
+          "waitMs": 515.9228749999893,
+          "usedPrefetch": false,
+          "providerMs": 515.8563749999739
+        },
+        {
+          "id": "113f5a31-352b-46fb-9766-438615a14d24",
+          "at": 1792313798961,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "b798f972-1d3d-49b6-a917-d6fc3de36734",
+          "result": "completed",
+          "providerMs": 515.8563749999739,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 104,
+            "total_tokens": 440,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "c0a09f06-f5ce-4fe8-af6f-0e02f7b805e5",
+          "at": 1792313798446,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "b798f972-1d3d-49b6-a917-d6fc3de36734",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-001-unexpected-summary",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 1500,
+      "journeyMs": 2871.739124999993,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 534.1942500000005,
+          "result": {
+            "text": "J.STB PROMO 17500\nY.B.BAT 46000\nY.BASO PROM 27500\nTOTAL 91000\nCASH 91000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 532.0589170000167,
+          "providerMs": 532.0102080000215,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1256,
+            "completion_tokens": 54,
+            "total_tokens": 1310,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "clientWaitMs": 836.753624999983,
+          "result": {
+            "summary": "Receipt for J.STB PROMO (17500), Y.B.BAT (46000), and Y.BASO PROM (27500) totaling 91000, paid in cash."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 834.0599999999977,
+          "providerMs": 833.9631659999723,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 110,
+            "candidatesTokenCount": 61,
+            "totalTokenCount": 171,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 110
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 1,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1366.1189170000143,
+        "medianWaitMs": 683.0594585000072,
+        "p95WaitMs": 834.0599999999977
+      },
+      "requestLog": [
+        {
+          "id": "d62efd11-c6eb-4be6-b875-871918ca431f",
+          "at": 1792313819185,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "6e1aeef8-e90d-475c-9663-37ae29a3eb24",
+          "result": "network",
+          "waitMs": 834.0599999999977,
+          "usedPrefetch": false,
+          "providerMs": 833.9631659999723
+        },
+        {
+          "id": "d509946c-49e7-436d-9ad5-39d58edf597e",
+          "at": 1792313819185,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "6e1aeef8-e90d-475c-9663-37ae29a3eb24",
+          "result": "completed",
+          "providerMs": 833.9631659999723,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 110,
+            "candidatesTokenCount": 61,
+            "totalTokenCount": 171,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 110
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "d6c1405c-aedd-4e3a-8e18-85f2b22c4105",
+          "at": 1792313818351,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "6e1aeef8-e90d-475c-9663-37ae29a3eb24",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "b964b1ce-ef73-43e2-b84d-8d6f9c1b56fd",
+          "at": 1792313818300,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "6e1aeef8-e90d-475c-9663-37ae29a3eb24",
+          "result": "completed",
+          "providerMs": 1453.2885000000242,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 128,
+            "candidatesTokenCount": 156,
+            "totalTokenCount": 284,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 128
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "9a9f6bad-c71c-4055-b96d-90abfde21258",
+          "at": 1792313816847,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "6e1aeef8-e90d-475c-9663-37ae29a3eb24",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "98549d99-8fdd-4e33-a54f-9d5ad6e8c85b",
+          "at": 1792313816847,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "6e1aeef8-e90d-475c-9663-37ae29a3eb24",
+          "result": "network",
+          "waitMs": 532.0589170000167,
+          "usedPrefetch": false,
+          "providerMs": 532.0102080000215
+        },
+        {
+          "id": "57de5411-a896-47e4-8efb-e695dcd4f8fa",
+          "at": 1792313816847,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "6e1aeef8-e90d-475c-9663-37ae29a3eb24",
+          "result": "completed",
+          "providerMs": 532.0102080000215,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1256,
+            "completion_tokens": 54,
+            "total_tokens": 1310,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "70c6ba98-95c2-4f7c-be0c-26c8c06b305c",
+          "at": 1792313816315,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "6e1aeef8-e90d-475c-9663-37ae29a3eb24",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-001-unexpected-summary",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 1500,
+      "journeyMs": 2770.1730409999727,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 538.5679170000367,
+          "result": {
+            "text": "J.STB PROMO 17500\nY.B.BAT 46000\nY.BASO PROM 27500\nTOTAL 91000\nCASH 91000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 535.3114999999525,
+          "providerMs": 535.2674170000246,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1256,
+            "completion_tokens": 54,
+            "total_tokens": 1310,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "SUMMARIZE",
+          "clientWaitMs": 730.0383339999826,
+          "result": {
+            "summary": "A receipt showing a total of 91,000 paid in cash, consisting of J.STB PROMO for 17,500, Y.B.BAT for 46,000, and Y.BASO PROM for 27,500."
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 727.0751250000321,
+          "providerMs": 726.97775000002,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 110,
+            "candidatesTokenCount": 68,
+            "totalTokenCount": 178,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 110
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1262.3866249999846,
+        "medianWaitMs": 631.1933124999923,
+        "p95WaitMs": 727.0751250000321
+      },
+      "requestLog": [
+        {
+          "id": "b8cf4631-df07-4579-9fec-258bdd9b8922",
+          "at": 1792313836979,
+          "kind": "navigation",
+          "action": "SUMMARIZE",
+          "itemId": "7f7e9a4c-fc42-4027-a590-a85e5eec34d2",
+          "result": "network",
+          "waitMs": 727.0751250000321,
+          "usedPrefetch": false,
+          "providerMs": 726.97775000002
+        },
+        {
+          "id": "5a3858a7-aaef-44e5-855e-13bcb74e1daf",
+          "at": 1792313836979,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "7f7e9a4c-fc42-4027-a590-a85e5eec34d2",
+          "result": "completed",
+          "providerMs": 726.97775000002,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 110,
+            "candidatesTokenCount": 68,
+            "totalTokenCount": 178,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 110
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "010e4436-ebbc-48f7-9ff1-16aed11ed077",
+          "at": 1792313836252,
+          "kind": "provider",
+          "action": "SUMMARIZE",
+          "itemId": "7f7e9a4c-fc42-4027-a590-a85e5eec34d2",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "8e1e1ba5-582d-42ae-962e-77e1d5b0e2c6",
+          "at": 1792313834747,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "7f7e9a4c-fc42-4027-a590-a85e5eec34d2",
+          "result": "network",
+          "waitMs": 535.3114999999525,
+          "usedPrefetch": false,
+          "providerMs": 535.2674170000246
+        },
+        {
+          "id": "e729c286-aaf9-45e8-9c89-19844c537259",
+          "at": 1792313834747,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "7f7e9a4c-fc42-4027-a590-a85e5eec34d2",
+          "result": "completed",
+          "providerMs": 535.2674170000246,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1256,
+            "completion_tokens": 54,
+            "total_tokens": 1310,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "28910c5a-e536-48f2-9850-1d6509e262a7",
+          "at": 1792313834212,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "7f7e9a4c-fc42-4027-a590-a85e5eec34d2",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-002-stop",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 0,
+      "journeyMs": 2428.5433329999796,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 927.5727920000209,
+          "result": {
+            "text": "1 JASMINE MT ( L ) 24.000\nCOCONUT JELLY ( L ) 4.000\nSUB TOTAL 28.000\nTOTAL SALES 28.000\nTOTAL ITEMS 1\nCASH 100.000\nCHANGE 72.000\nQueue No: 102"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 925.8996669999906,
+          "providerMs": 925.8196670000325,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 89,
+            "total_tokens": 1225,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 1,
+        "hits": 0,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 925.8996669999906,
+        "medianWaitMs": 925.8996669999906,
+        "p95WaitMs": 925.8996669999906
+      },
+      "requestLog": [
+        {
+          "id": "6bcc5440-1528-4c45-aee7-f477dfe8a019",
+          "at": 1792313852932,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "3cee8c55-9caa-4721-a2cc-cdf4c29fedfd",
+          "result": "network",
+          "waitMs": 925.8996669999906,
+          "usedPrefetch": false,
+          "providerMs": 925.8196670000325
+        },
+        {
+          "id": "2b53cdf2-8a02-4ef9-aebb-4d8fcc3b6cbf",
+          "at": 1792313852932,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "3cee8c55-9caa-4721-a2cc-cdf4c29fedfd",
+          "result": "completed",
+          "providerMs": 925.8196670000325,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 89,
+            "total_tokens": 1225,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "deceed87-fae2-4951-8952-c4c7272660ca",
+          "at": 1792313852006,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "3cee8c55-9caa-4721-a2cc-cdf4c29fedfd",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-002-stop",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 0,
+      "journeyMs": 2078.397916999995,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 576.861957999994,
+          "result": {
+            "text": "1 JASMINE MT ( L ) 24.000\nCOCONUT JELLY ( L ) 4.000\nSUB TOTAL 28.000\nTOTAL SALES 28.000\nTOTAL ITEMS 1\nCASH 100.000\nCHANGE 72.000\nQueue No: 102"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 574.2956669999985,
+          "providerMs": 574.214833999984,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 89,
+            "total_tokens": 1225,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 1,
+        "hits": 0,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 1,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 574.2956669999985,
+        "medianWaitMs": 574.2956669999985,
+        "p95WaitMs": 574.2956669999985
+      },
+      "requestLog": [
+        {
+          "id": "62c9ff28-cf2d-42e5-8cb8-17edf8cc4942",
+          "at": 1792313870929,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "7c1150a0-8d89-42ee-aa9c-6722d96307ee",
+          "result": "completed",
+          "providerMs": 895.463665999996,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 164,
+            "candidatesTokenCount": 147,
+            "totalTokenCount": 311,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 164
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "fffa759b-9437-484c-8a99-b61d95ad5cf6",
+          "at": 1792313870034,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "7c1150a0-8d89-42ee-aa9c-6722d96307ee",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "52c75cf2-fe63-43dc-a6f6-62be3c69fee0",
+          "at": 1792313870034,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "7c1150a0-8d89-42ee-aa9c-6722d96307ee",
+          "result": "network",
+          "waitMs": 574.2956669999985,
+          "usedPrefetch": false,
+          "providerMs": 574.214833999984
+        },
+        {
+          "id": "b74f096e-e474-423d-aa30-1c43153af35f",
+          "at": 1792313870034,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "7c1150a0-8d89-42ee-aa9c-6722d96307ee",
+          "result": "completed",
+          "providerMs": 574.214833999984,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 89,
+            "total_tokens": 1225,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "70aca977-b012-4825-9e93-1a1ab935263a",
+          "at": 1792313869459,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "7c1150a0-8d89-42ee-aa9c-6722d96307ee",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-003-stop",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 0,
+      "journeyMs": 2014.8089579999796,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 513.3726250000182,
+          "result": {
+            "text": "Bakery & Gate\nD NATURAL\n1X @11000\nDONAT GULA 11,000\n1.00xITEMs\nSUBTOTAL 11,000\nTOTAL 11,000\nCASH 11,000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 511.0494999999646,
+          "providerMs": 510.9937090000021,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 71,
+            "total_tokens": 1207,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 1,
+        "hits": 0,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 1,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 511.0494999999646,
+        "medianWaitMs": 511.0494999999646,
+        "p95WaitMs": 511.0494999999646
+      },
+      "requestLog": [
+        {
+          "id": "a9c13c30-b185-45fd-92da-557192a895fc",
+          "at": 1792313888105,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "6b52addb-2a99-4db5-ab76-043d6c96f9b4",
+          "result": "completed",
+          "providerMs": 1034.3519589999923,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 144,
+            "candidatesTokenCount": 176,
+            "totalTokenCount": 320,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 144
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "b74ccfc8-dbcd-4e37-a8c6-cbbb56103ec6",
+          "at": 1792313887071,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "6b52addb-2a99-4db5-ab76-043d6c96f9b4",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "e23da6f3-168d-4a18-9a7f-d43c5429034d",
+          "at": 1792313887071,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "6b52addb-2a99-4db5-ab76-043d6c96f9b4",
+          "result": "network",
+          "waitMs": 511.0494999999646,
+          "usedPrefetch": false,
+          "providerMs": 510.9937090000021
+        },
+        {
+          "id": "0b83c533-4d4c-4531-a10b-2eacad826f0d",
+          "at": 1792313887071,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "6b52addb-2a99-4db5-ab76-043d6c96f9b4",
+          "result": "completed",
+          "providerMs": 510.9937090000021,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 71,
+            "total_tokens": 1207,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "2f3d8578-131d-4ed4-bc24-6c9ff63a1f8e",
+          "at": 1792313886560,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "6b52addb-2a99-4db5-ab76-043d6c96f9b4",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-test-003-stop",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 0,
+      "journeyMs": 2028.7407079999684,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 527.8471669999999,
+          "result": {
+            "text": "Bakery & Gate\nD NATURAL\n1X @11000\nDONAT GULA 11,000\n1.00xITEMs\nSUBTOTAL 11,000\nTOTAL 11,000\nCASH 11,000"
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 526.1529999999912,
+          "providerMs": 526.1020419999841,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 71,
+            "total_tokens": 1207,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 1,
+        "hits": 0,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 526.1529999999912,
+        "medianWaitMs": 526.1529999999912,
+        "p95WaitMs": 526.1529999999912
+      },
+      "requestLog": [
+        {
+          "id": "d0721fc0-617b-42ab-8b0f-e8b439bd40c1",
+          "at": 1792313904123,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "b95323bc-12e7-4940-919f-3c3bdbbd963d",
+          "result": "network",
+          "waitMs": 526.1529999999912,
+          "usedPrefetch": false,
+          "providerMs": 526.1020419999841
+        },
+        {
+          "id": "972abf85-ee1c-48f5-8bd3-18be20ffcf60",
+          "at": 1792313904123,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "b95323bc-12e7-4940-919f-3c3bdbbd963d",
+          "result": "completed",
+          "providerMs": 526.1020419999841,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 1136,
+            "completion_tokens": 71,
+            "total_tokens": 1207,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "d3029b5a-6fbc-4896-8c7e-42a4d8678538",
+          "at": 1792313903596,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "b95323bc-12e7-4940-919f-3c3bdbbd963d",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    }
+  ]
+}
