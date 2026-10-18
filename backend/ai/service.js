@@ -13,7 +13,10 @@ const MAX_ITEMS = 10;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 // What to do about a failed provider call, decided by the kind of error:
 //   retry - temporary (timeout, network, server error, garbled reply):
-//           Read text retries automatically, up to twice (three attempts)
+//           Read text retries automatically, up to twice (three attempts),
+//           except after a timeout: that already waited AI_TIMEOUT_MS, and
+//           three of them would leave the user waiting over a minute
+//           before being offered Retry or typed text
 //   image - the image itself (no readable text, reply cut off): retrying the
 //           same image gives the same result; use a better photo or type it
 //   wait  - rate limit or quota: no automatic retry; try again later
@@ -153,7 +156,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     for (let attempt = 0; ; attempt++) {
       try { return await providers.run(action, { ...doc }); }
       catch (error) {
-        if (attempt >= delays.length || recoveryFor(error) !== 'retry') {
+        if (attempt >= delays.length || recoveryFor(error) !== 'retry' || error.code === 'PROVIDER_TIMEOUT') {
           error.attempts = attempt + 1;
           if (attempt > 0 && error instanceof AIError) error.message = `${error.message} (gave up after ${attempt + 1} attempts)`;
           throw error;

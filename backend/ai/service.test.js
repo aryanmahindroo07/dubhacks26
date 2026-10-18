@@ -306,6 +306,19 @@ test('a wrong key, model or quota is not retried',async()=>{
   assert.equal(server.calls(),3,'server errors are retried');
 });
 
+test('a timeout is not retried automatically but still offers Retry',async()=>{
+  const f=flakyOcr(99,()=>new AIError('Perceptron did not answer within 30 s.',502,'PROVIDER_TIMEOUT'));
+  const item=f.service.upload(f.session,{type:'RECEIPT',name:'r.png',image:IMAGE});
+  await assert.rejects(f.service.perform(f.session,item.id,'READ_TEXT'),/did not answer/);
+  assert.equal(f.calls(),1,'one wait of AI_TIMEOUT_MS, not three');
+  const error=f.service.snapshot(f.session).items[0].error;
+  assert.equal(error.recovery,'retry');assert.equal(error.attempts,1);
+  const providers=createProviders({env:{PERCEPTRON_API_KEY:'fake-test-only',AI_TIMEOUT_MS:'1000'},fetchImpl:async()=>{throw new DOMException('timed out','TimeoutError');}});
+  await assert.rejects(providers.run('READ_TEXT',{image:IMAGE}),e=>e.code==='PROVIDER_TIMEOUT'&&/within 1 s/.test(e.message));
+  const offline=createProviders({env:{PERCEPTRON_API_KEY:'fake-test-only'},fetchImpl:async()=>{throw new TypeError('fetch failed');}});
+  await assert.rejects(offline.run('READ_TEXT',{image:IMAGE}),e=>e.code==='PROVIDER_UNAVAILABLE');
+});
+
 test('read-ahead also stops after three attempts on a failing image',async()=>{
   const f=flakyOcr(99);
   const a=f.service.upload(f.session,{type:'RECEIPT',name:'a.png',image:IMAGE});
@@ -318,7 +331,8 @@ test('read-ahead also stops after three attempts on a failing image',async()=>{
 test('each kind of failure gets its own recovery',async()=>{
   const {recoveryFor}=require('./service');
   const rejected=status=>Object.assign(new AIError('x',502,'PROVIDER_REJECTED'),{providerStatus:status});
-  assert.equal(recoveryFor(new AIError('timeout',502,'PROVIDER_UNAVAILABLE')),'retry');
+  assert.equal(recoveryFor(new AIError('network',502,'PROVIDER_UNAVAILABLE')),'retry');
+  assert.equal(recoveryFor(new AIError('timeout',502,'PROVIDER_TIMEOUT')),'retry');
   assert.equal(recoveryFor(new AIError('garbled',502,'INVALID_PROVIDER_RESPONSE')),'retry');
   assert.equal(recoveryFor(rejected(503)),'retry');
   assert.equal(recoveryFor(new AIError('no text',502,'EMPTY_PROVIDER_RESPONSE')),'image');

@@ -28,7 +28,10 @@ function createProviders({ env = process.env, fetchImpl = globalThis.fetch } = {
         body: JSON.stringify(body), signal: AbortSignal.timeout(timeout),
       });
     } catch (error) {
-      throw new AIError(`${provider} request failed or timed out. Check the connection and retry.`, 502, 'PROVIDER_UNAVAILABLE');
+      // Kept separate from other network failures: a timeout has already
+      // waited the full limit, so it is not retried automatically.
+      if (error?.name === 'TimeoutError') throw new AIError(`${provider} did not answer within ${timeout / 1000} s. Retry, or type the text.`, 502, 'PROVIDER_TIMEOUT');
+      throw new AIError(`${provider} request failed. Check the connection and retry.`, 502, 'PROVIDER_UNAVAILABLE');
     }
     if (!response.ok) {
       // Never relay provider bodies: they can contain request text or credentials.
