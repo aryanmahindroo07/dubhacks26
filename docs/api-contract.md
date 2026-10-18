@@ -9,7 +9,7 @@ This document describes the current implementation and identifies integration wo
 | Module | Owner | Location / status |
 |---|---|---|
 | Prediction engine | Backend 1 | `backend/prediction/` |
-| Endpoint registry, cache, prefetch execution | Backend 2 | Planned `backend/cache/`; not present in the inspected checkout |
+| Endpoint registry, cache, prefetch execution | Backend 2 | Planned `frontend/src/services/`; not present in the inspected checkout |
 
 ## State IDs and endpoint mapping
 
