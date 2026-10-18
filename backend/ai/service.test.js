@@ -307,7 +307,7 @@ test('a wrong key, model or quota is not retried',async()=>{
 });
 
 test('a timeout is not retried automatically but still offers Retry',async()=>{
-  const f=flakyOcr(99,()=>new AIError('Perceptron did not answer within 30 s.',502,'PROVIDER_TIMEOUT'));
+  const f=flakyOcr(99,()=>new AIError('Perceptron did not answer within 15 s.',502,'PROVIDER_TIMEOUT'));
   const item=f.service.upload(f.session,{type:'RECEIPT',name:'r.png',image:IMAGE});
   await assert.rejects(f.service.perform(f.session,item.id,'READ_TEXT'),/did not answer/);
   assert.equal(f.calls(),1,'one wait of AI_TIMEOUT_MS, not three');

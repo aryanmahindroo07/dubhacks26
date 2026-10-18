@@ -55,9 +55,10 @@ The backend decides what to do from the kind of error (`recoveryFor` in
 - A background call (prefetch or read-ahead) gets the same single round of
   attempts and is not tried again for that image; only a click starts a new
   round. Retries show in the event log.
-- Provider calls give up after 30 s by default (`AI_TIMEOUT_MS` in
-  `backend/.env`; lower it for demos). That is also the longest a user waits
-  before Retry and typed text are offered.
+- Provider calls give up after 15 s by default (`AI_TIMEOUT_MS` in
+  `backend/.env`). That is also the longest a user waits before Retry and
+  typed text are offered. Measured calls take about 0.3–1.6 s, so 15 s only
+  cuts off calls that have stalled.
 - Typed text counts as the text for that image: Gemini actions work on it, it
   is labelled "Typed text", and no provider call is made.
 
