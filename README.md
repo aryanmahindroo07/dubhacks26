@@ -25,6 +25,8 @@ AI output remains subject to human review. Receipt evidence checks establish con
 
 See the [real-data evaluation protocol](docs/real-data-evaluation.md), [receipt correctness checks](docs/receipt-correctness.md), and [AI setup guide](docs/ai-inbox-setup.md) for evidence and limitations. These descriptions document intended behavior; they are not a compliance certification or a determination of legal applicability.
 
+See the [audit scope and evidence map](docs/audit-scope.md) for the decision boundary, existing safeguards, and limitations relevant to repository audits.
+
 ## Frontend starter
 
 The barebones React + CSS starter lives in [`frontend/`](frontend/).

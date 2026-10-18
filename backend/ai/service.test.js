@@ -411,3 +411,74 @@ test('the learning panel names the same action the next prefetch will run',async
   await f.service.perform(f.session,board.id,'READ_TEXT');await f.service.idle(f.session);
   assert.equal(f.calls[1]?.action,panel,'panel and real prefetch agree');
 });
+
+function overlappingBackgroundFixture() {
+  const calls=[];
+  let releaseOCR,releaseExtraction,finishOCR;
+  const ocrFinished=new Promise(resolve=>finishOCR=resolve);
+  const ocrGate=new Promise(resolve=>releaseOCR=resolve);
+  const extractionGate=new Promise(resolve=>releaseExtraction=resolve);
+  const providers={
+    available:()=>true,
+    identity:()=>({provider:'test',model:'test-model',promptVersion:'test-v1'}),
+    status:()=>({perceptron:{configured:true},gemini:{configured:true}}),
+    run:async(action,doc)=>{
+      calls.push({action,name:doc.name});
+      if(action==='READ_TEXT') {
+        if(doc.name==='b.png')await ocrGate;
+        await new Promise(resolve=>setTimeout(resolve,50));
+        if(doc.name==='b.png')finishOCR();
+      }
+      if(action==='EXTRACT_FIELDS')await extractionGate;
+      return {result:action==='READ_TEXT'?{text:'Total: $13.20'}:{fields:[{name:'total',value:'13.20'}]},model:'test-model'};
+    },
+  };
+  const service=createAIService({providers});const session=service.createSession().sessionId;
+  const items=['a.png','b.png','c.png'].map(name=>service.upload(session,{name,type:'RECEIPT',image:IMAGE}));
+  service.open(session,items[0].id);service.setEnabled(session,true);service.setReadAhead(session,true);
+  return {service,session,items,calls,releaseOCR,releaseExtraction,ocrFinished};
+}
+
+test('active receipt extraction resumes before more OCR read-ahead, and demand reuses it',async()=>{
+  const f=overlappingBackgroundFixture();
+  try {
+    await f.service.perform(f.session,f.items[0].id,'READ_TEXT');
+    assert.equal(f.calls.some(c=>c.action==='EXTRACT_FIELDS'),false,'next-image OCR occupies the speculative slot');
+    f.releaseOCR();
+    // Allow the held OCR's completion and background scheduler to run.
+    await f.ocrFinished;await tick();
+    const extraction=f.calls.findIndex(c=>c.action==='EXTRACT_FIELDS');
+    assert.notEqual(extraction,-1,'deferred extraction must resume without another click');
+    assert.equal(f.calls[extraction].name,'a.png');
+    assert.equal(f.calls.some(c=>c.name==='c.png'),false,'current-image work has priority');
+    const demand=f.service.perform(f.session,f.items[0].id,'EXTRACT_FIELDS');
+    f.releaseExtraction();
+    const result=await demand;
+    assert.equal(result.source,'in-flight');assert.equal(result.usedPrefetch,true);
+    await f.service.idle(f.session);
+    assert.equal(f.calls.filter(c=>c.action==='EXTRACT_FIELDS'&&c.name==='a.png').length,1);
+    assert.ok(f.calls.some(c=>c.name==='c.png'),'read-ahead continues after extraction');
+  } finally { f.releaseOCR();f.releaseExtraction();await f.service.idle(f.session); }
+});
+
+test('disabling both switches prevents deferred work after the running OCR completes',async()=>{
+  const f=overlappingBackgroundFixture();
+  try {
+    await f.service.perform(f.session,f.items[0].id,'READ_TEXT');
+    f.service.setEnabled(f.session,false);f.service.setReadAhead(f.session,false);
+    f.releaseOCR();await f.service.idle(f.session);
+    assert.deepEqual(f.calls.map(c=>c.name).sort(),['a.png','b.png']);
+  } finally { f.releaseOCR();f.releaseExtraction();await f.service.idle(f.session); }
+});
+
+test('changing focus does not resume the previous image extraction or consume unread OCR automatically',async()=>{
+  const f=overlappingBackgroundFixture();
+  try {
+    await f.service.perform(f.session,f.items[0].id,'READ_TEXT');
+    f.service.open(f.session,f.items[1].id);
+    f.releaseOCR();await f.service.idle(f.session);
+    assert.equal(f.calls.some(c=>c.action==='EXTRACT_FIELDS'),false);
+    const b=f.service.snapshot(f.session).items.find(i=>i.id===f.items[1].id);
+    assert.equal(b.textReady,true);assert.equal(b.read,false);
+  } finally { f.releaseOCR();f.releaseExtraction();await f.service.idle(f.session); }
+});

@@ -202,7 +202,18 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     track(s, start(s,doc,prediction.action,true));
   }
   function track(s, entry) {
-    const task = entry.promise.catch(()=>{}).finally(()=>{ s.background.delete(task); readAhead(s); });
+    const task = entry.promise.catch(()=>{}).finally(()=>{
+      s.background.delete(task);
+      // A click may have deferred its prediction while OCR occupied the slot.
+      // Re-evaluate the current image first, then use any spare slot for OCR.
+      const active=s.docs.get(s.activeItem);
+      if(s.enabled && s.running<4 && active?.text && !active.lastError) {
+        const predictions=predict(s,active,active.history);
+        s.predictions=predictions;active.predictions=predictions;
+        prefetch(s,active,predictions);
+      }
+      readAhead(s);
+    });
     s.background.add(task);
   }
   // Read-ahead: while the user works on one item, read the text of the next
