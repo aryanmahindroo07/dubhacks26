@@ -270,15 +270,6 @@
   background: white;
 }
 .search-demo h2 { margin-top: 0; }
-.search-form { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
-.search-form input {
-  flex: 1; min-width: 180px; padding: 12px;
-  border: 1px solid #aebfb4; border-radius: 9px; font: inherit;
-}
-.search-form button {
-  padding: 12px 24px; border: 0; border-radius: 9px;
-  background: #276b57; color: white; font: inherit; cursor: pointer;
-}
-.search-form button:disabled { opacity: 0.65; cursor: wait; }
+.search-bar button:disabled { opacity: 0.65; cursor: wait; }
 .search-results { list-style: none; padding: 0; }
 .search-results li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid #dde6e0; }

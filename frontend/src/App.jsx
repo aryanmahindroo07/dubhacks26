@@ -30,9 +30,12 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
+  const [submittedQuery, setSubmittedQuery] = useState('');
 
   async function handleSearch(event) {
     event.preventDefault();
+    if (loading) return;
+    setSubmittedQuery(query.trim());
     setLoading(true);
     setError('');
     setSearched(false);
@@ -48,10 +51,6 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
   }
 
   return (
@@ -70,15 +69,17 @@ function App() {
     </header>
     <main className="app">
       <header className="title">RequestFlow</header>
-      <form className="search-bar" role="search" onSubmit={handleSubmit}>
+      <form className="search-bar" role="search" onSubmit={handleSearch}>
         <input
           type="search"
-          placeholder="Search..."
-          aria-label="Search"
+          placeholder="Search customers…"
+          aria-label="Search customers"
+          aria-controls="search-results"
+          disabled={loading}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
-        <button type="submit">Search</button>
+        <button type="submit" disabled={loading}>{loading ? 'Searching…' : 'Search'}</button>
       </form>
 
       <section className="page-heading" id="metrics">
@@ -98,19 +99,17 @@ function App() {
       </section>
 
       <section className="search-demo" aria-labelledby="search-heading">
-        <h2 id="search-heading">Try a customer search</h2>
-        <p>Search customers through the backend. Try “Acme” or leave the search empty to see everyone.</p>
-        <form className="search-form" onSubmit={handleSearch}>
-          <label className="sr-only" htmlFor="customer-search">Customer name</label>
-          <input id="customer-search" type="search" value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search customers…" disabled={loading} />
-          <button type="submit" disabled={loading}>{loading ? 'Searching…' : 'Search'}</button>
-        </form>
-        <div aria-live="polite" aria-busy={loading}>
+        <h2 id="search-heading">Search results</h2>
+        {!loading && !error && !searched && (
+          <p>Use the search above to find a customer. Try “Acme”, or search with an empty field to see everyone.</p>
+        )}
+        <div id="search-results" role="status" aria-live="polite" aria-busy={loading}>
           {loading && <p>Searching customers…</p>}
           {error && <p role="alert">{error}</p>}
-          {searched && <p>{results.length} customer{results.length === 1 ? '' : 's'} found.</p>}
+          {searched && (
+            <p>{results.length} customer{results.length === 1 ? '' : 's'} found{submittedQuery ? ` for “${submittedQuery}”` : ''}.</p>
+          )}
+          {searched && results.length === 0 && <p>Try a different customer name or leave the search empty to see everyone.</p>}
           {results.length > 0 && (
             <ul className="search-results">
               {results.map((customer) => (
