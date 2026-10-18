@@ -50,26 +50,39 @@ function App() {
     }
   }
 
+  function handleSubmit(event) {
+    event.preventDefault();
+  }
+
   return (
+    <>
+    <header className="topbar">
+      <a className="brand" href="#metrics">
+        <span className="brand-mark" aria-hidden="true">R</span>
+        <span>RequestFlow</span>
+      </a>
+
+      <nav className="topbar-nav">
+        <a className="active" href="#metrics" aria-current="page">Metrics</a>
+        <a href="#requests">Requests</a>
+        <a href="#predictions">Predictions</a>
+      </nav>
+    </header>
     <main className="app">
-      <header className="topbar">
-        <a className="brand" href="#metrics">
-          <span className="brand-mark" aria-hidden="true">R</span>
-          <span>RequestFlow</span>
-        </a>
-
-        <nav className="topbar-nav">
-          <a className="active" href="#metrics" aria-current="page">Metrics</a>
-          <a href="#requests">Requests</a>
-          <a href="#predictions">Predictions</a>
-        </nav>
-
-      </header>
+      <header className="title">RequestFlow</header>
+      <form className="search-bar" role="search" onSubmit={handleSubmit}>
+        <input
+          type="search"
+          placeholder="Search..."
+          aria-label="Search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
 
       <section className="page-heading" id="metrics">
         <div>
-          <p className="eyebrow">Workspace / Metrics</p>
-          <h1>API Metrics</h1>
           <p className="subtitle">
             See request activity and which calls RequestFlow predicts next.
           </p>
@@ -122,6 +135,7 @@ function App() {
         ))}
       </section>
     </main>
+    </>
   );
 }
 
