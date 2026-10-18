@@ -11,6 +11,26 @@ const CACHE_TTL = 5 * 60 * 1000;
 const MAX_SESSIONS = 20;
 const MAX_ITEMS = 10;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+// What to do about a failed provider call, decided by the kind of error:
+//   retry - temporary (timeout, network, server error, garbled reply):
+//           Read text retries automatically, up to twice (three attempts)
+//   image - the image itself (no readable text, reply cut off): retrying the
+//           same image gives the same result; use a better photo or type it
+//   wait  - rate limit or quota: no automatic retry; try again later
+//   setup - wrong key, no access or wrong model: stop; fix backend/.env
+// Typing the text by hand is offered for every kind.
+const OCR_RETRY_DELAYS_MS = [1000, 2000];
+function recoveryFor(error) {
+  switch (error?.code) {
+    case 'MISSING_API_KEY': return 'setup';
+    case 'EMPTY_PROVIDER_RESPONSE':
+    case 'INCOMPLETE_PROVIDER_RESPONSE': return 'image';
+    case 'PROVIDER_REJECTED':
+      if (error.providerStatus === 429) return 'wait';
+      return error.providerStatus >= 500 ? 'retry' : 'setup';
+    default: return 'retry';
+  }
+}
 
 function validateImage(image) {
   if (typeof image !== 'string') throw new AIError('Choose a PNG, JPEG, or WebP image.');
@@ -25,7 +45,7 @@ function validateImage(image) {
   return hash(bytes);
 }
 
-function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env = process.env } = {}) {
+function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env = process.env, ocrRetryDelaysMs = OCR_RETRY_DELAYS_MS } = {}) {
   const sessions = new Map();
   const prefetchLimit = Math.max(0, Math.min(10, Number(env.AI_PREFETCH_LIMIT_PER_ITEM ?? 3) || 0));
   function cleanup() {
@@ -111,7 +131,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const startTime = performance.now();
     kind ||= speculative ? 'prefetch' : 'provider';
     event(s,{ kind, action, itemId: doc.id, result: 'started', model: providers.identity(action).model });
-    entry.promise = Promise.resolve().then(() => providers.run(action,{...doc})).then(output => {
+    entry.promise = Promise.resolve().then(() => runWithRetries(s, doc, action, kind)).then(output => {
       entry.status = 'ready'; entry.expiresAt = now()+cacheTtl;
       entry.output = output; entry.providerMs = performance.now()-startTime;
       const sample = s.latencySamples[action] ||= { total: 0, count: 0 };
@@ -127,6 +147,21 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
       throw error;
     }).finally(()=>{s.running--;});
     return entry;
+  }
+  async function runWithRetries(s, doc, action, kind) {
+    const delays = action === 'READ_TEXT' ? ocrRetryDelaysMs : [];
+    for (let attempt = 0; ; attempt++) {
+      try { return await providers.run(action, { ...doc }); }
+      catch (error) {
+        if (attempt >= delays.length || recoveryFor(error) !== 'retry') {
+          error.attempts = attempt + 1;
+          if (attempt > 0 && error instanceof AIError) error.message = `${error.message} (gave up after ${attempt + 1} attempts)`;
+          throw error;
+        }
+        event(s, { kind, action, itemId: doc.id, result: `retry ${attempt + 1} of ${delays.length}`, message: error.message });
+        await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+      }
+    }
   }
   function predict(s,doc,history) {
     const latencyByAction = Object.fromEntries(Object.entries(s.latencySamples).map(([action,sample])=>[action,sample.total/sample.count]));
@@ -173,7 +208,11 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
   async function perform(id,itemId,action) {
     const s = getSession(id), doc=docFor(s,itemId);
     if (!SUPPORTED_ACTIONS.includes(action)) throw new AIError('Unsupported action.');
-    if (!providers.available(action)) throw new AIError(`Configure ${action==='READ_TEXT'?'PERCEPTRON_API_KEY':'GEMINI_API_KEY'} in backend/.env and restart the backend.`,503,'MISSING_API_KEY');
+    if (!providers.available(action)) {
+      const error=new AIError(`Configure ${action==='READ_TEXT'?'PERCEPTRON_API_KEY':'GEMINI_API_KEY'} in backend/.env and restart the backend.`,503,'MISSING_API_KEY');
+      doc.lastError={action,message:error.message,recovery:'setup',attempts:0};
+      throw error;
+    }
     if (action !== 'READ_TEXT' && !doc.text) throw new AIError('Run Read text successfully first.',409,'OCR_REQUIRED');
     focus(s, doc);
     const startTime=performance.now();
@@ -186,7 +225,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     catch (error) {
       const waitMs=performance.now()-startTime;
       s.waits.push(waitMs);s.metrics.failedActions++;
-      doc.lastError={action,message:error.message};
+      doc.lastError={action,message:error.message,recovery:recoveryFor(error),attempts:error.attempts||1};
       event(s,{kind:'navigation',action,itemId:doc.id,result:'failed',source,waitMs,message:error.message});
       throw error;
     }
@@ -291,4 +330,4 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
   }
   return {createSession,upload,open,perform,setText,setEnabled,setReadAhead,snapshot,idle,remove};
 }
-module.exports={createAIService,validateImage};
+module.exports={createAIService,validateImage,recoveryFor};

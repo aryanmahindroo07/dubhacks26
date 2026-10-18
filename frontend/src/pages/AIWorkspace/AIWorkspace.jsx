@@ -32,6 +32,23 @@ function LearningCard({entry}){
   </div>;
 }
 
+// What to tell the user after Read text fails, by kind of error (the backend
+// decides the kind and has already retried temporary failures).
+const FAILURE_COPY={
+  retry:{title:"Couldn't reach Perceptron.",advice:'This looks temporary. Try again, or type the text yourself.',canRetry:true},
+  image:{title:"Couldn't read text from this image.",advice:'Trying the same image again will give the same result. Use a sharper or cropped photo, or type the text yourself.',canRetry:false},
+  wait:{title:'Perceptron rate limit reached.',advice:'Wait a minute, then try again, or type the text yourself.',canRetry:true},
+  setup:{title:"Perceptron isn't set up correctly.",advice:'Fix the key or model in backend/.env and restart the backend. You can type the text yourself in the meantime.',canRetry:false},
+};
+function FailurePanel({error,onRetry,typing,onType}){
+  const copy=FAILURE_COPY[error.recovery]||FAILURE_COPY.retry;
+  return <div className={styles.warning} role="group" aria-label="Read text failed">
+    <p><strong>{copy.title}</strong> {copy.advice}</p>
+    <p className={styles.small}>{error.message}</p>
+    <div className={styles.controls}>{copy.canRetry&&<button onClick={onRetry}>Retry Read text</button>}<button aria-expanded={typing} onClick={onType}>Type the text instead</button></div>
+  </div>;
+}
+
 export default function AIWorkspace(){
   const [session,setSession]=useState(null),[type,setType]=useState('RECEIPT');
   const [previews,setPreviews]=useState({}),[currentId,setCurrentId]=useState(null);
@@ -84,9 +101,9 @@ export default function AIWorkspace(){
     }catch(e){setError(e.message);setBusy('');}
   }
   async function run(action){
-    setBusy(LABELS[action]);setError('');setResult(null);
+    setBusy(action==='READ_TEXT'?'Reading text (retrying up to 2 times if it fails)':LABELS[action]);setError('');setResult(null);
     try{const output=await runAIAction(current.id,action);setResult({...output,action});await refresh();}
-    catch(e){setError(e.message);}finally{setBusy('');}
+    catch(e){setError(e.message);await refresh().catch(()=>{});}finally{setBusy('');}
   }
   async function useTypedText(){
     setBusy('Saving text');setError('');
@@ -154,10 +171,7 @@ export default function AIWorkspace(){
         <section className={styles.panel} aria-labelledby="action-heading"><div className={styles.sectionHeading}><h2 id="action-heading">2. Work on {current?`image ${index+1}`:'an image'}</h2>{current&&index<items.length-1&&<button disabled={Boolean(busy)} onClick={next}>Next image →</button>}</div>
           {current?.duplicateOf&&<p className={styles.warning}>Possible duplicate of “{current.duplicateOf.name}”. {current.duplicateOf.reason}</p>}
           <div className={styles.actions}>{ACTIONS.map(([id,label,provider])=><button key={id} disabled={!current||Boolean(busy)||sessionFailed||(id!=='READ_TEXT'&&!read)||!session?.providers[provider.toLowerCase()].configured} onClick={()=>run(id)}><span>{label}</span><small>{provider}{id==='READ_TEXT'&&current?.textReady&&!read?' · ready':''}</small></button>)}</div>
-          {current&&!read&&!busy&&current.error?.action==='READ_TEXT'&&<div className={styles.warning}>
-            <p><strong>Couldn't read this image.</strong> {current.error.message} Try again, use a sharper or smaller photo, or type the text yourself.</p>
-            <div className={styles.controls}><button onClick={()=>run('READ_TEXT')}>Retry Read text</button><button aria-expanded={typing} onClick={()=>setTyping(t=>!t)}>Type the text instead</button></div>
-          </div>}
+          {current&&!read&&!busy&&current.error?.action==='READ_TEXT'&&<FailurePanel error={current.error} onRetry={()=>run('READ_TEXT')} typing={typing} onType={()=>setTyping(t=>!t)}/>}
           {current&&!read&&typing&&<div className={styles.typed}>
             <label className={styles.label}>Text from the image<textarea rows="6" value={typedText} onChange={e=>setTypedText(e.target.value)} placeholder={'e.g. TOTAL 13.20\nDATE 2026-10-17'}/></label>
             <button disabled={!typedText.trim()||Boolean(busy)} onClick={useTypedText}>Use this text</button>

@@ -35,7 +35,9 @@ function createProviders({ env = process.env, fetchImpl = globalThis.fetch } = {
       const message = response.status === 429 ? 'rate limit or quota reached' :
         response.status === 401 || response.status === 403 ? 'credentials or model access rejected' :
         response.status === 404 ? 'model or endpoint not found; check the backend model setting' : `HTTP ${response.status}`;
-      throw new AIError(`${provider}: ${message}.`, 502, 'PROVIDER_REJECTED');
+      const rejected = new AIError(`${provider}: ${message}.`, 502, 'PROVIDER_REJECTED');
+      rejected.providerStatus = response.status;
+      throw rejected;
     }
     try { return await response.json(); }
     catch { throw new AIError(`${provider} returned an invalid response.`, 502, 'INVALID_PROVIDER_RESPONSE'); }

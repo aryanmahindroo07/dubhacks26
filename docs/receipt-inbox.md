@@ -39,14 +39,23 @@ match an earlier receipt. It is a warning only; nothing is blocked or removed.
 
 ## When OCR fails
 
-- A failed call made in the background (prefetch or read-ahead) is never
-  retried automatically. Only a click retries.
+The backend decides what to do from the kind of error (`recoveryFor` in
+`backend/ai/service.js`). Typing the text by hand is offered for every kind.
+
+| Kind | Examples | Automatic retries | The page offers |
+|---|---|---|---|
+| Temporary | timeout, network error, server error (5xx), garbled reply | up to 2 (1 s, then 2 s) | Retry, or type the text |
+| Image problem | no readable text, reply cut off | none | a sharper or cropped photo, or type the text |
+| Rate limit | 429 | none | wait a minute and retry, or type the text |
+| Setup problem | wrong key, no access, wrong model (401/403/404), key missing | none | fix `backend/.env`; type the text meanwhile |
+
+- A background call (prefetch or read-ahead) gets the same single round of
+  attempts and is not tried again for that image; only a click starts a new
+  round. Retries show in the event log.
 - Provider calls give up after 30 s by default (`AI_TIMEOUT_MS` in
   `backend/.env`; lower it for demos).
-- The item is marked "Couldn't read" in the inbox, with **Retry Read text**
-  and **Type the text instead**. Typed text counts as the text for that image:
-  Gemini actions work on it and it is labelled "Typed text". No provider call
-  is made for typed text.
+- Typed text counts as the text for that image: Gemini actions work on it, it
+  is labelled "Typed text", and no provider call is made.
 
 ## Receipt-check fixes
 

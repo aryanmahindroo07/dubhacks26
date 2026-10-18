@@ -242,18 +242,18 @@ test('duplicate receipts are flagged: same image, or same total and date',async(
   assert.equal(flagged.id,a.id);assert.match(flagged.reason,/13\.20.*2026-10-17/);
 });
 
-test('a failed background OCR is not retried automatically; a click still retries',async()=>{
+test('a failing background OCR gets one round of attempts, never repeated; a click starts a new round',async()=>{
   let calls=0;
   const providers={available:()=>true,identity:a=>({provider:'p',model:'m',promptVersion:'t'}),status:()=>({perceptron:{configured:true},gemini:{configured:true}}),
-    run:async()=>{calls++;await tick();throw new AIError('Perceptron request failed or timed out.',502);}};
-  const service=createAIService({providers});const session=service.createSession().sessionId;
+    run:async()=>{calls++;await tick();throw new AIError('Perceptron request failed or timed out.',502,'PROVIDER_UNAVAILABLE');}};
+  const service=createAIService({providers,ocrRetryDelaysMs:[1,1]});const session=service.createSession().sessionId;
   const a=service.upload(session,{type:'RECEIPT',name:'a.png',image:IMAGE});
   service.upload(session,{type:'RECEIPT',name:'b.png',image:IMAGE});
   service.open(session,a.id);service.setReadAhead(session,true);await service.idle(session);
-  assert.equal(calls,1,'one background attempt, no automatic retries');
-  service.open(session,a.id);await service.idle(session);assert.equal(calls,1);
-  await assert.rejects(service.perform(session,a.id,'READ_TEXT'),/failed or timed out/);
-  assert.equal(calls,2,'an explicit click does retry');
+  assert.equal(calls,3,'one round of three attempts in the background');
+  service.open(session,a.id);await service.idle(session);assert.equal(calls,3,'not repeated');
+  await assert.rejects(service.perform(session,a.id,'READ_TEXT'),/gave up after 3 attempts/);
+  assert.equal(calls,6,'an explicit click starts a new round');
   assert.equal(service.snapshot(session).items.find(i=>i.id===a.id).error.action,'READ_TEXT');
 });
 
@@ -266,4 +266,76 @@ test('typed text replaces failed OCR and unlocks Gemini actions',async()=>{
   assert.equal(f.calls.at(-1).text,'Total $13.20');assert.equal(extract.source,'network');
   const item=f.service.snapshot(f.session).items.find(i=>i.id===f.item.id);
   assert.equal(item.textSource,'manual');assert.equal(item.read,true);
+});
+
+function flakyOcr(failures, error=()=>new AIError('Perceptron request failed or timed out.',502,'PROVIDER_UNAVAILABLE')) {
+  let calls=0;
+  const providers={available:()=>true,identity:a=>({provider:'p',model:'m',promptVersion:'t'}),status:()=>({perceptron:{configured:true},gemini:{configured:true}}),
+    run:async(action)=>{calls++;await tick();if(action==='READ_TEXT'&&calls<=failures)throw error();return {result:{text:'Total 13.20'}};}};
+  const service=createAIService({providers,ocrRetryDelaysMs:[1,1]});
+  const session=service.createSession().sessionId;
+  return {service,session,calls:()=>calls};
+}
+
+test('Read text retries a temporary failure up to twice, then succeeds',async()=>{
+  const f=flakyOcr(2);const item=f.service.upload(f.session,{type:'RECEIPT',name:'r.png',image:IMAGE});
+  const result=await f.service.perform(f.session,item.id,'READ_TEXT');
+  assert.equal(result.result.text,'Total 13.20');assert.equal(f.calls(),3);
+  assert.equal(f.service.snapshot(f.session).requestLog.filter(e=>/^retry/.test(e.result)).length,2);
+});
+
+test('Read text stops after three attempts and offers typed text',async()=>{
+  const f=flakyOcr(99);const item=f.service.upload(f.session,{type:'RECEIPT',name:'r.png',image:IMAGE});
+  await assert.rejects(f.service.perform(f.session,item.id,'READ_TEXT'),/gave up after 3 attempts/);
+  assert.equal(f.calls(),3);
+  assert.equal(f.service.snapshot(f.session).items[0].error.action,'READ_TEXT');
+  f.service.setText(f.session,item.id,'Total 13.20');
+  assert.equal(f.service.snapshot(f.session).items[0].textSource,'manual');
+});
+
+test('a wrong key, model or quota is not retried',async()=>{
+  for(const status of [401,404,429]){
+    const f=flakyOcr(99,()=>Object.assign(new AIError('Perceptron: rejected.',502,'PROVIDER_REJECTED'),{providerStatus:status}));
+    const item=f.service.upload(f.session,{type:'RECEIPT',name:'r.png',image:IMAGE});
+    await assert.rejects(f.service.perform(f.session,item.id,'READ_TEXT'));
+    assert.equal(f.calls(),1,`status ${status}`);
+  }
+  const server=flakyOcr(99,()=>Object.assign(new AIError('Perceptron: HTTP 503.',502,'PROVIDER_REJECTED'),{providerStatus:503}));
+  const item=server.service.upload(server.session,{type:'RECEIPT',name:'r.png',image:IMAGE});
+  await assert.rejects(server.service.perform(server.session,item.id,'READ_TEXT'));
+  assert.equal(server.calls(),3,'server errors are retried');
+});
+
+test('read-ahead also stops after three attempts on a failing image',async()=>{
+  const f=flakyOcr(99);
+  const a=f.service.upload(f.session,{type:'RECEIPT',name:'a.png',image:IMAGE});
+  f.service.upload(f.session,{type:'RECEIPT',name:'b.png',image:IMAGE});
+  f.service.open(f.session,a.id);f.service.setReadAhead(f.session,true);await f.service.idle(f.session);
+  f.service.open(f.session,a.id);await f.service.idle(f.session);
+  assert.equal(f.calls(),3);
+});
+
+test('each kind of failure gets its own recovery',async()=>{
+  const {recoveryFor}=require('./service');
+  const rejected=status=>Object.assign(new AIError('x',502,'PROVIDER_REJECTED'),{providerStatus:status});
+  assert.equal(recoveryFor(new AIError('timeout',502,'PROVIDER_UNAVAILABLE')),'retry');
+  assert.equal(recoveryFor(new AIError('garbled',502,'INVALID_PROVIDER_RESPONSE')),'retry');
+  assert.equal(recoveryFor(rejected(503)),'retry');
+  assert.equal(recoveryFor(new AIError('no text',502,'EMPTY_PROVIDER_RESPONSE')),'image');
+  assert.equal(recoveryFor(new AIError('cut off',502,'INCOMPLETE_PROVIDER_RESPONSE')),'image');
+  assert.equal(recoveryFor(rejected(429)),'wait');
+  for(const status of [401,403,404])assert.equal(recoveryFor(rejected(status)),'setup');
+  assert.equal(recoveryFor(new AIError('key',503,'MISSING_API_KEY')),'setup');
+});
+
+test('image problems are not retried; the item records why it failed',async()=>{
+  const f=flakyOcr(99,()=>new AIError('Perceptron returned no readable text.',502,'EMPTY_PROVIDER_RESPONSE'));
+  const item=f.service.upload(f.session,{type:'RECEIPT',name:'r.png',image:IMAGE});
+  await assert.rejects(f.service.perform(f.session,item.id,'READ_TEXT'),/no readable text/);
+  assert.equal(f.calls(),1);
+  const error=f.service.snapshot(f.session).items[0].error;
+  assert.equal(error.recovery,'image');assert.equal(error.attempts,1);
+  const t=flakyOcr(99);const other=t.service.upload(t.session,{type:'RECEIPT',name:'r.png',image:IMAGE});
+  await assert.rejects(t.service.perform(t.session,other.id,'READ_TEXT'));
+  assert.deepEqual([t.service.snapshot(t.session).items[0].error.recovery,t.service.snapshot(t.session).items[0].error.attempts],['retry',3]);
 });
