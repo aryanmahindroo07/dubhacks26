@@ -11,14 +11,14 @@ Public US receipts; amounts are USD. These are real photographs, not generated r
 - License: CC-BY-SA-3.0 — https://creativecommons.org/licenses/by-sa/3.0/
 - Changes: Original Wikimedia image bytes; filename changed only.
 
-## Walmart · Excelsior Springs, Missouri
+## Walmart · Cameron, Missouri
 
 - File: us-walmart.jpg
 - Author: Cryptogoth
 - Source: https://commons.wikimedia.org/wiki/File:OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg
 - Image download: https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg/1280px-OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg
 - License: CC-BY-SA-4.0 — https://creativecommons.org/licenses/by-sa/4.0/
-- Changes: Wikimedia thumbnail, no receipt content changed.
+- Changes: Wikimedia thumbnail rotated 90 degrees clockwise and center-cropped to 440 × 1280 to remove background; entire receipt retained, JPEG re-encoded. No receipt text or amounts rewritten.
 
 ## Cameron Market · Cameron, Missouri
 

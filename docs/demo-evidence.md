@@ -8,8 +8,8 @@ in Missouri, and Cameron Market in Missouri, with USD amounts. Credits and
 individual CC BY-SA licenses are in `frontend/public/real-receipts/ATTRIBUTION.md`.
 Source URLs, hashes and manually transcribed reference amounts are recorded in
 `datasets/us-receipts/manifest.json`. Only images go to providers. The Walmart
-photo is sideways; OCR must handle the real photograph rather than a rewritten
-receipt. References are not an independent dataset ground truth.
+photo is rotated upright and cropped to remove background; the full receipt
+and its original printed amounts remain intact. References are not an independent dataset ground truth.
 
 The recorded benchmark in the comparison panel still uses the previous
 Indonesian CORD receipts. It is explicitly labelled CORD and must not be

@@ -24,7 +24,7 @@
     },
     {
       "id": "us-walmart",
-      "title": "Walmart \u00b7 Excelsior Springs, Missouri",
+      "title": "Walmart \u00b7 Cameron, Missouri",
       "country": "US",
       "currency": "USD",
       "image": "us-walmart.jpg",
@@ -33,8 +33,8 @@
       "author": "Cryptogoth",
       "license": "CC-BY-SA-4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-      "sha256": "1cd73a40af6acc088f63fdcf4b1d8da08bede166753526e5d053adbf2acab68e",
-      "changes": "Wikimedia thumbnail, no receipt content changed.",
+      "sha256": "ce0f504ee78446a5c5963626a10bedcb6393afa386560f573bf610d1e34a34a8",
+      "changes": "Wikimedia 1280px thumbnail rotated 90 degrees clockwise and center-cropped to 440 \u00d7 1280 to remove background. Entire receipt retained; no text or amounts rewritten. JPEG re-encoded using macOS sips.",
       "expected": {
         "total": "191.13"
       }
