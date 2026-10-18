@@ -1,3 +1,15 @@
+> Current integration update: frontend services now exist in `frontend/src/services/`.
+> `/api/predict` accepts `{ history, sessionId, stateId }` and returns a direct
+> prediction array. A non-null `stateId` requires a nonempty session ID and one
+> of the five valid states; it records one navigation and predicts from server
+> session history. A null/omitted state uses the supplied history without learning.
+> The customer workspace uses these services; search and `/overview` remain
+> separate. Prefetch budget is one eligible uncached request per navigation;
+> customer-specific predictions are skipped without an ID. Cache TTL is 30s,
+> capacity 50. Metrics come from `getPrefetchMetrics()`. The original draft below
+> records earlier design discussions; its “planned/not wired” status statements
+> are historical and superseded by this update.
+
 # Backend Contract: Prediction Engine ↔ Caching Module
 
 Status: DRAFT — verified against the local source on October 17, 2026; pending Backend 2 review.

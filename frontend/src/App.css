@@ -310,3 +310,9 @@
 .search-results { list-style: none; padding: 0; }
 .search-results li { 
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid #dde6e0; color: #247B65}
+
+.customer-workspace { max-width: 1200px; margin: 24px auto; }
+.customer-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.customer-workspace button { border: 1px solid #bdd3c9; border-radius: 8px; padding: 8px 12px; background: #eaf1eb; color: #245c49; cursor: pointer; }
+.customer-workspace button:disabled { opacity: .5; cursor: default; }
+.customer-workspace button[aria-pressed="true"] { background: #245c49; color: white; }

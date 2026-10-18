@@ -2,14 +2,14 @@
 import { resolveEndpoint } from "./resolver.js";
 import { responseCache } from "./cache.js";
 
-const API_BASE = "http://localhost:4000";
+const API_BASE = import.meta.env?.VITE_API_BASE ?? "";
 const REQUEST_BUDGET = 1;
 
 // Tracks what the user actually visits
 const history = [];
 
 const sessionId = crypto.randomUUID();
-let pendingNavigation = null;
+let navigationQueue = Promise.resolve();
 
 // Tracks prefetching statistics
 const prefetchMetrics = {
@@ -35,19 +35,17 @@ async function fetchData(url) {
 }
 
 // Ask the backend to predict what the user will visit next
-async function getPredictions() {
-  const stateId = pendingNavigation;
-    pendingNavigation = null;
+async function getPredictions(navigation) {
   const response = await fetch(API_BASE + "/api/predict", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      history,
+      history: navigation.history,
       sessionId,
-      stateId
-})
+      stateId: navigation.stateId
+    })
   });
 
   if (!response.ok) {
@@ -58,17 +56,21 @@ async function getPredictions() {
 }
 
 // Prefetch the highest-value predicted endpoints
-export async function prefetchNext(customerId) {
-  const predictions = await getPredictions();
+export async function prefetchNext(customerId, navigation = { history: [...history], stateId: null }, predictionResult) {
+  const predictions = await (predictionResult ?? getPredictions(navigation));
 
   // Only choose predictions worth prefetching
+  const hasCustomerId = customerId !== undefined && customerId !== null && customerId !== "";
   const selected = predictions
     .filter(p => p.shouldPrefetch === true && p.expectedValue > 0)
     .sort((a, b) => b.expectedValue - a.expectedValue)
+    .filter(p => hasCustomerId || p.endpoint === "CUSTOMERS")
+    .map(prediction => ({ ...prediction, url: resolveEndpoint(prediction.endpoint, customerId) }))
+    .filter(({ url }) => !responseCache.has(url) && !responseCache.inFlight.has(url))
     .slice(0, REQUEST_BUDGET);
 
   const tasks = selected.map(async prediction => {
-    const url = resolveEndpoint(prediction.endpoint, customerId);
+    const url = prediction.url;
 
     // Skip data already cached or currently being fetched
     if (responseCache.has(url) || responseCache.inFlight.has(url)) {
@@ -97,7 +99,14 @@ export async function requestEndpoint(stateId, customerId) {
 
   // Record actual user navigation
   history.push(stateId);
-  pendingNavigation = stateId;
+  const navigation = { history: [...history], stateId };
+  // Report clicks in initiation order, including overlapping data requests.
+  const predictions = navigationQueue.then(() => getPredictions(navigation));
+  navigationQueue = predictions.catch(error => {
+    console.error("Prediction failed:", error);
+    return [];
+  });
+  const safePredictions = navigationQueue;
 
   // Check browser cache
   const cachedData = responseCache.get(url);
@@ -138,8 +147,8 @@ export async function requestEndpoint(stateId, customerId) {
     estimatedSavedMs
   };
 
-  // Record navigation on backend and predict the next request
-  prefetchNext(customerId).catch(error => {
+  // Execute the prediction already requested for this navigation
+  prefetchNext(customerId, navigation, safePredictions).catch(error => {
     console.error("Prediction failed:", error);
   });
 

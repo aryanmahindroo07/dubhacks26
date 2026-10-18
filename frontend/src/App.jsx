@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './App.css';
+import CustomerWorkspace from './components/CustomerWorkspace/CustomerWorkspace.jsx';
 
 const metrics = [
   {
@@ -63,8 +64,8 @@ function App() {
 
       <nav className="topbar-nav">
         <a className="active" href="#metrics" aria-current="page">Metrics</a>
-        <a href="#requests">Requests</a>
-        <a href="#predictions">Predictions</a>
+        <a href="#customers">Customers</a>
+        <a href="/overview">Sample overview</a>
       </nav>
     </header>
     <main className="app">
@@ -135,6 +136,7 @@ function App() {
           ))}
         </section>
       </div>
+      <CustomerWorkspace />
     </main>
     </>
   );

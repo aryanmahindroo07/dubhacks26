@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { customers } = require("./data");
-const { predictNext } = require("./prediction/engine");
+const { predictNext, recordTransition, getHistory } = require("./prediction/engine");
 
 const app = express();
 app.use(cors());
@@ -113,7 +113,13 @@ app.post("/api/predict", (req, res) => {
     });
   }
 
-  const predictions = predictNext(history);
+  const { sessionId, stateId } = req.body;
+  const states = ["CUSTOMERS", "CUSTOMER", "ORDERS", "SUPPORT", "ANALYTICS"];
+  if (stateId != null && (typeof sessionId !== "string" || !sessionId.trim() || !states.includes(stateId))) {
+    return res.status(400).json({ error: "navigation requires a sessionId and valid stateId" });
+  }
+  if (stateId != null) recordTransition(sessionId, stateId);
+  const predictions = predictNext(stateId != null ? getHistory(sessionId) : history);
 
   res.json(predictions);
 });
