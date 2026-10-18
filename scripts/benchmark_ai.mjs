@@ -3,6 +3,7 @@ import {readFile,mkdir,writeFile} from 'node:fs/promises';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {performance} from 'node:perf_hooks';
+import {createHash} from 'node:crypto';
 
 const opt=(name,fallback)=>{const i=process.argv.indexOf(`--${name}`);return i<0?fallback:process.argv[i+1];};
 const base=opt('base','http://localhost:4000');
@@ -46,7 +47,9 @@ if(!reportOnly)try{
     try{
       if(!initial.providers.perceptron.configured||!initial.providers.gemini.configured)throw new Error('Configure BOTH backend API keys and restart before benchmarking. No calls were simulated.');
       const imagePath=scenario.imagePath?resolve(dirname(resolve(manifestPath)),scenario.imagePath):fileURLToPath(new URL(`../frontend/public/ai-samples/${scenario.image}.png`,import.meta.url));
-      const image=`data:${scenario.mime||'image/png'};base64,`+(await readFile(imagePath)).toString('base64');
+      const imageBytes=await readFile(imagePath);
+      const inputSha256=createHash('sha256').update(imageBytes).digest('hex');
+      const image=`data:${scenario.mime||'image/png'};base64,`+imageBytes.toString('base64');
       const item=await call('/items','POST',{type:scenario.type,name:scenario.name,image},session);
       await call('/session','PATCH',{enabled},session);
       const actions=[];const started=performance.now();let actionError;
@@ -60,7 +63,7 @@ if(!reportOnly)try{
       if(!actionError&&scenario.stopAfterMs)await sleep(scenario.stopAfterMs);
       const journeyMs=performance.now()-started;
       const snapshot=await settle(session);
-      const trial={scenario:scenario.name,repetition,mode:enabled?'ON':'OFF',dwellMs:scenario.dwellMs??dwell,journeyMs,actions,providers:initial.providers,completed:!actionError,clean:!actionError&&!snapshot.metrics.failures,error:actionError,metrics:snapshot.metrics,requestLog:snapshot.requestLog};
+      const trial={scenario:scenario.name,inputSha256,repetition,mode:enabled?'ON':'OFF',dwellMs:scenario.dwellMs??dwell,journeyMs,actions,providers:initial.providers,completed:!actionError,clean:!actionError&&!snapshot.metrics.failures,error:actionError,metrics:snapshot.metrics,requestLog:snapshot.requestLog};
       if(!enabled&&snapshot.metrics.speculativeCalls!==0)throw new Error('OFF unexpectedly made speculative calls.');
       trials.push(trial);
       await writeFile(resolve(out,'results.json'),JSON.stringify({metadata,trials},null,2));
@@ -74,6 +77,8 @@ const percentile=(values,p)=>{const a=[...values].sort((x,y)=>x-y);return a.leng
 const sum=(xs,fn)=>xs.reduce((a,x)=>a+fn(x),0);
 const cleanPairs=trials.filter(t=>t.clean&&trials.some(other=>other.scenario===t.scenario&&other.repetition===t.repetition&&other.mode!==t.mode&&other.clean));
 const formatMs=value=>Number.isFinite(value)?`${value.toFixed(1)} ms`:'N/A';
+const median=values=>{const a=[...values].sort((x,y)=>x-y);return a.length?(a[Math.floor((a.length-1)/2)]+a[Math.floor(a.length/2)])/2:NaN;};
+const matched=cleanPairs.filter(t=>t.mode==='OFF').map(off=>({off,on:cleanPairs.find(t=>t.mode==='ON'&&t.scenario===off.scenario&&t.repetition===off.repetition)}));
 const summary=['# AI inbox OFF/ON measurement','',`Actual model requests · ${metadata.repetitions} repetitions · ${metadata.dwellMs} ms default review interval (per-scenario overrides are retained). ${inputDescription}`, '', '| Scenario | OFF mean action wait | ON mean action wait | Net extra provider calls | ON consumed prefires | ON unused prefires |','|---|---:|---:|---:|---:|---:|'];
 for(const scenario of [...scenarios,{name:'ALL'}]){
   const selected=cleanPairs.filter(t=>scenario.name==='ALL'||t.scenario===scenario.name);
@@ -84,6 +89,7 @@ for(const scenario of [...scenarios,{name:'ALL'}]){
   summary.push(`| ${scenario.name} | ${formatMs(mean(off))} | ${formatMs(mean(on))} | ${calls(on)-calls(off)} | ${sum(on,t=>t.metrics.usedPrefetches)} | ${sum(on,t=>t.metrics.unusedPrefetches)} |`);
   if(scenario.name==='ALL')summary.push('',`P95 action wait: OFF ${formatMs(percentile(waits(off),.95))}; ON ${formatMs(percentile(waits(on),.95))}.`, '', 'Token usage is in results.json provider events. No dollar estimates are made. Task elapsed includes the fixed review interval; action waits do not. Small samples do not establish production accuracy or statistical significance.');
 }
+summary.push('', '## Paired total user waiting', '', `Valid pairs: ${matched.length}. Median OFF total action wait: ${formatMs(median(matched.map(p=>p.off.metrics.totalWaitMs)))}; median ON: ${formatMs(median(matched.map(p=>p.on.metrics.totalWaitMs)))}. Median paired reduction: ${formatMs(median(matched.map(p=>p.off.metrics.totalWaitMs-p.on.metrics.totalWaitMs)))} (negative means ON was slower).`, '', 'Read-ahead is OFF by default in each fresh session. These authored journeys are a controlled latency experiment, not a real-user prediction-accuracy estimate.');
 summary.push('', '## Reliability — all trials, including failures', '', '| Mode | Trials | Completed journeys | Provider failures | Failed actions | Provider calls | Total action wait incl. failures |', '|---|---:|---:|---:|---:|---:|---:|');
 for(const mode of ['OFF','ON']){
   const rows=trials.filter(t=>t.mode===mode);

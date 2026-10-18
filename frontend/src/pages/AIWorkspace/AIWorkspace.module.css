@@ -64,3 +64,15 @@
 .shift {font-weight:700;color:#245c49;}
 @media(max-width:800px){.learningGrid{grid-template-columns:1fr}}
 .toggleRow button {flex:none;}
+.prefireStatus {display:grid;gap:8px;padding:18px;margin:0 0 20px;border:1px solid #a8cbbc;border-left:5px solid #276b57;border-radius:10px;background:#f0f7f2;}
+.prefireStatus strong {font-size:21px;overflow-wrap:anywhere;}
+.prefireStatus p {margin:0;font-size:13px;line-height:1.5;}
+.demoGuide,.comparison {margin:24px auto;}
+.demoGuide summary {cursor:pointer;font-weight:700;color:#245c49;}
+.demoGuide li {margin:12px 0;line-height:1.6;}
+
+.waitBars {display:grid;gap:14px;margin:24px 0;}
+.waitBars span {display:block;font-size:14px;font-weight:700;margin-bottom:6px;}
+.waitTrack {height:22px;background:#f1f4f2;border-radius:5px;overflow:hidden;}
+.offBar,.onBar {height:100%;border-radius:5px;}
+.offBar {background:#82918a;}.onBar {background:#276b57;}

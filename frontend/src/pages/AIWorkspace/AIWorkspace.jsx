@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {getAISession,setAIPrefetch,setAIReadAhead,uploadAIImage,openAIItem,runAIAction,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
 import styles from './AIWorkspace.module.css';
+import {PrefireStatus,ComparisonPanel,DemoGuide} from './DemoEvidence.jsx';
 
 const ACTIONS=[['READ_TEXT','Read text','Perceptron'],['EXTRACT_FIELDS','Extract fields','Gemini'],['SUMMARIZE','Summarize','Gemini'],['MAKE_TASKS','Turn into tasks','Gemini']];
 const LABELS=Object.fromEntries(ACTIONS.map(([id,label])=>[id,label]));
@@ -73,6 +74,17 @@ export default function AIWorkspace(){
     }catch(e){setError(e.message);}
     finally{setBusy('');if(fileInput.current)fileInput.current.value='';}
   }
+  async function realReceipts(){
+    setBusy('Loading public receipts');setError('');
+    try{
+      const files=await Promise.all([6,7,8].map(async n=>{
+        const response=await fetch(`/real-receipts/cord-${String(n).padStart(3,'0')}.jpg`);
+        if(!response.ok)throw new Error('Public receipt could not be loaded.');
+        return new File([await response.blob()],`cord-test-${String(n).padStart(3,'0')}.jpg`,{type:'image/jpeg'});
+      }));
+      await addFiles(files,'RECEIPT');
+    }catch(e){setError(e.message);setBusy('');}
+  }
   async function sample(category){
     setBusy('Loading sample');setError('');
     try{
@@ -127,11 +139,13 @@ export default function AIWorkspace(){
       {session&&(!session.providers.perceptron.configured||!session.providers.gemini.configured)&&<p className={styles.setup}>Add the missing API keys to <code>backend/.env</code> using <code>backend/.env.example</code>, then restart the backend. This workspace does not substitute simulated AI results.</p>}
       {error&&<p role="alert" className={styles.error}>{error}</p>}
       <p role="status" className={styles.notice}>{busy?`${busy}…`:notice}</p>
+      <DemoGuide/>
       <div className={styles.workspace}>
         <section className={styles.panel} aria-labelledby="inbox-heading"><h2 id="inbox-heading">1. Inbox</h2>
           <label className={styles.label}>Image category<select value={type} disabled={Boolean(busy)} onChange={e=>setType(e.target.value)}><option value="RECEIPT">Receipt</option><option value="WHITEBOARD">Whiteboard</option></select></label>
           <label className={styles.label}>Add images · PNG, JPEG, or WebP · up to 5 MB each<input ref={fileInput} type="file" multiple accept="image/png,image/jpeg,image/webp" disabled={!session||Boolean(busy)} onChange={e=>addFiles(e.target.files)}/></label>
           <div className={styles.controls}><button disabled={!session||Boolean(busy)} onClick={()=>sample('RECEIPT')}>Add demo receipt</button><button disabled={!session||Boolean(busy)} onClick={()=>sample('WHITEBOARD')}>Add demo whiteboard</button></div>
+          <div className={styles.controls}><button disabled={!session||Boolean(busy)||items.length>7} onClick={realReceipts}>Add 3 real public receipts</button></div><p className={styles.small}>Photographed CORD test receipts · NAVER CLOVA · <a href="/real-receipts/ATTRIBUTION.md" target="_blank" rel="noreferrer">CC BY 4.0 / source</a>. Images only go to providers; reference answers are not supplied.</p>
           <div className={styles.toggleRow}><button disabled={!session||Boolean(busy)} aria-pressed={session?.readAhead||false} onClick={toggleReadAhead}>{session?.readAhead?'Stop reading ahead':'Read ahead'}</button><p className={styles.small}>Off by default. When on, the next unread image is sent to Perceptron in the background while you work, so it opens instantly.</p></div>
           {items.length?<ul className={styles.inboxList} aria-label="Images in this run">{items.map((it,i)=><li key={it.id}><button aria-current={it.id===currentId} disabled={Boolean(busy)} onClick={()=>openItem(it.id)}>
             <span className={styles.itemName}>{i+1}. {it.name}</span>
@@ -145,6 +159,7 @@ export default function AIWorkspace(){
         </section>
         <section className={styles.panel} aria-labelledby="action-heading"><div className={styles.sectionHeading}><h2 id="action-heading">2. Work on {current?`image ${index+1}`:'an image'}</h2>{current&&index<items.length-1&&<button disabled={Boolean(busy)} onClick={next}>Next image →</button>}</div>
           {current?.duplicateOf&&<p className={styles.warning}>Possible duplicate of “{current.duplicateOf.name}”. {current.duplicateOf.reason}</p>}
+          <PrefireStatus session={session} current={current} result={result}/>
           <div className={styles.actions}>{ACTIONS.map(([id,label,provider])=><button key={id} disabled={!current||Boolean(busy)||sessionFailed||(id!=='READ_TEXT'&&!read)||!session?.providers[provider.toLowerCase()].configured} onClick={()=>run(id)}><span>{label}</span><small>{provider}{id==='READ_TEXT'&&current?.textReady&&!read?' · ready':''}</small></button>)}</div>
           {current&&!read&&<p className={styles.small}>Gemini actions become available after Read text succeeds.</p>}
           {result?<div aria-live="polite"><h3>{LABELS[result.action]}</h3><p className={styles.source}>{result.source==='cache'?'Completed cache hit':result.source==='in-flight'?'Joined running request':'New provider request'}{result.usedPrefetch?' · consumed a prefetch':''} · observed wait {milliseconds(result.waitMs)}</p><p className={styles.small}>{result.provider} · {result.model} · original provider call {milliseconds(result.providerMs)}</p><Result result={result.result}/><p className={styles.small}>AI-generated output. Check extracted amounts, names, and tasks before using them.</p></div>:<div className={styles.empty}>{current?'Run Read text, then choose what to do with it. If RequestFlow already prepared that step, it appears instantly.':'Add or choose an image to start.'}</div>}
@@ -156,6 +171,7 @@ export default function AIWorkspace(){
         <p className={styles.small}>Predictions start from 500 generated journeys, not real-user data, then adapt to your own choices in this run. Your choices count more as they repeat: two or three consistent choices change what gets prefetched.</p>
         <div className={styles.learningGrid}>{session.learning.map(entry=><LearningCard key={entry.type} entry={entry}/>)}</div>
       </section>}
+      <ComparisonPanel/>
       <section className={styles.panel} aria-labelledby="metrics-heading"><div className={styles.sectionHeading}><h2 id="metrics-heading">This run · measured activity</h2><button disabled={!session||Boolean(busy)||Boolean(metrics?.running)} onClick={download}>Export measurements</button></div>
         {metrics&&<><div className={styles.metrics}><div><strong>{metrics.navigations}</strong><span>Completed actions</span></div><div><strong>{metrics.hits} / {metrics.reused}</strong><span>Cache hits / in-flight joins</span></div><div><strong>{metrics.usedPrefetches} / {metrics.unusedPrefetches}</strong><span>Used / unused prefetches so far</span></div><div><strong>{milliseconds(metrics.medianWaitMs)}</strong><span>Median observed wait</span></div></div><p>Provider calls: {metrics.demandCalls} demand + {metrics.speculativeCalls} speculative (prefetch and read-ahead) · Pending: {metrics.pendingPrefetches} · Failed background calls: {metrics.failedPrefetches} · Failed actions: {metrics.failedActions ?? 0} · Total action wait (including failures): {(metrics.totalWaitMs/1000).toFixed(2)} s</p></>}
         <p className={styles.small}>Unused prefetches may still be used later. Fresh run resets the inbox, cache, counters and learned habits for a matched comparison. Switching prefetch OFF alone keeps the cache. Initial scoring costs and latencies are estimates; exported waits and provider usage are measured, not a dollar ROI claim.</p>

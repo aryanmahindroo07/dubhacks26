@@ -1,0 +1,864 @@
+{
+  "createdAt": "2026-10-18T10:23:35.921Z",
+  "method": "Four synthetic whiteboards; actual Perceptron/Gemini calls. Authored READ_TEXT → SUMMARIZE choices, fresh session, read-ahead OFF. A controlled adaptation demonstration, not prediction accuracy.",
+  "steps": [
+    {
+      "image": 1,
+      "predictionsAfterRead": [
+        {
+          "action": "MAKE_TASKS",
+          "label": "Turn into tasks",
+          "probability": 0.6060606060606061,
+          "startingProbability": 0.6060606060606061,
+          "personalObservations": 0,
+          "contextOrder": 2,
+          "shouldPrefetch": true,
+          "expectedValue": 2384.848484848485,
+          "estimatedProviderMs": 4000,
+          "latencySource": "placeholder",
+          "eligible": true
+        },
+        {
+          "action": "SUMMARIZE",
+          "label": "Summarize",
+          "probability": 0.22727272727272727,
+          "startingProbability": 0.22727272727272727,
+          "personalObservations": 0,
+          "contextOrder": 2,
+          "shouldPrefetch": false,
+          "expectedValue": 604.5454545454545,
+          "estimatedProviderMs": 3000,
+          "latencySource": "placeholder",
+          "eligible": true
+        }
+      ],
+      "summarySource": "network",
+      "usedPrefetch": false,
+      "waitMs": 755.210000000021,
+      "learning": [
+        {
+          "type": "RECEIPT",
+          "after": "READ_TEXT",
+          "finishedItems": 0,
+          "observations": 0,
+          "startingPrefetch": "EXTRACT_FIELDS",
+          "nowPrefetch": "EXTRACT_FIELDS",
+          "rows": [
+            {
+              "action": "EXTRACT_FIELDS",
+              "label": "Extract fields",
+              "starting": 0.7333333333333333,
+              "now": 0.7333333333333333
+            },
+            {
+              "action": "SUMMARIZE",
+              "label": "Summarize",
+              "starting": 0.08666666666666667,
+              "now": 0.08666666666666667
+            }
+          ]
+        },
+        {
+          "type": "WHITEBOARD",
+          "after": "READ_TEXT",
+          "finishedItems": 0,
+          "observations": 1,
+          "startingPrefetch": "MAKE_TASKS",
+          "nowPrefetch": "MAKE_TASKS",
+          "rows": [
+            {
+              "action": "MAKE_TASKS",
+              "label": "Turn into tasks",
+              "starting": 0.6060606060606061,
+              "now": 0.4867715617715618
+            },
+            {
+              "action": "SUMMARIZE",
+              "label": "Summarize",
+              "starting": 0.22727272727272727,
+              "now": 0.37604895104895103
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "image": 2,
+      "predictionsAfterRead": [
+        {
+          "action": "MAKE_TASKS",
+          "label": "Turn into tasks",
+          "probability": 0.4867715617715618,
+          "startingProbability": 0.6060606060606061,
+          "personalObservations": 1,
+          "contextOrder": 2,
+          "shouldPrefetch": true,
+          "expectedValue": 433.93966526078225,
+          "estimatedProviderMs": 996.8998750000028,
+          "latencySource": "measured",
+          "eligible": true
+        },
+        {
+          "action": "SUMMARIZE",
+          "label": "Summarize",
+          "probability": 0.37604895104895103,
+          "startingProbability": 0.22727272727272727,
+          "personalObservations": 1,
+          "contextOrder": 2,
+          "shouldPrefetch": true,
+          "expectedValue": 221.56262324597196,
+          "estimatedProviderMs": 755.1084169999813,
+          "latencySource": "measured",
+          "eligible": true
+        }
+      ],
+      "summarySource": "network",
+      "usedPrefetch": false,
+      "waitMs": 587.1430000000109,
+      "learning": [
+        {
+          "type": "RECEIPT",
+          "after": "READ_TEXT",
+          "finishedItems": 0,
+          "observations": 0,
+          "startingPrefetch": "EXTRACT_FIELDS",
+          "nowPrefetch": "EXTRACT_FIELDS",
+          "rows": [
+            {
+              "action": "EXTRACT_FIELDS",
+              "label": "Extract fields",
+              "starting": 0.7333333333333333,
+              "now": 0.7333333333333333
+            },
+            {
+              "action": "SUMMARIZE",
+              "label": "Summarize",
+              "starting": 0.08666666666666667,
+              "now": 0.08666666666666667
+            }
+          ]
+        },
+        {
+          "type": "WHITEBOARD",
+          "after": "READ_TEXT",
+          "finishedItems": 1,
+          "observations": 2,
+          "startingPrefetch": "MAKE_TASKS",
+          "nowPrefetch": "MAKE_TASKS",
+          "rows": [
+            {
+              "action": "MAKE_TASKS",
+              "label": "Turn into tasks",
+              "starting": 0.6060606060606061,
+              "now": 0.4056743909685086
+            },
+            {
+              "action": "SUMMARIZE",
+              "label": "Summarize",
+              "starting": 0.22727272727272727,
+              "now": 0.4799465240641711
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "image": 3,
+      "predictionsAfterRead": [
+        {
+          "action": "MAKE_TASKS",
+          "label": "Turn into tasks",
+          "probability": 0.4056743909685086,
+          "startingProbability": 0.6060606060606061,
+          "personalObservations": 2,
+          "contextOrder": 2,
+          "shouldPrefetch": true,
+          "expectedValue": 330.3032803994338,
+          "estimatedProviderMs": 960.7109789999959,
+          "latencySource": "measured",
+          "eligible": true
+        },
+        {
+          "action": "SUMMARIZE",
+          "label": "Summarize",
+          "probability": 0.4799465240641711,
+          "startingProbability": 0.22727272727272727,
+          "personalObservations": 2,
+          "contextOrder": 2,
+          "shouldPrefetch": true,
+          "expectedValue": 270.08444512432783,
+          "estimatedProviderMs": 671.0951669999922,
+          "latencySource": "measured",
+          "eligible": true
+        }
+      ],
+      "summarySource": "network",
+      "usedPrefetch": false,
+      "waitMs": 893.5493330000318,
+      "learning": [
+        {
+          "type": "RECEIPT",
+          "after": "READ_TEXT",
+          "finishedItems": 0,
+          "observations": 0,
+          "startingPrefetch": "EXTRACT_FIELDS",
+          "nowPrefetch": "EXTRACT_FIELDS",
+          "rows": [
+            {
+              "action": "EXTRACT_FIELDS",
+              "label": "Extract fields",
+              "starting": 0.7333333333333333,
+              "now": 0.7333333333333333
+            },
+            {
+              "action": "SUMMARIZE",
+              "label": "Summarize",
+              "starting": 0.08666666666666667,
+              "now": 0.08666666666666667
+            }
+          ]
+        },
+        {
+          "type": "WHITEBOARD",
+          "after": "READ_TEXT",
+          "finishedItems": 2,
+          "observations": 3,
+          "startingPrefetch": "MAKE_TASKS",
+          "nowPrefetch": "SUMMARIZE",
+          "rows": [
+            {
+              "action": "MAKE_TASKS",
+              "label": "Turn into tasks",
+              "starting": 0.6060606060606061,
+              "now": 0.34773012075643656
+            },
+            {
+              "action": "SUMMARIZE",
+              "label": "Summarize",
+              "starting": 0.22727272727272727,
+              "now": 0.5542122351332878
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "image": 4,
+      "predictionsAfterRead": [
+        {
+          "action": "SUMMARIZE",
+          "label": "Summarize",
+          "probability": 0.5542122351332878,
+          "startingProbability": 0.22727272727272727,
+          "personalObservations": 3,
+          "contextOrder": 2,
+          "shouldPrefetch": true,
+          "expectedValue": 368.43516814190843,
+          "estimatedProviderMs": 745.2270419999841,
+          "latencySource": "measured",
+          "eligible": true
+        },
+        {
+          "action": "MAKE_TASKS",
+          "label": "Turn into tasks",
+          "probability": 0.34773012075643656,
+          "startingProbability": 0.6060606060606061,
+          "personalObservations": 3,
+          "contextOrder": 2,
+          "shouldPrefetch": false,
+          "expectedValue": 255.11703864419553,
+          "estimatedProviderMs": 921.2432499999995,
+          "latencySource": "measured",
+          "eligible": true
+        }
+      ],
+      "summarySource": "cache",
+      "usedPrefetch": true,
+      "waitMs": 0.0740419999929145,
+      "learning": [
+        {
+          "type": "RECEIPT",
+          "after": "READ_TEXT",
+          "finishedItems": 0,
+          "observations": 0,
+          "startingPrefetch": "EXTRACT_FIELDS",
+          "nowPrefetch": "EXTRACT_FIELDS",
+          "rows": [
+            {
+              "action": "EXTRACT_FIELDS",
+              "label": "Extract fields",
+              "starting": 0.7333333333333333,
+              "now": 0.7333333333333333
+            },
+            {
+              "action": "SUMMARIZE",
+              "label": "Summarize",
+              "starting": 0.08666666666666667,
+              "now": 0.08666666666666667
+            }
+          ]
+        },
+        {
+          "type": "WHITEBOARD",
+          "after": "READ_TEXT",
+          "finishedItems": 3,
+          "observations": 4,
+          "startingPrefetch": "MAKE_TASKS",
+          "nowPrefetch": "SUMMARIZE",
+          "rows": [
+            {
+              "action": "MAKE_TASKS",
+              "label": "Turn into tasks",
+              "starting": 0.6060606060606061,
+              "now": 0.3042679267926793
+            },
+            {
+              "action": "SUMMARIZE",
+              "label": "Summarize",
+              "starting": 0.22727272727272727,
+              "now": 0.6099234923492349
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "providers": {
+    "perceptron": {
+      "configured": true,
+      "model": "perceptron-mk1.5"
+    },
+    "gemini": {
+      "configured": true,
+      "model": "gemini-3.5-flash-lite"
+    }
+  },
+  "before": [
+    {
+      "type": "RECEIPT",
+      "after": "READ_TEXT",
+      "finishedItems": 0,
+      "observations": 0,
+      "startingPrefetch": "EXTRACT_FIELDS",
+      "nowPrefetch": "EXTRACT_FIELDS",
+      "rows": [
+        {
+          "action": "EXTRACT_FIELDS",
+          "label": "Extract fields",
+          "starting": 0.7333333333333333,
+          "now": 0.7333333333333333
+        },
+        {
+          "action": "SUMMARIZE",
+          "label": "Summarize",
+          "starting": 0.08666666666666667,
+          "now": 0.08666666666666667
+        }
+      ]
+    },
+    {
+      "type": "WHITEBOARD",
+      "after": "READ_TEXT",
+      "finishedItems": 0,
+      "observations": 0,
+      "startingPrefetch": "MAKE_TASKS",
+      "nowPrefetch": "MAKE_TASKS",
+      "rows": [
+        {
+          "action": "MAKE_TASKS",
+          "label": "Turn into tasks",
+          "starting": 0.6060606060606061,
+          "now": 0.6060606060606061
+        },
+        {
+          "action": "SUMMARIZE",
+          "label": "Summarize",
+          "starting": 0.22727272727272727,
+          "now": 0.22727272727272727
+        }
+      ]
+    }
+  ],
+  "after": [
+    {
+      "type": "RECEIPT",
+      "after": "READ_TEXT",
+      "finishedItems": 0,
+      "observations": 0,
+      "startingPrefetch": "EXTRACT_FIELDS",
+      "nowPrefetch": "EXTRACT_FIELDS",
+      "rows": [
+        {
+          "action": "EXTRACT_FIELDS",
+          "label": "Extract fields",
+          "starting": 0.7333333333333333,
+          "now": 0.7333333333333333
+        },
+        {
+          "action": "SUMMARIZE",
+          "label": "Summarize",
+          "starting": 0.08666666666666667,
+          "now": 0.08666666666666667
+        }
+      ]
+    },
+    {
+      "type": "WHITEBOARD",
+      "after": "READ_TEXT",
+      "finishedItems": 3,
+      "observations": 4,
+      "startingPrefetch": "MAKE_TASKS",
+      "nowPrefetch": "SUMMARIZE",
+      "rows": [
+        {
+          "action": "MAKE_TASKS",
+          "label": "Turn into tasks",
+          "starting": 0.6060606060606061,
+          "now": 0.3042679267926793
+        },
+        {
+          "action": "SUMMARIZE",
+          "label": "Summarize",
+          "starting": 0.22727272727272727,
+          "now": 0.6099234923492349
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "navigations": 8,
+    "hits": 1,
+    "reused": 0,
+    "misses": 7,
+    "demandCalls": 7,
+    "speculativeCalls": 4,
+    "failures": 0,
+    "failedActions": 0,
+    "running": 0,
+    "usedPrefetches": 1,
+    "unusedPrefetches": 3,
+    "pendingPrefetches": 0,
+    "failedPrefetches": 0,
+    "totalWaitMs": 4301.642417000112,
+    "medianWaitMs": 543.7285830000183,
+    "p95WaitMs": 893.5493330000318
+  },
+  "requestLog": [
+    {
+      "id": "6be703b9-12b4-40c3-bc9a-a8510a07b204",
+      "at": 1792319207904,
+      "kind": "navigation",
+      "action": "SUMMARIZE",
+      "itemId": "2ae19c5e-5c3c-4eb9-a16b-3854ed2e0918",
+      "result": "cache",
+      "waitMs": 0.0740419999929145,
+      "usedPrefetch": true,
+      "providerMs": 708.7866250000079
+    },
+    {
+      "id": "7f34cc16-accf-45f1-81bb-7c117f5ead33",
+      "at": 1792319197842,
+      "kind": "prefetch",
+      "action": "SUMMARIZE",
+      "itemId": "2ae19c5e-5c3c-4eb9-a16b-3854ed2e0918",
+      "result": "completed",
+      "providerMs": 708.7866250000079,
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "promptTokenCount": 103,
+        "candidatesTokenCount": 33,
+        "totalTokenCount": 136,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 103
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "id": "bce9c699-2111-489c-a148-23521973225b",
+      "at": 1792319197133,
+      "kind": "prefetch",
+      "action": "SUMMARIZE",
+      "itemId": "2ae19c5e-5c3c-4eb9-a16b-3854ed2e0918",
+      "result": "started",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "af11476b-521a-4e3e-a49d-f4b5752ebc0f",
+      "at": 1792319197133,
+      "kind": "navigation",
+      "action": "READ_TEXT",
+      "itemId": "2ae19c5e-5c3c-4eb9-a16b-3854ed2e0918",
+      "result": "network",
+      "waitMs": 465.821958000015,
+      "usedPrefetch": false,
+      "providerMs": 465.7730000000447
+    },
+    {
+      "id": "0438b1db-e08d-46ea-be7f-f427cd02b0fa",
+      "at": 1792319197133,
+      "kind": "provider",
+      "action": "READ_TEXT",
+      "itemId": "2ae19c5e-5c3c-4eb9-a16b-3854ed2e0918",
+      "result": "completed",
+      "providerMs": 465.7730000000447,
+      "model": "perceptron-mk1.5",
+      "usage": {
+        "prompt_tokens": 1048,
+        "completion_tokens": 52,
+        "total_tokens": 1100,
+        "prompt_tokens_details": {
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "790a92dc-e926-4924-8ca8-cc2296b6ca9e",
+      "at": 1792319196667,
+      "kind": "provider",
+      "action": "READ_TEXT",
+      "itemId": "2ae19c5e-5c3c-4eb9-a16b-3854ed2e0918",
+      "result": "started",
+      "model": "perceptron-mk1.5"
+    },
+    {
+      "id": "42618893-9d02-4835-9ca8-b9c780a2d879",
+      "at": 1792319186659,
+      "kind": "navigation",
+      "action": "SUMMARIZE",
+      "itemId": "309cd758-2155-406c-8c21-6d98d4ae5b6d",
+      "result": "network",
+      "waitMs": 893.5493330000318,
+      "usedPrefetch": false,
+      "providerMs": 893.4907919999678
+    },
+    {
+      "id": "f79c2af8-823c-40eb-9eed-d67581077847",
+      "at": 1792319186659,
+      "kind": "provider",
+      "action": "SUMMARIZE",
+      "itemId": "309cd758-2155-406c-8c21-6d98d4ae5b6d",
+      "result": "completed",
+      "providerMs": 893.4907919999678,
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "promptTokenCount": 103,
+        "candidatesTokenCount": 37,
+        "totalTokenCount": 140,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 103
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "id": "8cd7d1fb-f086-475d-8123-216e7db2b41e",
+      "at": 1792319185765,
+      "kind": "provider",
+      "action": "SUMMARIZE",
+      "itemId": "309cd758-2155-406c-8c21-6d98d4ae5b6d",
+      "result": "started",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "4b66b2e5-6ba4-411b-bd4e-4193d2ae2496",
+      "at": 1792319061805,
+      "kind": "prefetch",
+      "action": "MAKE_TASKS",
+      "itemId": "309cd758-2155-406c-8c21-6d98d4ae5b6d",
+      "result": "completed",
+      "providerMs": 842.3077920000069,
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "promptTokenCount": 131,
+        "candidatesTokenCount": 138,
+        "totalTokenCount": 269,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 131
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "id": "f61abce3-08e8-4de5-a480-eedc11d63004",
+      "at": 1792319060963,
+      "kind": "prefetch",
+      "action": "MAKE_TASKS",
+      "itemId": "309cd758-2155-406c-8c21-6d98d4ae5b6d",
+      "result": "started",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "b041596d-65ba-4109-927d-504e1e549298",
+      "at": 1792319060963,
+      "kind": "navigation",
+      "action": "READ_TEXT",
+      "itemId": "309cd758-2155-406c-8c21-6d98d4ae5b6d",
+      "result": "network",
+      "waitMs": 466.07083400001284,
+      "usedPrefetch": false,
+      "providerMs": 466.0065830000094
+    },
+    {
+      "id": "651b6879-5595-4cdc-8f4c-2e49137cf2e9",
+      "at": 1792319060962,
+      "kind": "provider",
+      "action": "READ_TEXT",
+      "itemId": "309cd758-2155-406c-8c21-6d98d4ae5b6d",
+      "result": "completed",
+      "providerMs": 466.0065830000094,
+      "model": "perceptron-mk1.5",
+      "usage": {
+        "prompt_tokens": 1048,
+        "completion_tokens": 52,
+        "total_tokens": 1100,
+        "prompt_tokens_details": {
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "52646536-481b-4ed8-8767-e533b1a8d3a6",
+      "at": 1792319060496,
+      "kind": "provider",
+      "action": "READ_TEXT",
+      "itemId": "309cd758-2155-406c-8c21-6d98d4ae5b6d",
+      "result": "started",
+      "model": "perceptron-mk1.5"
+    },
+    {
+      "id": "44a25c6b-e041-433c-b4b3-19f36684fef0",
+      "at": 1792319050482,
+      "kind": "navigation",
+      "action": "SUMMARIZE",
+      "itemId": "8b1db395-67dd-4463-b301-b0ee06817bcb",
+      "result": "network",
+      "waitMs": 587.1430000000109,
+      "usedPrefetch": false,
+      "providerMs": 587.0819170000032
+    },
+    {
+      "id": "b8336bd6-df23-44a9-a7f2-4fcea6a5ed4f",
+      "at": 1792319050482,
+      "kind": "provider",
+      "action": "SUMMARIZE",
+      "itemId": "8b1db395-67dd-4463-b301-b0ee06817bcb",
+      "result": "completed",
+      "providerMs": 587.0819170000032,
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "promptTokenCount": 103,
+        "candidatesTokenCount": 33,
+        "totalTokenCount": 136,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 103
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "id": "4f3b60b2-e107-4935-9db3-d13bd80103c3",
+      "at": 1792319049895,
+      "kind": "provider",
+      "action": "SUMMARIZE",
+      "itemId": "8b1db395-67dd-4463-b301-b0ee06817bcb",
+      "result": "started",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "5f821cfd-d46d-4037-a85e-9641b8250ce8",
+      "at": 1792319039803,
+      "kind": "prefetch",
+      "action": "MAKE_TASKS",
+      "itemId": "8b1db395-67dd-4463-b301-b0ee06817bcb",
+      "result": "completed",
+      "providerMs": 924.5220829999889,
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "promptTokenCount": 131,
+        "candidatesTokenCount": 138,
+        "totalTokenCount": 269,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 131
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "id": "49b7b5c3-9dd2-4685-a6d2-57274a54b4c3",
+      "at": 1792319038878,
+      "kind": "prefetch",
+      "action": "MAKE_TASKS",
+      "itemId": "8b1db395-67dd-4463-b301-b0ee06817bcb",
+      "result": "started",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "1573e762-234f-4c02-9672-cfcec2d96e18",
+      "at": 1792319038878,
+      "kind": "navigation",
+      "action": "READ_TEXT",
+      "itemId": "8b1db395-67dd-4463-b301-b0ee06817bcb",
+      "result": "network",
+      "waitMs": 500.3141660000256,
+      "usedPrefetch": false,
+      "providerMs": 500.26183400000446
+    },
+    {
+      "id": "61395309-a851-4bef-a8b4-6564fa560668",
+      "at": 1792319038878,
+      "kind": "provider",
+      "action": "READ_TEXT",
+      "itemId": "8b1db395-67dd-4463-b301-b0ee06817bcb",
+      "result": "completed",
+      "providerMs": 500.26183400000446,
+      "model": "perceptron-mk1.5",
+      "usage": {
+        "prompt_tokens": 1048,
+        "completion_tokens": 52,
+        "total_tokens": 1100,
+        "prompt_tokens_details": {
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "67bb30dc-7b2f-4de3-baa1-1e56297aa861",
+      "at": 1792319038378,
+      "kind": "provider",
+      "action": "READ_TEXT",
+      "itemId": "8b1db395-67dd-4463-b301-b0ee06817bcb",
+      "result": "started",
+      "model": "perceptron-mk1.5"
+    },
+    {
+      "id": "f1a0d2e7-b56a-46bc-9ca3-6ab8e7f07350",
+      "at": 1792319028365,
+      "kind": "navigation",
+      "action": "SUMMARIZE",
+      "itemId": "1d3baf36-273e-4c92-80ee-7769fd2fa966",
+      "result": "network",
+      "waitMs": 755.210000000021,
+      "usedPrefetch": false,
+      "providerMs": 755.1084169999813
+    },
+    {
+      "id": "5f498707-2404-43c1-920f-2c082db61738",
+      "at": 1792319028365,
+      "kind": "provider",
+      "action": "SUMMARIZE",
+      "itemId": "1d3baf36-273e-4c92-80ee-7769fd2fa966",
+      "result": "completed",
+      "providerMs": 755.1084169999813,
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "promptTokenCount": 103,
+        "candidatesTokenCount": 40,
+        "totalTokenCount": 143,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 103
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "id": "460fa366-3b04-41df-a132-2ec3eebcdf65",
+      "at": 1792319027609,
+      "kind": "provider",
+      "action": "SUMMARIZE",
+      "itemId": "1d3baf36-273e-4c92-80ee-7769fd2fa966",
+      "result": "started",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "866df658-3c5c-41da-9330-8f78598d2bd7",
+      "at": 1792319017583,
+      "kind": "prefetch",
+      "action": "MAKE_TASKS",
+      "itemId": "1d3baf36-273e-4c92-80ee-7769fd2fa966",
+      "result": "completed",
+      "providerMs": 996.8998750000028,
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "promptTokenCount": 131,
+        "candidatesTokenCount": 138,
+        "totalTokenCount": 269,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 131
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "id": "a52e51c7-5843-476b-8dbf-b82e63aa3a02",
+      "at": 1792319016586,
+      "kind": "prefetch",
+      "action": "MAKE_TASKS",
+      "itemId": "1d3baf36-273e-4c92-80ee-7769fd2fa966",
+      "result": "started",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "d3af88af-777e-4df1-bdb1-d3ac2de6d2ea",
+      "at": 1792319016586,
+      "kind": "navigation",
+      "action": "READ_TEXT",
+      "itemId": "1d3baf36-273e-4c92-80ee-7769fd2fa966",
+      "result": "network",
+      "waitMs": 633.4590840000019,
+      "usedPrefetch": false,
+      "providerMs": 633.4222500000033
+    },
+    {
+      "id": "eed53210-482d-468d-a90c-4c44f85c6a08",
+      "at": 1792319016586,
+      "kind": "provider",
+      "action": "READ_TEXT",
+      "itemId": "1d3baf36-273e-4c92-80ee-7769fd2fa966",
+      "result": "completed",
+      "providerMs": 633.4222500000033,
+      "model": "perceptron-mk1.5",
+      "usage": {
+        "prompt_tokens": 1048,
+        "completion_tokens": 52,
+        "total_tokens": 1100,
+        "prompt_tokens_details": {
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "fdc0825d-72e2-4392-af66-24f2c69eebb5",
+      "at": 1792319015953,
+      "kind": "provider",
+      "action": "READ_TEXT",
+      "itemId": "1d3baf36-273e-4c92-80ee-7769fd2fa966",
+      "result": "started",
+      "model": "perceptron-mk1.5"
+    }
+  ],
+  "completed": true,
+  "changed": true,
+  "fourthConsumedSummary": true
+}
