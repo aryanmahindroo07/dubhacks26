@@ -44,9 +44,21 @@ saved is estimated against that fixed baseline, not a measured OFF/ON result.
 Run regression checks from the repository root:
 
 ```sh
-node --test frontend/src/services/prefetch.test.js frontend/src/pages/Overview/overviewData.test.js
+node --test frontend/src/services/prefetch.test.js frontend/src/pages/Overview/overviewData.test.js backend/prediction/policy.test.js
 npm run build --prefix frontend
 ```
+
+Browser check (needs both servers running and Playwright installed):
+`python scripts/verify_prefetch.py`. It opens a customer, waits for the
+prefetch, opens Orders and expects a cache hit; repeats with an immediate
+click and expects the running prefetch to be reused; and fails on any
+duplicate data request.
+
+Prefetch policy: the backend only marks a prediction for prefetch when its
+likelihood is at least 35% (`minProbability` in
+`backend/prediction/scoring.js`), so near-uniform guesses don't cost requests.
+The workspace reports cache hits, reused running requests and misses
+separately; "served without a new request" counts both hits and reuse.
 
 Frontend API requests use the Vite `/api` proxy in development. For deployment,
 provide a same-origin `/api` reverse proxy or set `VITE_API_BASE` for the workspace

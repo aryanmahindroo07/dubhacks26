@@ -16,6 +16,22 @@ export class ResponseCache {
     // Performance metrics
     this.hits = 0;
     this.misses = 0;
+    // Requests that joined a fetch already running (usually a prefetch)
+    this.reused = 0;
+  }
+
+  // Classify a user request and update metrics exactly once:
+  // "hit" (ready in cache), "reused" (joins a running request) or "miss".
+  lookup(key) {
+    if (this.has(key)) {
+      return { status: "hit", data: this.get(key) };
+    }
+    if (this.inFlight.has(key)) {
+      this.reused++;
+      return { status: "reused" };
+    }
+    this.misses++;
+    return { status: "miss" };
   }
 
   // Get a cached response if it is still valid
@@ -105,12 +121,16 @@ export class ResponseCache {
 
   // Return cache performance metrics
   getMetrics() {
-    const total = this.hits + this.misses;
+    const total = this.hits + this.reused + this.misses;
 
     return {
       hits: this.hits,
+      reused: this.reused,
       misses: this.misses,
+      // Share of requests answered instantly from the cache
       hitRate: total === 0 ? 0 : this.hits / total,
+      // Share of requests that avoided starting a new network request
+      servedRate: total === 0 ? 0 : (this.hits + this.reused) / total,
       cacheSize: this.cache.size,
       inFlightRequests: this.inFlight.size
     };
