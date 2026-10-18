@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import CustomerWorkspace from './components/CustomerWorkspace/CustomerWorkspace.jsx';
+import AppLayout from './components/AppLayout/AppLayout.jsx';
 
 const metrics = [
   {
@@ -32,6 +33,16 @@ function App() {
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
   const [submittedQuery, setSubmittedQuery] = useState('');
+  const [arrowAnimationKey, setArrowAnimationKey] = useState(0);
+
+  useEffect(() => {
+    function replayArrow(event) {
+      if (event.persisted) setArrowAnimationKey((key) => key + 1);
+    }
+
+    window.addEventListener('pageshow', replayArrow);
+    return () => window.removeEventListener('pageshow', replayArrow);
+  }, []);
 
   async function handleSearch(event) {
     event.preventDefault();
@@ -55,26 +66,14 @@ function App() {
   }
 
   return (
-    <>
-    <header className="topbar">
-      <a className="brand" href="#metrics">
-        <span className="brand-mark" aria-hidden="true">R</span>
-        <span>RequestFlow</span>
-      </a>
-
-      <nav className="topbar-nav">
-        <a className="active" href="#metrics" aria-current="page">Metrics</a>
-        <a href="#customers">Customers</a>
-        <a href="/overview">Live overview</a>
-        <a href="/ai">AI inbox</a>
-      </nav>
-    </header>
+    <AppLayout activePage="home">
     <main className="app">
       <header className="title">
         Request<span className="title-accent">
           Flow
-          <svg className="title-underline" viewBox="0 0 140 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-            <path d="M2 10H138M130 2l8 8-8 8" />
+          <svg key={arrowAnimationKey} className="title-underline" viewBox="0 0 140 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path className="title-underline-line" pathLength="1" d="M2 10H138" />
+            <path className="title-underline-head" d="M130 2l8 8-8 8" />
           </svg>
         </span>
       </header>
@@ -91,6 +90,7 @@ function App() {
         <button type="submit" disabled={loading}>{loading ? 'Searching…' : 'Search'}</button>
       </form>
 
+      <div className="home-content">
       <section className="page-heading" id="metrics">
         <div>
           <p className="subtitle">
@@ -145,8 +145,9 @@ function App() {
         </section>
       </div>
       <CustomerWorkspace />
+      </div>
     </main>
-    </>
+    </AppLayout>
   );
 }
 

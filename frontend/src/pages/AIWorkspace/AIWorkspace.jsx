@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {getAISession,setAIPrefetch,uploadAIImage,runAIAction,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
 import styles from './AIWorkspace.module.css';
+import AppLayout from '../../components/AppLayout/AppLayout.jsx';
 
 const ACTIONS=[['READ_TEXT','Read text','Perceptron'],['EXTRACT_FIELDS','Extract fields','Gemini'],['SUMMARIZE','Summarize','Gemini'],['MAKE_TASKS','Turn into tasks','Gemini']];
 const LABELS=Object.fromEntries(ACTIONS.map(([id,label])=>[id,label]));
@@ -67,10 +68,9 @@ export default function AIWorkspace(){
     const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;a.download=`requestflow-ai-${session.enabled?'on':'off'}-${Date.now()}.json`;a.click();URL.revokeObjectURL(url);
   }
-  return <>
-    <header className={styles.topbar}><a className={styles.brand} href="/">RequestFlow</a><nav aria-label="Main navigation"><a href="/">Customers</a><a href="/overview">Live overview</a><a href="/ai" aria-current="page">AI inbox</a></nav></header>
+  return <AppLayout activePage="ai">
     <main className={styles.page}>
-      <div className={styles.heading}><div><p className={styles.eyebrow}>Visual AI workspace</p><h1>Prepare the next step.</h1><p>Perceptron reads the image. Gemini transforms the text. RequestFlow anticipates a matching next action while you review.</p></div><div className={styles.controls}><button disabled={!session||Boolean(busy)} aria-pressed={session?.enabled||false} onClick={toggle}>{session?.enabled?'Pause prefetch':'Enable prefetch'}</button><button disabled={Boolean(busy)||Boolean(metrics?.running)} onClick={fresh}>Fresh run</button></div></div>
+      <div className={styles.heading}><div><p className={styles.eyebrow}>Visual AI workspace</p><h1>Prepare the next step.</h1><p className={styles.subtitle}>Perceptron reads the image. Gemini transforms the text. RequestFlow anticipates a matching next action while you review.</p></div><div className={styles.controls}><button className={styles.prefetchButton} disabled={!session||Boolean(busy)} aria-pressed={session?.enabled||false} onClick={toggle}>{session?.enabled?'Pause prefetch':'Enable prefetch'}</button><button disabled={Boolean(busy)||Boolean(metrics?.running)} onClick={fresh}>Fresh run</button></div></div>
       <p className={styles.disclosure}>Read text sends the selected image to Perceptron. Transformations send OCR text to Gemini. Enabling prefetch can make up to {session?.prefetchLimitPerItem??3} additional paid calls per image. Nothing is sent as a message or added to an external account.</p>
       <div className={styles.providerStatus} aria-label="Provider configuration"><span>Perceptron: {session?(session.providers.perceptron.configured?'key configured':'key needed'):'checking…'}</span><span>Gemini: {session?(session.providers.gemini.configured?'key configured':'key needed'):'checking…'}</span><span>Prefetch: {session?.enabled?'ON':'OFF'}</span></div>
       {session&&(!session.providers.perceptron.configured||!session.providers.gemini.configured)&&<p className={styles.setup}>Add the missing API keys to <code>backend/.env</code> using <code>backend/.env.example</code>, then restart the backend. This workspace does not substitute simulated AI results.</p>}
@@ -97,5 +97,5 @@ export default function AIWorkspace(){
         <div className={styles.tableWrap}><table><caption className={styles.srOnly}>AI provider, speculation, and navigation events</caption><thead><tr><th>Event</th><th>Action</th><th>Outcome</th><th>Time</th></tr></thead><tbody>{session?.requestLog.map(e=><tr key={e.id}><td>{e.kind}</td><td>{LABELS[e.action]||e.action}</td><td>{e.result}{e.message?` · ${e.message}`:''}{e.usedPrefetch?' · useful prefire':''}</td><td>{e.waitMs!==undefined?milliseconds(e.waitMs):e.providerMs!==undefined?milliseconds(e.providerMs):'—'}</td></tr>)}</tbody></table></div>
       </section>
     </main>
-  </>;
+  </AppLayout>;
 }
