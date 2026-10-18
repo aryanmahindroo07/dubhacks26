@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { customers } = require("./data");
+const { predictNext } = require("./prediction/engine");
 
 const app = express();
 app.use(cors());
@@ -100,3 +101,19 @@ app.post("/api/config/delays", (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+
+// ---- Prediction endpoint --------------------------------------------------
+app.post("/api/predict", (req, res) => {
+  const history = req.body?.history;
+
+  if (!Array.isArray(history) ||
+      !history.every(state => typeof state === "string")) {
+    return res.status(400).json({
+      error: "history must be an array of state strings"
+    });
+  }
+
+  const predictions = predictNext(history);
+
+  res.json(predictions);
+});
