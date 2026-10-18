@@ -157,12 +157,12 @@ export default function AIWorkspace(){
     const {sessionId: _sessionId, ...measurements}=session;
     const data={exportedAt:new Date().toISOString(),...measurements};
     const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
-    const a=document.createElement('a');a.href=url;a.download=`requestflow-ai-${session.enabled?'on':'off'}-${Date.now()}.json`;a.click();URL.revokeObjectURL(url);
+    const a=document.createElement('a');a.href=url;a.download=`mise-ai-${session.enabled?'on':'off'}-${Date.now()}.json`;a.click();URL.revokeObjectURL(url);
   }
   const index=items.findIndex(i=>i.id===currentId);
   return <AppLayout activePage="ai">
     <main className={styles.page}>
-      <div className={styles.heading}><div><p className={styles.eyebrow}>RequestFlow · live AI demo</p><h1>AI that’s ready before you ask.</h1><p className={styles.subtitle}>RequestFlow learns your next step and prepares it while you review. Try it with receipts or whiteboards.</p></div><div className={styles.controls}><button className={styles.prefetchButton} disabled={!session||Boolean(busy)} aria-pressed={session?.enabled||false} onClick={toggle}>{session?.enabled?'Pause prefetch':'Enable prefetch'}</button><button disabled={Boolean(busy)||Boolean(metrics?.running)} onClick={fresh}>Fresh run</button></div></div>
+      <div className={styles.heading}><div><p className={styles.eyebrow}>Mise · live AI demo</p><h1>AI that’s ready before you ask.</h1><p className={styles.subtitle}>Mise learns your next step and prepares it while you review. Try it with receipts or whiteboards.</p></div><div className={styles.controls}><button className={styles.prefetchButton} disabled={!session||Boolean(busy)} aria-pressed={session?.enabled||false} onClick={toggle}>{session?.enabled?'Pause prefetch':'Enable prefetch'}</button><button disabled={Boolean(busy)||Boolean(metrics?.running)} onClick={fresh}>Fresh run</button></div></div>
       <BenchmarkHighlight/>
       <p className={styles.disclosure}>Images go to Perceptron; extracted text goes to Gemini. Prefetch allows up to {session?.prefetchLimitPerItem??3} extra paid calls per image. Actions only prepare results here.</p>
       <div className={styles.providerStatus} aria-label="Provider configuration"><span>Perceptron: {session?(session.providers.perceptron.configured?'key configured':'key needed'):'checking…'}</span><span>Gemini: {session?(session.providers.gemini.configured?'key configured':'key needed'):'checking…'}</span><span>Prefetch: {session?.enabled?'ON':'OFF'}</span><span>Read-ahead: {session?.readAhead?'ON':'OFF'}</span></div>

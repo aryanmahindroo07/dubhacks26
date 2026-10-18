@@ -54,7 +54,7 @@ export default function BenchmarkHighlight() {
       <div className={styles.comparison}>
         <div><span className={styles.label}>Prefetch OFF</span><strong>{seconds(off.medianWaitMs)}</strong></div>
         <span className={styles.arrow} aria-hidden="true">→</span>
-        <div><span className={styles.label}>RequestFlow ON</span><strong className={styles.onValue}>{seconds(on.medianWaitMs)}</strong></div>
+        <div><span className={styles.label}>Mise ON</span><strong className={styles.onValue}>{seconds(on.medianWaitMs)}</strong></div>
       </div>
       <p className={styles.caption}>Median total waiting per workflow · {report.triples} matched OFF/fixed/Markov trial groups · US receipts</p>
     </div>

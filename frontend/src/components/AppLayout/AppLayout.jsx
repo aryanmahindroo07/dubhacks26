@@ -26,7 +26,7 @@ function Sidebar({ activePage, sidebarFooter }) {
         <span className={styles.brandMark}>
           <Icon name="workflow" size={23} />
         </span>
-        <span>requestflow</span>
+        <span>Mise</span>
       </a>
       <p className={styles.navLabel}>Workspace</p>
       <nav className={styles.navigation}>
