@@ -5,7 +5,7 @@
 const { MarkovPredictor } = require("../prediction/markov");
 const { scorePredictions } = require("../prediction/scoring");
 const { ACTIONS } = require("./actions");
-const { generateJourneys, candidatesFor, typed, untyped } = require("./journeys");
+const { generateJourneys, candidatesFor, typed, untyped, typeOf } = require("./journeys");
 
 const TRAINING_JOURNEYS = 500;
 const TRAINING_SEED = 42;
@@ -31,9 +31,11 @@ function toHistory(type, actions) {
 }
 
 // Score each candidate with that action's own latency: a slow action is worth
-// prefetching at a lower likelihood than a fast one.
+// prefetching at a lower likelihood than a fast one. Actions already run on
+// this item are skipped: their results are on screen already.
 function predictNextAction(type, actions, config = {}, predictor = model) {
-  const predictions = predictor.predict(toHistory(type, actions), candidatesFor(type));
+  const candidates = candidatesFor(type).filter((state) => !actions.includes(untyped(state)));
+  const predictions = predictor.predict(toHistory(type, actions), candidates);
   return predictions
     .map((prediction) => {
       const action = untyped(prediction.endpoint);
@@ -44,14 +46,36 @@ function predictNextAction(type, actions, config = {}, predictor = model) {
 }
 
 // Live learning: record what a user actually did, per session and item.
+// sessionId -> { itemId, history } for the item the user is working on.
 const sessions = new Map();
 
+// Moving to another item means the user stopped working on the current one:
+// record DONE so the model learns how often people stop, not only how often
+// they carry on.
+function focusItem(sessionId, itemId, type) {
+  const current = sessions.get(sessionId);
+  if (current && current.itemId === itemId) return current.history;
+  if (current) {
+    current.history.push(typed(typeOf(current.history[0]), "DONE"));
+    model.recordTransition(current.history);
+  }
+  const history = [typed(type, "OPEN")];
+  sessions.set(sessionId, { itemId, history });
+  return history;
+}
+
+// The user opened an item (no action yet).
+function openItem(sessionId, itemId, type) {
+  return focusItem(sessionId, itemId, type).slice(1).map(untyped);
+}
+
 function recordAction(sessionId, itemId, type, action) {
-  const key = `${sessionId}:${itemId}`;
-  if (!sessions.has(key)) sessions.set(key, [typed(type, "OPEN")]);
-  const history = sessions.get(key);
-  history.push(typed(type, action));
-  model.recordTransition(history);
+  const history = focusItem(sessionId, itemId, type);
+  // Running an action again just shows the earlier result; nothing to learn.
+  if (!history.includes(typed(type, action))) {
+    history.push(typed(type, action));
+    model.recordTransition(history);
+  }
   return history.slice(1).map(untyped);
 }
 
@@ -63,6 +87,7 @@ module.exports = {
   createInboxModel,
   resetInboxModel,
   predictNextAction,
+  openItem,
   recordAction,
   getModel,
   toHistory,

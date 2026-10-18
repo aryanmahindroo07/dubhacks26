@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const { ACTIONS, ITEM_TYPES } = require("./actions");
 const { items } = require("./items");
 const { TRANSITIONS, TYPE_MIX, generateJourneys } = require("./journeys");
-const { predictNextAction, recordAction, resetInboxModel } = require("./engine");
+const { predictNextAction, openItem, recordAction, resetInboxModel } = require("./engine");
 const { evaluate } = require("./evaluate");
 
 test("every probability table sums to 1 and names real actions", () => {
@@ -47,8 +47,35 @@ test("live learning records actions per session and item", () => {
   resetInboxModel();
   assert.deepEqual(recordAction("s1", "r1", "RECEIPT", "READ_TEXT"), ["READ_TEXT"]);
   assert.deepEqual(recordAction("s1", "r1", "RECEIPT", "EXTRACT_FIELDS"), ["READ_TEXT", "EXTRACT_FIELDS"]);
+  // Re-running an action is not a new step
+  assert.deepEqual(recordAction("s1", "r1", "RECEIPT", "READ_TEXT"), ["READ_TEXT", "EXTRACT_FIELDS"]);
+  assert.deepEqual(openItem("s1", "r1", "RECEIPT"), ["READ_TEXT", "EXTRACT_FIELDS"]);
   assert.deepEqual(recordAction("s1", "w1", "WHITEBOARD", "READ_TEXT"), ["READ_TEXT"]);
   resetInboxModel();
+});
+
+test("live learning also learns when people stop", () => {
+  resetInboxModel();
+  const extract = () => predictNextAction("RECEIPT", ["READ_TEXT"]).find((p) => p.action === "EXTRACT_FIELDS").probability;
+  const before = extract();
+  // 30 users read a receipt's text, then move on to another item.
+  for (let i = 0; i < 30; i++) {
+    recordAction(`u${i}`, "r1", "RECEIPT", "READ_TEXT");
+    openItem(`u${i}`, "w1", "WHITEBOARD");
+  }
+  assert.ok(extract() < before - 0.05, `${before} -> ${extract()}`);
+  resetInboxModel();
+});
+
+test("never predicts an action already run on the item", () => {
+  const history = ["CAPTION", "FIND_OBJECTS"];
+  const actions = predictNextAction("PRODUCT_PHOTO", history).map((p) => p.action);
+  assert.ok(actions.length > 0);
+  for (const action of history) assert.ok(!actions.includes(action), action);
+  for (const journey of generateJourneys(500)) {
+    const steps = journey.slice(1, -1);
+    assert.equal(new Set(steps).size, steps.length, journey.join(" > "));
+  }
 });
 
 test("on unseen journeys the model beats simple prefetch strategies", () => {

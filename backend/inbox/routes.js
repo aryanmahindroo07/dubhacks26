@@ -2,7 +2,7 @@
 
 const { ACTIONS, ITEM_TYPES } = require("./actions");
 const { items, getItem, getActionResult } = require("./items");
-const { predictNextAction, recordAction } = require("./engine");
+const { predictNextAction, openItem, recordAction } = require("./engine");
 
 // Scale the simulated AI latency for quick local testing (e.g. 0.1).
 const DELAY_SCALE = Number(process.env.INBOX_DELAY_SCALE ?? 1);
@@ -49,7 +49,8 @@ function registerInboxRoutes(app) {
   });
 
   // Body: { sessionId, itemId, action? }. With `action`, records it first
-  // (live learning); without, predicts the first action on a newly opened item.
+  // (live learning); without, records that the item was opened. Either way,
+  // moving to a different item records the previous one as finished.
   app.post("/api/inbox/predict", (req, res) => {
     const { sessionId, itemId, action } = req.body || {};
     const item = getItem(itemId);
@@ -60,7 +61,9 @@ function registerInboxRoutes(app) {
     if (action != null && !ACTIONS[action]) {
       return res.status(400).json({ error: `Unknown action ${action}` });
     }
-    const history = action != null ? recordAction(sessionId, item.id, item.type, action) : [];
+    const history = action != null
+      ? recordAction(sessionId, item.id, item.type, action)
+      : openItem(sessionId, item.id, item.type);
     res.json({ itemId: item.id, type: item.type, history, predictions: predictNextAction(item.type, history) });
   });
 }

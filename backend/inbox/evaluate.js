@@ -40,10 +40,12 @@ function evaluate({ trainCount = 500, testCount = 200, trainSeed = 42, testSeed 
   }
   const globalTop = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
 
+  // Every strategy skips actions already run on the item (results on screen).
+  const notRun = (p) => (action) => !p.history.includes(action);
   const strategies = {
     "No prefetch": () => [],
-    "Always prefetch the most common action": () => [globalTop],
-    "Prefetch every possible action": (p) => candidatesFor(p.type).map(untyped),
+    "Always prefetch the most common action": (p) => [globalTop].filter(notRun(p)),
+    "Prefetch every possible action": (p) => candidatesFor(p.type).map(untyped).filter(notRun(p)),
     "RequestFlow (Markov + 35% threshold)": (p) =>
       predictNextAction(p.type, p.history, {}, model)
         .filter((x) => x.shouldPrefetch)
