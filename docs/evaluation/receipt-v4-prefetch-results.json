@@ -1,0 +1,414 @@
+{
+  "metadata": {
+    "createdAt": "2026-10-18T09:19:51.760Z",
+    "dwellMs": 1500,
+    "repetitions": 1,
+    "trialGapMs": 15000,
+    "inputDescription": "One OFF/ON regression pair on real CORD receipt 007, previously missing right-column amounts. Five-second review interval; development regression example, not a new accuracy sample.",
+    "manifestSource": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+    "method": "Actual provider-backed API. Fresh backend AI session/cache/seed model for each trial. OFF and ON use identical image inputs and scripts; ordinary caching enabled in both. Alternating paired order. Final background work drained for usage accounting. No artificial latency. Authored scenarios, not real-user prediction accuracy. Input provenance is specified separately in inputDescription.",
+    "scenarios": [
+      {
+        "name": "cord-007-quality-prefetch",
+        "type": "RECEIPT",
+        "imagePath": "../../datasets/cord-check/test-007.jpg",
+        "mime": "image/jpeg",
+        "actions": [
+          "READ_TEXT",
+          "EXTRACT_FIELDS"
+        ],
+        "dwellMs": 5000
+      }
+    ]
+  },
+  "trials": [
+    {
+      "scenario": "cord-007-quality-prefetch",
+      "repetition": 1,
+      "mode": "OFF",
+      "dwellMs": 5000,
+      "journeyMs": 6317.359166,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 496.584416,
+          "result": {
+            "text": "Kupon 15 100,000\nADD CHICKEN BOX 909\nSubtotal 100,909\nPBI (10%) 10,091\nTotal 111,000\nCash Rp. 111,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 493.986791000003,
+          "providerMs": 493.92512500000885,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 820.0843750000004,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "100,909",
+                "evidence": "Subtotal 100,909",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "10,091",
+                "evidence": "PBI (10%) 10,091",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "111,000",
+                "evidence": "Total 111,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 815.2597919999971,
+          "providerMs": 815.1031669999938,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 0,
+        "reused": 0,
+        "misses": 2,
+        "demandCalls": 2,
+        "speculativeCalls": 0,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 0,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 1309.246583,
+        "medianWaitMs": 654.6232915,
+        "p95WaitMs": 815.2597919999971
+      },
+      "requestLog": [
+        {
+          "id": "8352cab0-324c-44d2-831c-99e9594bb62b",
+          "at": 1792315198103,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4ace0416-945b-415a-9aeb-0dce3f8eea1a",
+          "result": "network",
+          "waitMs": 815.2597919999971,
+          "usedPrefetch": false,
+          "providerMs": 815.1031669999938
+        },
+        {
+          "id": "c38e69d5-0c42-42fd-beef-60550399e059",
+          "at": 1792315198103,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4ace0416-945b-415a-9aeb-0dce3f8eea1a",
+          "result": "completed",
+          "providerMs": 815.1031669999938,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "a4684128-f3cc-4326-9721-5a0bbe63ca4e",
+          "at": 1792315197288,
+          "kind": "provider",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "4ace0416-945b-415a-9aeb-0dce3f8eea1a",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "2302d99e-a008-4766-be5f-b892ff3e9ceb",
+          "at": 1792315192281,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "4ace0416-945b-415a-9aeb-0dce3f8eea1a",
+          "result": "network",
+          "waitMs": 493.986791000003,
+          "usedPrefetch": false,
+          "providerMs": 493.92512500000885
+        },
+        {
+          "id": "b2e1550f-275d-43e2-8651-1bce9a6a8157",
+          "at": 1792315192281,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "4ace0416-945b-415a-9aeb-0dce3f8eea1a",
+          "result": "completed",
+          "providerMs": 493.92512500000885,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "ab69408f-0384-40ca-8b67-2d28c36de7ca",
+          "at": 1792315191787,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "4ace0416-945b-415a-9aeb-0dce3f8eea1a",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    },
+    {
+      "scenario": "cord-007-quality-prefetch",
+      "repetition": 1,
+      "mode": "ON",
+      "dwellMs": 5000,
+      "journeyMs": 5666.787084,
+      "actions": [
+        {
+          "action": "READ_TEXT",
+          "clientWaitMs": 661.7094999999972,
+          "result": {
+            "text": "Kupon 15 100,000\nADD CHICKEN BOX 909\nSubtotal 100,909\nPBI (10%) 10,091\nTotal 111,000\nCash Rp. 111,000",
+            "quality": {
+              "hasReadableTotal": true
+            }
+          },
+          "source": "network",
+          "usedPrefetch": false,
+          "waitMs": 658.1858749999956,
+          "providerMs": 658.0764170000039,
+          "model": "perceptron-mk1.5",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "action": "EXTRACT_FIELDS",
+          "clientWaitMs": 4.609542000001966,
+          "result": {
+            "fields": [
+              {
+                "name": "subtotal",
+                "value": "100,909",
+                "evidence": "Subtotal 100,909",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "tax",
+                "value": "10,091",
+                "evidence": "PBI (10%) 10,091",
+                "status": "supported-by-ocr"
+              },
+              {
+                "name": "total",
+                "value": "111,000",
+                "evidence": "Total 111,000",
+                "status": "supported-by-ocr"
+              }
+            ],
+            "validation": {
+              "requiresReview": false,
+              "issues": [],
+              "note": "Checked against OCR text only. Verify important amounts against the image."
+            }
+          },
+          "source": "cache",
+          "usedPrefetch": true,
+          "waitMs": 0.0822080000070855,
+          "providerMs": 884.4807919999876,
+          "model": "gemini-3.5-flash-lite",
+          "promptVersion": "ai-inbox-v4",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        }
+      ],
+      "providers": {
+        "perceptron": {
+          "configured": true,
+          "model": "perceptron-mk1.5"
+        },
+        "gemini": {
+          "configured": true,
+          "model": "gemini-3.5-flash-lite"
+        }
+      },
+      "completed": true,
+      "clean": true,
+      "metrics": {
+        "navigations": 2,
+        "hits": 1,
+        "reused": 0,
+        "misses": 1,
+        "demandCalls": 1,
+        "speculativeCalls": 1,
+        "failures": 0,
+        "failedActions": 0,
+        "running": 0,
+        "usedPrefetches": 1,
+        "unusedPrefetches": 0,
+        "pendingPrefetches": 0,
+        "failedPrefetches": 0,
+        "totalWaitMs": 658.2680830000027,
+        "medianWaitMs": 329.13404150000133,
+        "p95WaitMs": 658.1858749999956
+      },
+      "requestLog": [
+        {
+          "id": "e8d46cc0-1d69-438a-be4b-605c039f7593",
+          "at": 1792315218798,
+          "kind": "navigation",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c1f85cb3-6a71-456f-b98c-5242af9f5c9e",
+          "result": "cache",
+          "waitMs": 0.0822080000070855,
+          "usedPrefetch": true,
+          "providerMs": 884.4807919999876
+        },
+        {
+          "id": "0ad30f93-437c-4c74-bb54-6f398b457333",
+          "at": 1792315214677,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c1f85cb3-6a71-456f-b98c-5242af9f5c9e",
+          "result": "completed",
+          "providerMs": 884.4807919999876,
+          "model": "gemini-3.5-flash-lite",
+          "usage": {
+            "promptTokenCount": 265,
+            "candidatesTokenCount": 149,
+            "totalTokenCount": 414,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 265
+              }
+            ],
+            "serviceTier": "standard"
+          }
+        },
+        {
+          "id": "2dd39c21-d5c3-42fc-b7ef-d5b9784c3340",
+          "at": 1792315213792,
+          "kind": "prefetch",
+          "action": "EXTRACT_FIELDS",
+          "itemId": "c1f85cb3-6a71-456f-b98c-5242af9f5c9e",
+          "result": "started",
+          "model": "gemini-3.5-flash-lite"
+        },
+        {
+          "id": "e2fd59a5-a411-4d73-90bc-b404970336b7",
+          "at": 1792315213792,
+          "kind": "navigation",
+          "action": "READ_TEXT",
+          "itemId": "c1f85cb3-6a71-456f-b98c-5242af9f5c9e",
+          "result": "network",
+          "waitMs": 658.1858749999956,
+          "usedPrefetch": false,
+          "providerMs": 658.0764170000039
+        },
+        {
+          "id": "fc3f470f-b86a-4b0a-b749-7cb39fa97514",
+          "at": 1792315213792,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "c1f85cb3-6a71-456f-b98c-5242af9f5c9e",
+          "result": "completed",
+          "providerMs": 658.0764170000039,
+          "model": "perceptron-mk1.5",
+          "usage": {
+            "prompt_tokens": 666,
+            "completion_tokens": 74,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "audio_tokens": 0
+            }
+          }
+        },
+        {
+          "id": "4d0f4bf0-77c1-45cd-a71b-4a619e3991a5",
+          "at": 1792315213134,
+          "kind": "provider",
+          "action": "READ_TEXT",
+          "itemId": "c1f85cb3-6a71-456f-b98c-5242af9f5c9e",
+          "result": "started",
+          "model": "perceptron-mk1.5"
+        }
+      ]
+    }
+  ]
+}

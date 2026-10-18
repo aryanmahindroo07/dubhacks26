@@ -1,3 +1,5 @@
+> Historical evaluation before the v4 correctness follow-up. See [receipt correctness](../receipt-correctness.md) and the receipt-v4 results for current checks; these older outcomes are retained for transparency.
+
 # What the real-data tests found
 
 The first demo was an integration proof, not enough evidence to call the product broadly validated. These follow-up tests use public real inputs and real human behavior in separate experiments.

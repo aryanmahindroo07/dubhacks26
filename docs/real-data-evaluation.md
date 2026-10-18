@@ -1,3 +1,5 @@
+> This describes the original evaluation and v2 prompt check. The current v4 OCR/evidence validation follow-up is documented in [receipt correctness](receipt-correctness.md); earlier results remain historical.
+
 # Real-data evaluation protocol
 
 This work separates three questions that synthetic demos cannot answer together:

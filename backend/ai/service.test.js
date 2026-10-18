@@ -6,7 +6,7 @@ const {createAIService,validateImage}=require('./service');
 const {createProviders,AIError}=require('./providers');
 const IMAGE='data:image/png;base64,'+fs.readFileSync(path.join(__dirname,'../../frontend/public/ai-samples/receipt.png')).toString('base64');
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
-function fixture({hold=false,fail=false,available=true,...options}={}) {
+function fixture({hold=false,fail=false,available=true,ocrText='Vendor: Demo Shop\nTotal: $13.20',...options}={}) {
   const calls=[];let release;let failOnce=fail;
   const providers={
     available:()=>available,
@@ -16,7 +16,7 @@ function fixture({hold=false,fail=false,available=true,...options}={}) {
       calls.push({action,text:doc.text});
       if(action==='EXTRACT_FIELDS'&&hold)await new Promise(resolve=>release=resolve);
       if(action==='EXTRACT_FIELDS'&&failOnce){failOnce=false;throw new AIError('test failure',502);}
-      return {result:action==='READ_TEXT'?{text:'Vendor: Demo Shop\nTotal: $13.20'}:action==='EXTRACT_FIELDS'?{fields:[{name:'total',value:'13.20'}]}:{summary:'Demo summary'},provider:action==='READ_TEXT'?'perceptron':'gemini',model:'test-model',usage:{input:10,output:5}};
+      return {result:action==='READ_TEXT'?{text:ocrText}:action==='EXTRACT_FIELDS'?{fields:[{name:'total',value:'13.20'}]}:{summary:'Demo summary'},provider:action==='READ_TEXT'?'perceptron':'gemini',model:'test-model',usage:{input:10,output:5}};
     },
   };
   const service=createAIService({providers,...options});
@@ -170,4 +170,15 @@ test('reopening a completed action does not retrain its transition',async()=>{
   const again=await f.service.perform(f.session,f.item.id,'READ_TEXT');
   assert.deepEqual(first.predictions,again.predictions);
   assert.ok(again.predictions.every(p=>p.action!=='READ_TEXT'));
+});
+
+
+test('unreadable receipt amounts do not spend a speculative extraction call',async()=>{
+  const f=fixture({ocrText:'Kupon 15\nSubtotal\nTax (10%)\nTotal'});
+  f.service.setEnabled(f.session,true);
+  await f.service.perform(f.session,f.item.id,'READ_TEXT');await f.service.idle(f.session);
+  const state=f.service.snapshot(f.session);
+  assert.equal(state.metrics.speculativeCalls,0);
+  const prediction=state.predictions.find(p=>p.action==='EXTRACT_FIELDS');
+  assert.equal(prediction.eligible,false);assert.match(prediction.eligibilityNote,/not readable/);
 });

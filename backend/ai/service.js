@@ -2,6 +2,7 @@ const { randomUUID } = require('node:crypto');
 const { performance } = require('node:perf_hooks');
 const { createInboxModel, predictNextAction, toHistory } = require('../inbox/engine');
 const { AIError, SUPPORTED_ACTIONS, hash } = require('./providers');
+const { hasReadableTotal } = require('./receiptValidation');
 
 const SESSION_TTL = 60 * 60 * 1000;
 const CACHE_TTL = 5 * 60 * 1000;
@@ -103,7 +104,8 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
         shouldPrefetch:p.shouldPrefetch,expectedValue:p.expectedValue,
         estimatedProviderMs:s.latencySamples[p.action]?.count ? s.latencySamples[p.action].total/s.latencySamples[p.action].count : p.latencyMs,
         latencySource:s.latencySamples[p.action]?.count?'measured':'placeholder',
-        eligible: providers.available(p.action) && (p.action === 'READ_TEXT' || Boolean(doc.text)),
+        eligible: providers.available(p.action) && (p.action === 'READ_TEXT' || Boolean(doc.text)) && !(doc.type==='RECEIPT'&&p.action==='EXTRACT_FIELDS'&&!hasReadableTotal(doc.text)),
+        eligibilityNote:doc.type==='RECEIPT'&&p.action==='EXTRACT_FIELDS'&&!hasReadableTotal(doc.text)?'Receipt total is not readable in OCR; check the image before extraction.':undefined,
       }));
   }
   function prefetch(s,doc,predictions) {

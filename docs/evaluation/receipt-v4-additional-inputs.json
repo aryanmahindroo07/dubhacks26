@@ -1,0 +1,39 @@
+{
+  "dataset": "naver-clova-ix/cord-v2",
+  "revision": "7f0115a4b758a71d6473b8d085751692da2fef98",
+  "source": "https://huggingface.co/datasets/naver-clova-ix/cord-v2",
+  "license": "CC-BY-4.0",
+  "attribution": "NAVER CLOVA; Park et al., CORD: A Consolidated Receipt Dataset for Post-OCR Parsing, 2019",
+  "selection": "Consecutive test rows 9\u201311; selected before provider calls; not selected by outcome.",
+  "downloadedAt": "2026-10-18T09:11:06.044139+00:00",
+  "samples": [
+    {
+      "id": "cord-test-009",
+      "image": "test-009.jpg",
+      "annotation": "test-009.json",
+      "sha256": "f1922943a5c2a4627fbd93ca2551bb7a79038ee9a760e63239b0036482b0238c",
+      "expected": {
+        "subtotal": "36000"
+      }
+    },
+    {
+      "id": "cord-test-010",
+      "image": "test-010.jpg",
+      "annotation": "test-010.json",
+      "sha256": "b815404532dc13595b3722cff86a4c3e76155187f5b289040ca4f9a59d44a546",
+      "expected": {
+        "total": "17,000",
+        "subtotal": "17,000"
+      }
+    },
+    {
+      "id": "cord-test-011",
+      "image": "test-011.jpg",
+      "annotation": "test-011.json",
+      "sha256": "e7865926c68a5282fb28040144000ca796a600887eae5e0c30b1827334408bb1",
+      "expected": {
+        "total": "230,000"
+      }
+    }
+  ]
+}

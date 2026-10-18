@@ -7,8 +7,8 @@ const LABELS=Object.fromEntries(ACTIONS.map(([id,label])=>[id,label]));
 const milliseconds=n=>`${(n||0).toFixed(1)} ms`;
 
 function Result({result}){
-  if(result.text!==undefined)return <pre className={styles.transcript}>{result.text}</pre>;
-  if(result.fields)return <dl className={styles.fields}>{result.fields.map((field,i)=><div key={i}><dt>{field.name}</dt><dd>{field.value}</dd></div>)}</dl>;
+  if(result.text!==undefined)return <>{result.quality?.hasReadableTotal===false&&<p>Receipt total was not readable in the extracted text. Check the image; automatic field extraction is skipped.</p>}<pre className={styles.transcript}>{result.text}</pre></>;
+  if(result.fields)return <><p>{result.validation?.requiresReview?'Some values need review. Unsupported amounts are hidden.':result.validation?'Values have supporting OCR text. Verify them against the image.':null}</p><dl className={styles.fields}>{result.fields.map((field,i)=><div key={i}><dt>{field.name}</dt><dd>{field.value??(field.status==='not-stated'?'Not stated':'Needs review — not readable from OCR')}</dd>{field.reason&&<dd className={styles.small}>{field.reason}</dd>}{field.evidence&&<dd className={styles.small}>OCR: {field.evidence}</dd>}</div>)}</dl></>;
   if(result.tasks)return result.tasks.length?<ul>{result.tasks.map((item,i)=><li key={i}>{item.task}{item.owner&&` · ${item.owner}`}{item.due&&` · ${item.due}`}</li>)}</ul>:<p>No explicit tasks were found.</p>;
   return <p>{result.summary}</p>;
 }
