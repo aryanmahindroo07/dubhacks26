@@ -4,7 +4,7 @@
 
 Mise takes its name from *mise en place*, a culinary term meaning **“everything in its place.”** Just as a chef prepares ingredients before cooking, Mise predicts your next step and prepares likely API or AI results while you review the current one. The response can be ready before you click.
 
-Built for the cooking theme at DubHacks '26.
+Built for DubHacks '26.
 
 ## What this project does
 
@@ -25,9 +25,9 @@ AI output remains subject to human review. Receipt evidence checks establish con
 
 See the [real-data evaluation protocol](docs/real-data-evaluation.md), [receipt correctness checks](docs/receipt-correctness.md), and [AI setup guide](docs/ai-inbox-setup.md) for evidence and limitations. These descriptions document intended behavior; they are not a compliance certification or a determination of legal applicability.
 
-## Frontend
+## Frontend starter
 
-The React + CSS interface lives in [`frontend/`](frontend/).
+The barebones React + CSS starter lives in [`frontend/`](frontend/).
 
 With Node.js 24 LTS installed:
 
@@ -99,7 +99,7 @@ waiting time, useful and unused prefetches, and extra API calls.
 
 ## AI inbox (dummy data)
 
-The synthetic Mise inbox predicts which AI action a user will run next
+The next version of Mise predicts which AI action a user will run next
 on an inbox item (read text, extract fields, turn into tasks, caption…) and
 runs it early. Everything lives in `backend/inbox/`:
 

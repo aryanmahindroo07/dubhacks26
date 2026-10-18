@@ -251,5 +251,5 @@ export function getPrefetchMetrics() {
 
 // Debug and benchmark hook (read-only metrics and the on/off switch)
 if (typeof window !== "undefined") {
-  window.__mise = { getPrefetchMetrics, setPrefetchEnabled, isPrefetchEnabled };
+  window.__mise = window.__requestflow = { getPrefetchMetrics, setPrefetchEnabled, isPrefetchEnabled };
 }

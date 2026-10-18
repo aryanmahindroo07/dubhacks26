@@ -1,5 +1,5 @@
 {
-  "name": "predictive-prefetch-api",
+  "name": "mise-backend",
   "version": "1.0.0",
   "description": "Mock SaaS customer API with simulated latency",
   "main": "server.js",

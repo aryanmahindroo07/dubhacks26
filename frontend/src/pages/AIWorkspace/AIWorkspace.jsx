@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-import {getAISession,setAIPrefetch,setAIReadAhead,uploadAIImage,openAIItem,runAIAction,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
+import {getAISession,setAIPrefetch,setAIReadAhead,uploadAIImage,openAIItem,runAIAction,setAIText,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
 import styles from './AIWorkspace.module.css';
 import AppLayout from '../../components/AppLayout/AppLayout.jsx';
 import PolicyEvidence from './PolicyEvidence.jsx';
@@ -37,11 +37,29 @@ function LearningCard({entry}){
   </div>;
 }
 
+// What to tell the user after Read text fails, by kind of error (the backend
+// decides the kind and has already retried temporary failures).
+const FAILURE_COPY={
+  retry:{title:"Couldn't reach Perceptron.",advice:'This looks temporary. Try again, or type the text yourself.',canRetry:true},
+  image:{title:"Couldn't read text from this image.",advice:'Trying the same image again will give the same result. Use a sharper or cropped photo, or type the text yourself.',canRetry:false},
+  wait:{title:'Perceptron rate limit reached.',advice:'Wait a minute, then try again, or type the text yourself.',canRetry:true},
+  setup:{title:"Perceptron isn't set up correctly.",advice:'Fix the key or model in backend/.env and restart the backend. You can type the text yourself in the meantime.',canRetry:false},
+};
+function FailurePanel({error,onRetry,typing,onType}){
+  const copy=FAILURE_COPY[error.recovery]||FAILURE_COPY.retry;
+  return <div className={styles.warning} role="group" aria-label="Read text failed">
+    <p><strong>{copy.title}</strong> {copy.advice}</p>
+    <p className={styles.small}>{error.message}</p>
+    <div className={styles.controls}>{copy.canRetry&&<button onClick={onRetry}>Retry Read text</button>}<button aria-expanded={typing} onClick={onType}>Type the text instead</button></div>
+  </div>;
+}
+
 export default function AIWorkspace(){
   const [session,setSession]=useState(null),[type,setType]=useState('RECEIPT');
   const [previews,setPreviews]=useState({}),[currentId,setCurrentId]=useState(null);
   const [busy,setBusy]=useState(''),[error,setError]=useState(''),[result,setResult]=useState(null);
   const [notice,setNotice]=useState(''),[sessionFailed,setSessionFailed]=useState(false);
+  const [typing,setTyping]=useState(false),[typedText,setTypedText]=useState('');
   const fileInput=useRef(null);
   useEffect(()=>{
     let active=true;
@@ -60,7 +78,7 @@ export default function AIWorkspace(){
   const refresh=async()=>setSession(await getAISession());
 
   async function openItem(id){
-    setError('');setResult(null);
+    setError('');setResult(null);setTyping(false);setTypedText('');
     try{await openAIItem(id);setCurrentId(id);await refresh();}
     catch(e){setError(e.message);}
   }
@@ -102,8 +120,13 @@ export default function AIWorkspace(){
     }catch(e){setError(e.message);setBusy('');}
   }
   async function run(action){
-    setBusy(LABELS[action]);setError('');setResult(null);
+    setBusy(action==='READ_TEXT'?'Reading text (retrying up to 2 times if it fails)':LABELS[action]);setError('');setResult(null);
     try{const output=await runAIAction(current.id,action);setResult({...output,action});await refresh();}
+    catch(e){setError(e.message);await refresh().catch(()=>{});}finally{setBusy('');}
+  }
+  async function useTypedText(){
+    setBusy('Saving text');setError('');
+    try{const output=await setAIText(current.id,typedText);setResult({...output,action:'READ_TEXT'});setTyping(false);setTypedText('');await refresh();setNotice('Using the text you typed. Gemini actions are now available.');}
     catch(e){setError(e.message);}finally{setBusy('');}
   }
   async function next(){
@@ -157,6 +180,8 @@ export default function AIWorkspace(){
             <span className={styles.chips}>
               <span className={styles.chip}>{it.type==='RECEIPT'?'Receipt':'Whiteboard'}</span>
               {it.read?<span className={styles.chip}>Text read</span>:it.textReady?<span className={`${styles.chip} ${styles.chipReady}`}>Text ready</span>:it.textPending?<span className={styles.chip}>Reading…</span>:null}
+              {!it.read&&it.error?.action==='READ_TEXT'&&<span className={`${styles.chip} ${styles.chipWarn}`}>Couldn't read</span>}
+              {it.textSource==='manual'&&<span className={styles.chip}>Typed text</span>}
               {it.duplicateOf&&<span className={`${styles.chip} ${styles.chipWarn}`}>Possible duplicate</span>}
             </span></button></li>)}</ul>:<div className={styles.empty}>Your images will appear here.</div>}
           {current&&<figure><img className={styles.preview} src={previews[current.id]} alt={`${current.type.toLowerCase()}: ${current.name}`}/><figcaption>{current.name} · {current.type.toLowerCase()}</figcaption></figure>}
@@ -171,8 +196,13 @@ export default function AIWorkspace(){
             const badge=sessionFailed?null:actionBadge(current?.actionStates?.[id]);
             return <button key={id} className={badge?.ready?styles.actionReady:undefined} disabled={!current||Boolean(busy)||sessionFailed||(id!=='READ_TEXT'&&!read)||!session?.providers[provider.toLowerCase()].configured} onClick={()=>run(id)}><span className={styles.actionTitle}><span>{label}</span>{badge&&<span className={badge.ready?styles.readyBadge:styles.actionBadge}>{badge.label}</span>}</span><small>{provider}</small></button>;
           })}</div>
-          {current&&!read&&<p className={styles.small}>Gemini actions become available after Read text succeeds.</p>}
-          {result?<div aria-live="polite"><h3>{LABELS[result.action]}</h3><p className={styles.source}>{result.source==='cache'?'From cache':result.source==='in-flight'?'Joined running request':'New provider request'} · {milliseconds(result.waitMs)} wait</p><Result result={result.result}/><p className={styles.small}>AI-generated · verify before use.</p><details className={styles.resultDetails}><summary>Provider details</summary><p>{result.provider} · {result.model} · original call {milliseconds(result.providerMs)}{result.usedPrefetch?' · used a prefetch':''}</p></details></div>:<div className={styles.empty}>{current?'Start with Read text. Watch for ✓ Ready on your next action.':'Add an image to start.'}</div>}
+          {current&&!read&&!busy&&current.error?.action==='READ_TEXT'&&<FailurePanel error={current.error} onRetry={()=>run('READ_TEXT')} typing={typing} onType={()=>setTyping(t=>!t)}/>}
+          {current&&!read&&typing&&<div className={styles.typed}>
+            <label className={styles.label}>Text from the image<textarea rows="6" value={typedText} onChange={e=>setTypedText(e.target.value)} placeholder={'e.g. TOTAL 13.20\nDATE 2026-10-17'}/></label>
+            <button disabled={!typedText.trim()||Boolean(busy)} onClick={useTypedText}>Use this text</button>
+          </div>}
+          {current&&!read&&!current.error&&<p className={styles.small}>Gemini actions become available after Read text succeeds.</p>}
+          {result?<div aria-live="polite"><h3>{LABELS[result.action]}</h3><p className={styles.source}>{result.source==='manual'?'Text typed by you':result.source==='cache'?'From cache':result.source==='in-flight'?'Joined running request':'New provider request'} · {milliseconds(result.waitMs)} wait</p><Result result={result.result}/><p className={styles.small}>AI-generated · verify before use.</p><details className={styles.resultDetails}><summary>Provider details</summary><p>{result.provider} · {result.model} · original call {milliseconds(result.providerMs)}{result.usedPrefetch?' · used a prefetch':''}</p></details></div>:<div className={styles.empty}>{current?'Start with Read text. Watch for ✓ Ready on your next action.':'Add an image to start.'}</div>}
           {!sessionFailed&&!!predictions.length&&<div className={styles.predictions}><h3>What runs early — and what doesn’t</h3><ul className={styles.decisionList}>{predictions.map(p=><li key={p.action}><div><strong>{p.label}</strong><span>{percent(p.probability)} likely</span></div><p>{predictionReason(p,session,current)}</p></li>)}</ul><details className={styles.learningDetails}><summary>How this is decided</summary><p>Markov next-action estimates, adjusted by your choices. Calls must clear a likelihood floor, estimated cost benefit and request budget. Initial costs and latencies are assumptions; this is not measured accuracy or dollar ROI.</p></details></div>}
         </section>
         {session&&(!session.providers.perceptron.configured||!session.providers.gemini.configured)&&<p className={styles.setup}>Add the missing API keys to <code>backend/.env</code> using <code>backend/.env.example</code>, then restart the backend. This workspace does not substitute simulated AI results.</p>}
