@@ -2,12 +2,20 @@
 
 ## 1. Show actual input and actual provider output
 
-Open `/ai`, start a Fresh run and choose **Add 3 real public receipts**.
-These are unchanged CORD test images 6–8, selected before provider evaluation,
-not selected for successful outcomes. NAVER CLOVA / Park et al. (2019), CC BY 4.0;
-see `datasets/README.md` and `datasets/cord-check/manifest.json` for attribution,
-source revision, hashes and reference annotations. Only the images go to providers.
-The browser bundle includes the three images and attribution, not reference answers.
+Open `/ai`, start a Fresh run and choose **Add 3 real US receipts**.
+These are publicly licensed photographs from Family Dollar in Oklahoma, Walmart
+in Missouri, and Cameron Market in Missouri, with USD amounts. Credits and
+individual CC BY-SA licenses are in `frontend/public/real-receipts/ATTRIBUTION.md`.
+Source URLs, hashes and manually transcribed reference amounts are recorded in
+`datasets/us-receipts/manifest.json`. Only images go to providers. The Walmart
+photo is sideways; OCR must handle the real photograph rather than a rewritten
+receipt. References are not an independent dataset ground truth.
+
+The recorded benchmark in the comparison panel still uses the previous
+Indonesian CORD receipts. It is explicitly labelled CORD and must not be
+presented as a US-receipt result. To measure the new inputs, substitute
+`--manifest datasets/us-receipts/evaluation.json` in the benchmark command below.
+No US provider accuracy or latency claim is established merely by adding images.
 
 Click Read text and compare its text with the visible image. Then Extract fields;
 show the supporting OCR quote and any values requiring review. OCR-supported does
@@ -94,7 +102,7 @@ of adaptation under an authored sequence, not a real-user accuracy measurement.
 
 - `docs/evaluation/demo-benchmark.md`: 16 live trials / 8 matched pairs.
 - `frontend/public/demo-evidence/results.json`: raw live-provider benchmark
-  loaded by **Load recorded real-receipt benchmark** in the UI.
+  loaded by **Load recorded CORD benchmark (Indonesia)** in the UI.
 - `docs/evaluation/demo-amount-checks.md`: amount correctness against local
   reference annotations for the same receipts (separate from latency).
 - `docs/evaluation/demo-adaptation.md`: controlled four-whiteboard run with a

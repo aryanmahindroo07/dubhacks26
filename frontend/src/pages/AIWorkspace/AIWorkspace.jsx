@@ -77,10 +77,10 @@ export default function AIWorkspace(){
   async function realReceipts(){
     setBusy('Loading public receipts');setError('');
     try{
-      const files=await Promise.all([6,7,8].map(async n=>{
-        const response=await fetch(`/real-receipts/cord-${String(n).padStart(3,'0')}.jpg`);
+      const files=await Promise.all(['family-dollar','walmart','cameron-market'].map(async name=>{
+        const response=await fetch(`/real-receipts/us-${name}.jpg`);
         if(!response.ok)throw new Error('Public receipt could not be loaded.');
-        return new File([await response.blob()],`cord-test-${String(n).padStart(3,'0')}.jpg`,{type:'image/jpeg'});
+        return new File([await response.blob()],`us-${name}.jpg`,{type:'image/jpeg'});
       }));
       await addFiles(files,'RECEIPT');
     }catch(e){setError(e.message);setBusy('');}
@@ -145,7 +145,7 @@ export default function AIWorkspace(){
           <label className={styles.label}>Image category<select value={type} disabled={Boolean(busy)} onChange={e=>setType(e.target.value)}><option value="RECEIPT">Receipt</option><option value="WHITEBOARD">Whiteboard</option></select></label>
           <label className={styles.label}>Add images · PNG, JPEG, or WebP · up to 5 MB each<input ref={fileInput} type="file" multiple accept="image/png,image/jpeg,image/webp" disabled={!session||Boolean(busy)} onChange={e=>addFiles(e.target.files)}/></label>
           <div className={styles.controls}><button disabled={!session||Boolean(busy)} onClick={()=>sample('RECEIPT')}>Add demo receipt</button><button disabled={!session||Boolean(busy)} onClick={()=>sample('WHITEBOARD')}>Add demo whiteboard</button></div>
-          <div className={styles.controls}><button disabled={!session||Boolean(busy)||items.length>7} onClick={realReceipts}>Add 3 real public receipts</button></div><p className={styles.small}>Photographed CORD test receipts · NAVER CLOVA · <a href="/real-receipts/ATTRIBUTION.md" target="_blank" rel="noreferrer">CC BY 4.0 / source</a>. Images only go to providers; reference answers are not supplied.</p>
+          <div className={styles.controls}><button disabled={!session||Boolean(busy)||items.length>7} onClick={realReceipts}>Add 3 real US receipts</button></div><p className={styles.small}>US receipts · USD · Family Dollar, Walmart, Cameron Market · <a href="/real-receipts/ATTRIBUTION.md" target="_blank" rel="noreferrer">Photo credits / licenses</a>. Images only go to providers; reference answers are not supplied.</p>
           <div className={styles.toggleRow}><button disabled={!session||Boolean(busy)} aria-pressed={session?.readAhead||false} onClick={toggleReadAhead}>{session?.readAhead?'Stop reading ahead':'Read ahead'}</button><p className={styles.small}>Off by default. When on, the next unread image is sent to Perceptron in the background while you work, so it opens instantly.</p></div>
           {items.length?<ul className={styles.inboxList} aria-label="Images in this run">{items.map((it,i)=><li key={it.id}><button aria-current={it.id===currentId} disabled={Boolean(busy)} onClick={()=>openItem(it.id)}>
             <span className={styles.itemName}>{i+1}. {it.name}</span>

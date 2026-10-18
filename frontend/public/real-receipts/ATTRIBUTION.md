@@ -1,17 +1,34 @@
-# Public photographed receipt inputs
+# US receipt photograph credits
 
-Images cord-006.jpg, cord-007.jpg and cord-008.jpg are unchanged images from
-consecutive CORD-v2 test rows 6–8, selected before provider evaluation.
+Public US receipts; amounts are USD. These are real photographs, not generated receipts.
 
-Source: https://huggingface.co/datasets/naver-clova-ix/cord-v2
-Revision: 7f0115a4b758a71d6473b8d085751692da2fef98
-Authors: NAVER CLOVA; Seunghyun Park et al., CORD: A Consolidated Receipt Dataset
-for Post-OCR Parsing, Document Intelligence Workshop at NeurIPS 2019.
-Original project: https://github.com/clovaai/cord
-License: Creative Commons Attribution 4.0 International (CC BY 4.0)
-https://creativecommons.org/licenses/by/4.0/
+## Family Dollar · Oklahoma
 
-Only filenames changed for web delivery. No image content was changed.
-Reference annotations are not supplied to the providers. For pinned hashes,
-selection details and annotation caveats see datasets/cord-check/manifest.json
-and datasets/README.md in the repository.
+- File: us-family-dollar.jpg
+- Author: Corn cheese; enhanced by Ubcule
+- Source: https://commons.wikimedia.org/wiki/File:Family_Dollar_store_receipt.jpg
+- Image download: https://upload.wikimedia.org/wikipedia/commons/9/9e/Family_Dollar_store_receipt.jpg
+- License: CC-BY-SA-3.0 — https://creativecommons.org/licenses/by-sa/3.0/
+- Changes: Original Wikimedia image bytes; filename changed only.
+
+## Walmart · Excelsior Springs, Missouri
+
+- File: us-walmart.jpg
+- Author: Cryptogoth
+- Source: https://commons.wikimedia.org/wiki/File:OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg
+- Image download: https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg/1280px-OSE_Apprenticeship_Food_Receipt_-_WalMart_25_July_2021.jpeg
+- License: CC-BY-SA-4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+- Changes: Wikimedia thumbnail, no receipt content changed.
+
+## Cameron Market · Cameron, Missouri
+
+- File: us-cameron-market.jpg
+- Author: Cryptogoth
+- Source: https://commons.wikimedia.org/wiki/File:OSE_Food_Receipt_-_Cameron_Market_21_July_2021.jpeg
+- Image download: https://upload.wikimedia.org/wikipedia/commons/f/f3/OSE_Food_Receipt_-_Cameron_Market_21_July_2021.jpeg
+- License: CC-BY-SA-4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+- Changes: Original Wikimedia image bytes; filename changed only.
+
+Each image remains under its specified Creative Commons Attribution-ShareAlike license. No endorsement by the authors or retailers is implied. Source pages provide the original file history.
+
+The previous Indonesian CORD inputs remain available for reproducing historical results; their separate credits are in CORD-ATTRIBUTION.md. Historical CORD benchmark numbers are not US-receipt measurements.

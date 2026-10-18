@@ -38,7 +38,7 @@ export function ComparisonPanel(){
   async function recorded(){setError('');setReport(null);try{const response=await fetch('/demo-evidence/results.json');if(!response.ok)throw Error('Recorded benchmark is not available yet. Load your own results.json instead.');setReport(compareTrials(await response.json()));}catch(e){setError(e.message);}}
   return <section className={`${styles.panel} ${styles.comparison}`} aria-labelledby="comparison-heading"><h2 id="comparison-heading">OFF / ON · measured waiting</h2>
     <p>Load a matched benchmark results.json. Fresh sessions, identical images and action sequences, matched review time, read-ahead OFF in both modes.</p>
-    <button onClick={recorded}>Load recorded real-receipt benchmark</button>
+    <button onClick={recorded}>Load recorded CORD benchmark (Indonesia)</button>
     <label className={styles.label}>Benchmark measurements<input type="file" accept=".json,application/json" onChange={e=>load(e.target.files[0])}/></label>
     {error&&<p role="alert" className={styles.error}>{error}</p>}
     {!report&&<p className={styles.small}>No measurements loaded. No sample savings are shown.</p>}
