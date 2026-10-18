@@ -69,8 +69,8 @@ function App() {
     <AppLayout activePage="home">
     <main className="app">
       <header className="title">
-        Request<span className="title-accent">
-          Flow
+        <span className="title-accent">
+          Mise
           <svg key={arrowAnimationKey} className="title-underline" viewBox="0 0 140 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
             <path className="title-underline-line" pathLength="1" d="M2 10H138" />
             <path className="title-underline-head" d="M130 2l8 8-8 8" />
@@ -94,7 +94,7 @@ function App() {
       <section className="page-heading" id="metrics">
         <div>
           <p className="subtitle">
-            See request activity and which calls RequestFlow predicts next.
+            See request activity and which calls Mise predicts next.
           </p>
         </div>
         <label className="range-select">

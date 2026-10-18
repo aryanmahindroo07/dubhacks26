@@ -7,7 +7,7 @@ export default function DropdownMenu () {
             <div className = {styles.header}>
                 <div className = {styles.title}>
                     <img className = {styles.icon} src = {logo} />
-                    <div className = {styles.requestFlow}>Requestflow</div>
+                    <div className = {styles.requestFlow}>Mise</div>
                 </div>
                 <div className = {styles.xButton}>X</div>
             </div>

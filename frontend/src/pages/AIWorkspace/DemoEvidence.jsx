@@ -18,7 +18,7 @@ export function PrefireStatus({session,current,result}){
   else if(failed){title=`${names[failed.action]} wasn’t prepared`;detail='Background call failed. Choose this action to retry.';}
   else if(result?.usedPrefetch){title=`${names[result.action]} · ${seconds(result.waitMs)} wait`;detail=`Provider call: ${seconds(result.providerMs)} · Your wait: ${seconds(result.waitMs)}. ${result.source==='in-flight'?'Joined while still running.':'Reused the prepared result.'}`;}
   else if(prediction){title=`Next likely: ${names[prediction.action]} · ${(prediction.probability*100).toFixed(0)}%`;detail=session.enabled?'See the decisions below for what runs early.':'Enable prefetch to prepare likely actions in the background.';}
-  else if(result||current.read){title='Choose your next action';detail='Your choices teach RequestFlow what to prepare next time.';}
+  else if(result||current.read){title='Choose your next action';detail='Your choices teach Mise what to prepare next time.';}
   return <div className={`${styles.prefireStatus} ${failed&&!ready&&!pending?styles.prefireFailed:''}`} role="status"><span className={styles.eyebrow}>Behind the next click</span><strong>{title}</strong><p>{detail}</p></div>;
 }
 
