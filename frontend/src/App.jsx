@@ -69,7 +69,14 @@ function App() {
       </nav>
     </header>
     <main className="app">
-      <header className="title">RequestFlow</header>
+      <header className="title">
+        Request<span className="title-accent">
+          Flow
+          <svg className="title-underline" viewBox="0 0 140 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path d="M2 10H138M130 2l8 8-8 8" />
+          </svg>
+        </span>
+      </header>
       <form className="search-bar" role="search" onSubmit={handleSearch}>
         <input
           type="search"
