@@ -1,10 +1,12 @@
 import {useEffect,useRef,useState} from 'react';
-import {getAISession,setAIPrefetch,uploadAIImage,runAIAction,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
+import {getAISession,setAIPrefetch,setAIReadAhead,uploadAIImage,openAIItem,runAIAction,resetAIRun,restartExpiredAIRun} from '../../services/ai.js';
 import styles from './AIWorkspace.module.css';
 
 const ACTIONS=[['READ_TEXT','Read text','Perceptron'],['EXTRACT_FIELDS','Extract fields','Gemini'],['SUMMARIZE','Summarize','Gemini'],['MAKE_TASKS','Turn into tasks','Gemini']];
 const LABELS=Object.fromEntries(ACTIONS.map(([id,label])=>[id,label]));
 const milliseconds=n=>`${(n||0).toFixed(1)} ms`;
+const percent=p=>`${((p||0)*100).toFixed(0)}%`;
+const TYPE_NAMES={RECEIPT:'Receipts',WHITEBOARD:'Whiteboards'};
 
 function Result({result}){
   if(result.text!==undefined)return <>{result.quality?.hasReadableTotal===false&&<p>Receipt total was not readable in the extracted text. Check the image; automatic field extraction is skipped.</p>}<pre className={styles.transcript}>{result.text}</pre></>;
@@ -13,9 +15,27 @@ function Result({result}){
   return <p>{result.summary}</p>;
 }
 
+function LearningCard({entry}){
+  const shifted=entry.startingPrefetch!==entry.nowPrefetch;
+  const name=TYPE_NAMES[entry.type]||entry.type;
+  return <div className={styles.learningCard}>
+    <h3>{name}: after Read text</h3>
+    <p className={shifted?styles.shift:styles.small}>
+      {shifted?`Prefetch changed: ${LABELS[entry.startingPrefetch]||'nothing'} → ${LABELS[entry.nowPrefetch]||'nothing'}`
+        :`Prefetches ${LABELS[entry.nowPrefetch]||'nothing'}`}
+    </p>
+    <p className={styles.small}>Learned from {entry.finishedItems} finished {name.toLowerCase()} in this run{entry.observations?` (${entry.observations} observed choices at this step)`:''}.</p>
+    <table><caption className={styles.srOnly}>{name}: next-action likelihood, starting model versus now</caption>
+      <thead><tr><th scope="col">Next action</th><th scope="col">Starting model</th><th scope="col">Now</th></tr></thead>
+      <tbody>{entry.rows.map(r=><tr key={r.action}><td>{r.label}</td><td>{percent(r.starting)}</td><td>{percent(r.now)}</td></tr>)}</tbody>
+    </table>
+  </div>;
+}
+
 export default function AIWorkspace(){
-  const [session,setSession]=useState(null),[item,setItem]=useState(null),[type,setType]=useState('RECEIPT');
-  const [busy,setBusy]=useState(''),[error,setError]=useState(''),[result,setResult]=useState(null),[read,setRead]=useState(false);
+  const [session,setSession]=useState(null),[type,setType]=useState('RECEIPT');
+  const [previews,setPreviews]=useState({}),[currentId,setCurrentId]=useState(null);
+  const [busy,setBusy]=useState(''),[error,setError]=useState(''),[result,setResult]=useState(null);
   const [notice,setNotice]=useState(''),[sessionFailed,setSessionFailed]=useState(false);
   const fileInput=useRef(null);
   useEffect(()=>{
@@ -26,38 +46,68 @@ export default function AIWorkspace(){
     return()=>{active=false;clearInterval(timer);};
   },[]);
   const metrics=session?.metrics;
-  async function upload(file,category=type){
-    if(!file)return;
-    setBusy('Uploading image');setError('');setResult(null);setRead(false);setItem(null);
-    try{const uploaded=await uploadAIImage(file,category);setItem(uploaded);setNotice('Image loaded. Read text first; Gemini transformations use the resulting OCR text.');}
-    catch(e){setError(e.message);}finally{setBusy('');}
+  const items=session?.items??[];
+  const current=items.find(i=>i.id===currentId)||null;
+  const read=Boolean(current?.read);
+  const refresh=async()=>setSession(await getAISession());
+
+  async function openItem(id){
+    setError('');setResult(null);
+    try{await openAIItem(id);setCurrentId(id);await refresh();}
+    catch(e){setError(e.message);}
+  }
+  async function addFiles(files,category=type){
+    const list=[...(files||[])];
+    if(!list.length)return;
+    setBusy(list.length>1?`Adding ${list.length} images`:'Uploading image');setError('');
+    try{
+      let first=null;
+      for(const file of list){
+        const uploaded=await uploadAIImage(file,category);
+        setPreviews(p=>({...p,[uploaded.id]:uploaded.preview}));
+        first||=uploaded;
+      }
+      if(!currentId&&first){await openAIItem(first.id);setCurrentId(first.id);setResult(null);}
+      await refresh();
+      setNotice(list.length>1?`${list.length} images added to the inbox.`:'Image added. Read text first; Gemini actions use the resulting text.');
+    }catch(e){setError(e.message);}
+    finally{setBusy('');if(fileInput.current)fileInput.current.value='';}
   }
   async function sample(category){
-    setType(category);setBusy('Loading sample');setError('');
+    setBusy('Loading sample');setError('');
     try{
       const url=category==='RECEIPT'?'/ai-samples/receipt.png':'/ai-samples/whiteboard.png';
       const response=await fetch(url);if(!response.ok)throw new Error('Sample image could not be loaded.');
-      const blob=await response.blob();await upload(new File([blob],`${category.toLowerCase()}-synthetic.png`,{type:'image/png'}),category);
+      const blob=await response.blob();
+      await addFiles([new File([blob],`${category.toLowerCase()}-synthetic.png`,{type:'image/png'})],category);
     }catch(e){setError(e.message);setBusy('');}
   }
   async function run(action){
     setBusy(LABELS[action]);setError('');setResult(null);
-    try{
-      const output=await runAIAction(item.id,action);setResult({...output,action});
-      if(action==='READ_TEXT')setRead(true);
-      setSession(await getAISession());
-    }catch(e){setError(e.message);}finally{setBusy('');}
+    try{const output=await runAIAction(current.id,action);setResult({...output,action});await refresh();}
+    catch(e){setError(e.message);}finally{setBusy('');}
+  }
+  async function next(){
+    const index=items.findIndex(i=>i.id===currentId);
+    const following=items[index+1];
+    if(following)await openItem(following.id);
   }
   async function toggle(){
     setError('');
-    try{const next=await setAIPrefetch(!session.enabled);setSession(next);setNotice(next.enabled?'Prefetch enabled. Additional provider calls may be billed.':'Prefetch paused. Calls already running can finish; cached results remain available.');}
+    try{const s=await setAIPrefetch(!session.enabled);setSession(s);setNotice(s.enabled?'Prefetch on: after each action, the likely next action on this image may run early (extra provider calls may be billed).':'Prefetch paused. Calls already running can finish; cached results remain available.');}
+    catch(e){setError(e.message);}
+  }
+  async function toggleReadAhead(){
+    setError('');
+    try{const s=await setAIReadAhead(!session.readAhead);setSession(s);setNotice(s.readAhead?'Read-ahead on: the next unread image in your inbox is sent to Perceptron in the background while you work.':'Read-ahead off: images are only sent when you open them and click Read text.');}
     catch(e){setError(e.message);}
   }
   async function fresh(){
     setBusy('Starting fresh run');setError('');
     try{
       const s=sessionFailed?await restartExpiredAIRun():await resetAIRun();
-      setSession(s);setSessionFailed(false);setItem(null);setRead(false);setResult(null);setNotice('Fresh cache, counters, and seed model. Prefetch is OFF. Load the same image again for a comparison.');
+      setSession(s);setSessionFailed(false);setCurrentId(null);setPreviews({});setResult(null);
+      setNotice('Fresh inbox, cache, counters and learned habits. Prefetch and read-ahead are OFF.');
       if(fileInput.current)fileInput.current.value='';
     }catch(e){setError(e.message);}finally{setBusy('');}
   }
@@ -67,34 +117,49 @@ export default function AIWorkspace(){
     const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;a.download=`requestflow-ai-${session.enabled?'on':'off'}-${Date.now()}.json`;a.click();URL.revokeObjectURL(url);
   }
+  const index=items.findIndex(i=>i.id===currentId);
   return <>
-    <header className={styles.topbar}><a className={styles.brand} href="/">RequestFlow</a><nav aria-label="Main navigation"><a href="/">Customers</a><a href="/overview">Live overview</a><a href="/ai" aria-current="page">AI inbox</a></nav></header>
+    <header className={styles.topbar}><a className={styles.brand} href="/">RequestFlow</a><nav aria-label="Main navigation"><a href="/">Customers</a><a href="/overview">Live overview</a><a href="/ai" aria-current="page">Receipt inbox</a></nav></header>
     <main className={styles.page}>
-      <div className={styles.heading}><div><p className={styles.eyebrow}>Visual AI workspace</p><h1>Prepare the next step.</h1><p>Perceptron reads the image. Gemini transforms the text. RequestFlow anticipates a matching next action while you review.</p></div><div className={styles.controls}><button disabled={!session||Boolean(busy)} aria-pressed={session?.enabled||false} onClick={toggle}>{session?.enabled?'Pause prefetch':'Enable prefetch'}</button><button disabled={Boolean(busy)||Boolean(metrics?.running)} onClick={fresh}>Fresh run</button></div></div>
-      <p className={styles.disclosure}>Read text sends the selected image to Perceptron. Transformations send OCR text to Gemini. Enabling prefetch can make up to {session?.prefetchLimitPerItem??3} additional paid calls per image. Nothing is sent as a message or added to an external account.</p>
-      <div className={styles.providerStatus} aria-label="Provider configuration"><span>Perceptron: {session?(session.providers.perceptron.configured?'key configured':'key needed'):'checking…'}</span><span>Gemini: {session?(session.providers.gemini.configured?'key configured':'key needed'):'checking…'}</span><span>Prefetch: {session?.enabled?'ON':'OFF'}</span></div>
+      <div className={styles.heading}><div><p className={styles.eyebrow}>Receipt inbox for bookkeepers and small teams</p><h1>Your receipts, ready before you click.</h1><p>Drop in a stack of receipts. Perceptron reads each one and Gemini pulls out the amounts, with the supporting text shown beside every value. RequestFlow learns how you work and prepares your next step while you review.</p></div><div className={styles.controls}><button disabled={!session||Boolean(busy)} aria-pressed={session?.enabled||false} onClick={toggle}>{session?.enabled?'Pause prefetch':'Enable prefetch'}</button><button disabled={Boolean(busy)||Boolean(metrics?.running)} onClick={fresh}>Fresh run</button></div></div>
+      <p className={styles.disclosure}>Read text sends the selected image to Perceptron. Other actions send the text Perceptron read to Gemini. Prefetch can make up to {session?.prefetchLimitPerItem??3} extra paid calls per image. Nothing is submitted, sent as a message or added to an external account.</p>
+      <div className={styles.providerStatus} aria-label="Provider configuration"><span>Perceptron: {session?(session.providers.perceptron.configured?'key configured':'key needed'):'checking…'}</span><span>Gemini: {session?(session.providers.gemini.configured?'key configured':'key needed'):'checking…'}</span><span>Prefetch: {session?.enabled?'ON':'OFF'}</span><span>Read-ahead: {session?.readAhead?'ON':'OFF'}</span></div>
       {session&&(!session.providers.perceptron.configured||!session.providers.gemini.configured)&&<p className={styles.setup}>Add the missing API keys to <code>backend/.env</code> using <code>backend/.env.example</code>, then restart the backend. This workspace does not substitute simulated AI results.</p>}
       {error&&<p role="alert" className={styles.error}>{error}</p>}
       <p role="status" className={styles.notice}>{busy?`${busy}…`:notice}</p>
       <div className={styles.workspace}>
-        <section className={styles.panel} aria-labelledby="image-heading"><h2 id="image-heading">1. Choose an image</h2>
+        <section className={styles.panel} aria-labelledby="inbox-heading"><h2 id="inbox-heading">1. Inbox</h2>
           <label className={styles.label}>Image category<select value={type} disabled={Boolean(busy)} onChange={e=>setType(e.target.value)}><option value="RECEIPT">Receipt</option><option value="WHITEBOARD">Whiteboard</option></select></label>
-          <label className={styles.label}>PNG, JPEG, or WebP · up to 5 MB<input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" disabled={!session||Boolean(busy)} onChange={e=>upload(e.target.files?.[0])}/></label>
-          <div className={styles.controls}><button disabled={!session||Boolean(busy)} onClick={()=>sample('RECEIPT')}>Demo receipt</button><button disabled={!session||Boolean(busy)} onClick={()=>sample('WHITEBOARD')}>Demo whiteboard</button></div>
-          <p className={styles.small}>Demo images contain synthetic text. They are actual image inputs; provider responses are generated live.</p>
-          {item?<figure><img className={styles.preview} src={item.preview} alt={`Uploaded ${item.type.toLowerCase()}: ${item.name}`}/><figcaption>{item.name} · {item.type.toLowerCase()}</figcaption></figure>:<div className={styles.empty}>Your image will appear here.</div>}
+          <label className={styles.label}>Add images · PNG, JPEG, or WebP · up to 5 MB each<input ref={fileInput} type="file" multiple accept="image/png,image/jpeg,image/webp" disabled={!session||Boolean(busy)} onChange={e=>addFiles(e.target.files)}/></label>
+          <div className={styles.controls}><button disabled={!session||Boolean(busy)} onClick={()=>sample('RECEIPT')}>Add demo receipt</button><button disabled={!session||Boolean(busy)} onClick={()=>sample('WHITEBOARD')}>Add demo whiteboard</button></div>
+          <div className={styles.toggleRow}><button disabled={!session||Boolean(busy)} aria-pressed={session?.readAhead||false} onClick={toggleReadAhead}>{session?.readAhead?'Stop reading ahead':'Read ahead'}</button><p className={styles.small}>Off by default. When on, the next unread image is sent to Perceptron in the background while you work, so it opens instantly.</p></div>
+          {items.length?<ul className={styles.inboxList} aria-label="Images in this run">{items.map((it,i)=><li key={it.id}><button aria-current={it.id===currentId} disabled={Boolean(busy)} onClick={()=>openItem(it.id)}>
+            <span className={styles.itemName}>{i+1}. {it.name}</span>
+            <span className={styles.chips}>
+              <span className={styles.chip}>{it.type==='RECEIPT'?'Receipt':'Whiteboard'}</span>
+              {it.read?<span className={styles.chip}>Text read</span>:it.textReady?<span className={`${styles.chip} ${styles.chipReady}`}>Text ready</span>:it.textPending?<span className={styles.chip}>Reading…</span>:null}
+              {it.duplicateOf&&<span className={`${styles.chip} ${styles.chipWarn}`}>Possible duplicate</span>}
+            </span></button></li>)}</ul>:<div className={styles.empty}>Your images will appear here.</div>}
+          {current&&<figure><img className={styles.preview} src={previews[current.id]} alt={`${current.type.toLowerCase()}: ${current.name}`}/><figcaption>{current.name} · {current.type.toLowerCase()}</figcaption></figure>}
+          <p className={styles.small}>Demo images contain synthetic text. Real public receipts are in <code>datasets/</code>.</p>
         </section>
-        <section className={styles.panel} aria-labelledby="action-heading"><h2 id="action-heading">2. Run an action</h2>
-          <div className={styles.actions}>{ACTIONS.map(([id,label,provider])=><button key={id} disabled={!item||Boolean(busy)||sessionFailed||(id!=='READ_TEXT'&&!read)||!session?.providers[provider.toLowerCase()].configured} onClick={()=>run(id)}><span>{label}</span><small>{provider}</small></button>)}</div>
-          {!read&&<p className={styles.small}>Gemini actions become available after Read text succeeds.</p>}
-          {result?<div aria-live="polite"><h3>{LABELS[result.action]}</h3><p className={styles.source}>{result.source==='cache'?'Completed cache hit':result.source==='in-flight'?'Joined running request':'New provider request'}{result.usedPrefetch?' · consumed a prefetch':''} · observed wait {milliseconds(result.waitMs)}</p><p className={styles.small}>{result.provider} · {result.model} · original provider call {milliseconds(result.providerMs)}</p><Result result={result.result}/><p className={styles.small}>AI-generated output. Check extracted amounts, names, and tasks before using them.</p></div>:<div className={styles.empty}>Run Read text, then choose a transformation. If a matching prefire is ready, it is reused.</div>}
-          {!!session?.predictions.length&&<div className={styles.predictions}><h3>Latest next-action estimates</h3>{session.predictions.map(p=><p key={p.action}>{p.label}: {(p.probability*100).toFixed(1)}% · {p.shouldPrefetch&&p.eligible?'eligible':'skipped'} · {p.latencySource} latency estimate</p>)}</div>}
+        <section className={styles.panel} aria-labelledby="action-heading"><div className={styles.sectionHeading}><h2 id="action-heading">2. Work on {current?`image ${index+1}`:'an image'}</h2>{current&&index<items.length-1&&<button disabled={Boolean(busy)} onClick={next}>Next image →</button>}</div>
+          {current?.duplicateOf&&<p className={styles.warning}>Possible duplicate of “{current.duplicateOf.name}”. {current.duplicateOf.reason}</p>}
+          <div className={styles.actions}>{ACTIONS.map(([id,label,provider])=><button key={id} disabled={!current||Boolean(busy)||sessionFailed||(id!=='READ_TEXT'&&!read)||!session?.providers[provider.toLowerCase()].configured} onClick={()=>run(id)}><span>{label}</span><small>{provider}{id==='READ_TEXT'&&current?.textReady&&!read?' · ready':''}</small></button>)}</div>
+          {current&&!read&&<p className={styles.small}>Gemini actions become available after Read text succeeds.</p>}
+          {result?<div aria-live="polite"><h3>{LABELS[result.action]}</h3><p className={styles.source}>{result.source==='cache'?'Completed cache hit':result.source==='in-flight'?'Joined running request':'New provider request'}{result.usedPrefetch?' · consumed a prefetch':''} · observed wait {milliseconds(result.waitMs)}</p><p className={styles.small}>{result.provider} · {result.model} · original provider call {milliseconds(result.providerMs)}</p><Result result={result.result}/><p className={styles.small}>AI-generated output. Check extracted amounts, names, and tasks before using them.</p></div>:<div className={styles.empty}>{current?'Run Read text, then choose what to do with it. If RequestFlow already prepared that step, it appears instantly.':'Add or choose an image to start.'}</div>}
+          {!!session?.predictions.length&&<div className={styles.predictions}><h3>Next-action estimates for this image</h3>{session.predictions.map(p=><p key={p.action}>{p.label}: {percent(p.probability)}{p.personalObservations?` (starting model ${percent(p.startingProbability)})`:''} · {p.shouldPrefetch&&p.eligible?'eligible':'skipped'}{p.eligibilityNote?` · ${p.eligibilityNote}`:''} · {p.latencySource} latency estimate</p>)}</div>}
         </section>
       </div>
+      {!!session?.learning?.length&&<section className={`${styles.panel} ${styles.learning}`} aria-labelledby="learning-heading">
+        <h2 id="learning-heading">What RequestFlow has learned about you</h2>
+        <p className={styles.small}>Predictions start from 500 generated journeys, not real-user data, then adapt to your own choices in this run. Your choices count more as they repeat: two or three consistent choices change what gets prefetched.</p>
+        <div className={styles.learningGrid}>{session.learning.map(entry=><LearningCard key={entry.type} entry={entry}/>)}</div>
+      </section>}
       <section className={styles.panel} aria-labelledby="metrics-heading"><div className={styles.sectionHeading}><h2 id="metrics-heading">This run · measured activity</h2><button disabled={!session||Boolean(busy)||Boolean(metrics?.running)} onClick={download}>Export measurements</button></div>
-        {metrics&&<><div className={styles.metrics}><div><strong>{metrics.navigations}</strong><span>Completed actions</span></div><div><strong>{metrics.hits} / {metrics.reused}</strong><span>Cache hits / in-flight joins</span></div><div><strong>{metrics.usedPrefetches} / {metrics.unusedPrefetches}</strong><span>Used / unused prefires so far</span></div><div><strong>{milliseconds(metrics.medianWaitMs)}</strong><span>Median observed wait</span></div></div><p>Provider calls: {metrics.demandCalls} demand + {metrics.speculativeCalls} speculative · Pending prefires: {metrics.pendingPrefetches} · Failed prefires: {metrics.failedPrefetches} · Failed actions: {metrics.failedActions ?? 0} · Total action wait (including failures): {(metrics.totalWaitMs/1000).toFixed(2)} s</p></>}
-        <p className={styles.small}>Unused prefires may still be consumed later. Fresh run resets cache, counters, and learned transitions for a matched comparison. Switching OFF alone preserves cache. Prediction probabilities start from synthetic journeys, not verified user behavior. Initial scoring costs/latencies are estimates; exported waits and provider usage are measured, not a dollar ROI claim.</p>
-        <div className={styles.tableWrap}><table><caption className={styles.srOnly}>AI provider, speculation, and navigation events</caption><thead><tr><th>Event</th><th>Action</th><th>Outcome</th><th>Time</th></tr></thead><tbody>{session?.requestLog.map(e=><tr key={e.id}><td>{e.kind}</td><td>{LABELS[e.action]||e.action}</td><td>{e.result}{e.message?` · ${e.message}`:''}{e.usedPrefetch?' · useful prefire':''}</td><td>{e.waitMs!==undefined?milliseconds(e.waitMs):e.providerMs!==undefined?milliseconds(e.providerMs):'—'}</td></tr>)}</tbody></table></div>
+        {metrics&&<><div className={styles.metrics}><div><strong>{metrics.navigations}</strong><span>Completed actions</span></div><div><strong>{metrics.hits} / {metrics.reused}</strong><span>Cache hits / in-flight joins</span></div><div><strong>{metrics.usedPrefetches} / {metrics.unusedPrefetches}</strong><span>Used / unused prefetches so far</span></div><div><strong>{milliseconds(metrics.medianWaitMs)}</strong><span>Median observed wait</span></div></div><p>Provider calls: {metrics.demandCalls} demand + {metrics.speculativeCalls} speculative (prefetch and read-ahead) · Pending: {metrics.pendingPrefetches} · Failed background calls: {metrics.failedPrefetches} · Failed actions: {metrics.failedActions ?? 0} · Total action wait (including failures): {(metrics.totalWaitMs/1000).toFixed(2)} s</p></>}
+        <p className={styles.small}>Unused prefetches may still be used later. Fresh run resets the inbox, cache, counters and learned habits for a matched comparison. Switching prefetch OFF alone keeps the cache. Initial scoring costs and latencies are estimates; exported waits and provider usage are measured, not a dollar ROI claim.</p>
+        <div className={styles.tableWrap}><table><caption className={styles.srOnly}>AI provider, prefetch, read-ahead and navigation events</caption><thead><tr><th>Event</th><th>Action</th><th>Outcome</th><th>Time</th></tr></thead><tbody>{session?.requestLog.map(e=><tr key={e.id}><td>{e.kind}</td><td>{LABELS[e.action]||e.action}</td><td>{e.result}{e.message?` · ${e.message}`:''}{e.usedPrefetch?' · useful prefetch':''}</td><td>{e.waitMs!==undefined?milliseconds(e.waitMs):e.providerMs!==undefined?milliseconds(e.providerMs):'—'}</td></tr>)}</tbody></table></div>
       </section>
     </main>
   </>;

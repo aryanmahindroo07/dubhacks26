@@ -99,3 +99,7 @@ The separate `/ai` workspace supports image OCR through Perceptron and text tran
 ## Real-data validation
 
 See [the evaluation protocol](docs/real-data-evaluation.md) for real CORD receipt inputs, real provider timings and a separate held-out human-navigation evaluation. These experiments are separate from synthetic dashboard data and are not a claim of real-user AI-workflow accuracy. [Dataset attribution and upload instructions](datasets/README.md).
+
+## Receipt inbox features
+
+Per-user habit learning, consent-gated read-ahead of the next receipt, duplicate flags and receipt-check fixes: see [docs/receipt-inbox.md](docs/receipt-inbox.md).

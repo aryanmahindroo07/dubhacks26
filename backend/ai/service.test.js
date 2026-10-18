@@ -6,7 +6,7 @@ const {createAIService,validateImage}=require('./service');
 const {createProviders,AIError}=require('./providers');
 const IMAGE='data:image/png;base64,'+fs.readFileSync(path.join(__dirname,'../../frontend/public/ai-samples/receipt.png')).toString('base64');
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
-function fixture({hold=false,fail=false,available=true,ocrText='Vendor: Demo Shop\nTotal: $13.20',...options}={}) {
+function fixture({hold=false,fail=false,available=true,ocrText='Vendor: Demo Shop\nTotal: $13.20',delayMs=0,...options}={}) {
   const calls=[];let release;let failOnce=fail;
   const providers={
     available:()=>available,
@@ -14,6 +14,7 @@ function fixture({hold=false,fail=false,available=true,ocrText='Vendor: Demo Sho
     status:()=>({perceptron:{configured:available,model:'test-model'},gemini:{configured:available,model:'test-model'}}),
     run:async(action,doc)=>{
       calls.push({action,text:doc.text});
+      if(delayMs)await new Promise(resolve=>setTimeout(resolve,delayMs));
       if(action==='EXTRACT_FIELDS'&&hold)await new Promise(resolve=>release=resolve);
       if(action==='EXTRACT_FIELDS'&&failOnce){failOnce=false;throw new AIError('test failure',502);}
       return {result:action==='READ_TEXT'?{text:ocrText}:action==='EXTRACT_FIELDS'?{fields:[{name:'total',value:'13.20'}]}:{summary:'Demo summary'},provider:action==='READ_TEXT'?'perceptron':'gemini',model:'test-model',usage:{input:10,output:5}};
@@ -181,4 +182,62 @@ test('unreadable receipt amounts do not spend a speculative extraction call',asy
   assert.equal(state.metrics.speculativeCalls,0);
   const prediction=state.predictions.find(p=>p.action==='EXTRACT_FIELDS');
   assert.equal(prediction.eligible,false);assert.match(prediction.eligibilityNote,/not readable/);
+});
+
+test('the model adapts to one user: three whiteboards summarized change the prefetch from tasks to summary',async()=>{
+  // Realistic provider time: an instant action is (correctly) never worth prefetching.
+  const f=fixture({delayMs:150});f.service.setEnabled(f.session,true);
+  const before=f.service.snapshot(f.session).learning.find(l=>l.type==='WHITEBOARD');
+  assert.equal(before.startingPrefetch,'MAKE_TASKS');assert.equal(before.nowPrefetch,'MAKE_TASKS');
+  for(let i=0;i<3;i++){
+    const board=f.service.upload(f.session,{type:'WHITEBOARD',name:`board-${i}.png`,image:IMAGE});
+    await f.service.perform(f.session,board.id,'READ_TEXT');await f.service.idle(f.session);
+    await f.service.perform(f.session,board.id,'SUMMARIZE');await f.service.idle(f.session);
+  }
+  const after=f.service.snapshot(f.session).learning.find(l=>l.type==='WHITEBOARD');
+  assert.equal(after.startingPrefetch,'MAKE_TASKS');assert.equal(after.nowPrefetch,'SUMMARIZE');
+  assert.equal(after.finishedItems,2);
+  // The next whiteboard's prefetch follows the learned habit.
+  const board=f.service.upload(f.session,{type:'WHITEBOARD',name:'board-3.png',image:IMAGE});
+  f.calls.length=0;
+  await f.service.perform(f.session,board.id,'READ_TEXT');await f.service.idle(f.session);
+  assert.deepEqual(f.calls.map(c=>c.action),['READ_TEXT','SUMMARIZE']);
+});
+
+test('read-ahead reads the next receipt in the background only with consent',async()=>{
+  const off=fixture();
+  const second=off.service.upload(off.session,{type:'RECEIPT',name:'second.png',image:IMAGE});
+  off.service.open(off.session,off.item.id);await off.service.idle(off.session);
+  assert.equal(off.calls.length,0,'nothing is sent before the user opts in');
+
+  const f=fixture();
+  const next=f.service.upload(f.session,{type:'RECEIPT',name:'second.png',image:IMAGE});
+  f.service.open(f.session,f.item.id);
+  f.service.setReadAhead(f.session,true);await f.service.idle(f.session);
+  assert.deepEqual(f.calls.map(c=>c.action),['READ_TEXT']);
+  const state=f.service.snapshot(f.session);
+  assert.equal(state.items.find(i=>i.id===next.id).textReady,true);
+  assert.ok(state.requestLog.some(e=>e.kind==='read-ahead'&&e.result==='completed'));
+  const opened=await f.service.perform(f.session,next.id,'READ_TEXT');
+  assert.equal(opened.source,'cache');assert.equal(opened.usedPrefetch,true);
+  assert.equal(f.calls.length,1,'the read-ahead result is reused, not fetched again');
+  assert.ok(second);
+});
+
+test('duplicate receipts are flagged: same image, or same total and date',async()=>{
+  const f=fixture();
+  const again=f.service.upload(f.session,{type:'RECEIPT',name:'again.png',image:IMAGE});
+  assert.equal(again.duplicateOf.id,f.item.id);
+
+  const providers={available:()=>true,identity:a=>({provider:'p',model:'m',promptVersion:'t'}),status:()=>({perceptron:{configured:true},gemini:{configured:true}}),
+    run:async(action)=>action==='READ_TEXT'?{result:{text:'TOTAL 13.20\nDATE 2026-10-17'}}:{result:{fields:[
+      {name:'total',value:'13.20',evidence:'TOTAL 13.20',status:'supported-by-ocr'},{name:'date',value:'2026-10-17',evidence:'DATE 2026-10-17',status:'supported-by-ocr'}]}}};
+  const service=createAIService({providers});const session=service.createSession().sessionId;
+  const png=(n)=>'data:image/png;base64,'+Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),Buffer.alloc(8,n)]).toString('base64');
+  const a=service.upload(session,{type:'RECEIPT',name:'a.png',image:png(1)});
+  const b=service.upload(session,{type:'RECEIPT',name:'b.png',image:png(2)});
+  assert.equal(b.duplicateOf,null);
+  for(const item of [a,b]){await service.perform(session,item.id,'READ_TEXT');await service.perform(session,item.id,'EXTRACT_FIELDS');}
+  const flagged=service.snapshot(session).items.find(i=>i.id===b.id).duplicateOf;
+  assert.equal(flagged.id,a.id);assert.match(flagged.reason,/13\.20.*2026-10-17/);
 });

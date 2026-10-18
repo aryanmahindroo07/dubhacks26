@@ -1,8 +1,10 @@
 const { randomUUID } = require('node:crypto');
 const { performance } = require('node:perf_hooks');
-const { createInboxModel, predictNextAction, toHistory } = require('../inbox/engine');
+const { createInboxModel, createPersonalModel, predictBlended, toHistory } = require('../inbox/engine');
 const { AIError, SUPPORTED_ACTIONS, hash } = require('./providers');
-const { hasReadableTotal } = require('./receiptValidation');
+const { hasReadableTotal, amountToken } = require('./receiptValidation');
+
+const LIVE_TYPES = ['RECEIPT', 'WHITEBOARD'];
 
 const SESSION_TTL = 60 * 60 * 1000;
 const CACHE_TTL = 5 * 60 * 1000;
@@ -33,7 +35,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     cleanup();
     if (sessions.size >= MAX_SESSIONS) throw new AIError('Demo session limit reached. Restart the backend to clear sessions.', 429);
     const id = randomUUID();
-    sessions.set(id, { id, touchedAt: now(), enabled: false, docs: new Map(), cache: new Map(), attempts: [], events: [], predictions: [], waits: [], model: createInboxModel(), running: 0, background: new Set(), latencySamples: {},
+    sessions.set(id, { id, touchedAt: now(), enabled: false, readAhead: false, order: [], activeItem: null, personal: createPersonalModel(), learned: { RECEIPT: 0, WHITEBOARD: 0 }, docs: new Map(), cache: new Map(), attempts: [], events: [], predictions: [], waits: [], model: createInboxModel(), running: 0, background: new Set(), latencySamples: {},
       metrics: { navigations: 0, hits: 0, reused: 0, misses: 0, demandCalls: 0, speculativeCalls: 0, failures: 0, failedActions: 0 } });
     return { sessionId: id, ...snapshot(id) };
   }
@@ -49,12 +51,38 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const imageHash = validateImage(image);
     const storedBytes = [...s.docs.values()].reduce((sum, doc) => sum + doc.image.length, 0);
     if (storedBytes + image.length > 12 * 1024 * 1024) throw new AIError("Image memory limit reached. Start a fresh run.");
-    const item = { id: randomUUID(), name: typeof name === 'string' ? name.slice(0,120) : 'Uploaded image', type, image, imageHash, text: null, history: [], prefires: 0 };
-    const previous=s.docs.get(s.activeItem);
-    if(previous) s.model.recordTransition([...toHistory(previous.type,previous.history),`${previous.type}:DONE`]);
-    s.activeItem=item.id;
+    const item = { id: randomUUID(), name: typeof name === 'string' ? name.slice(0,120) : 'Uploaded image', type, image, imageHash, text: null, history: [], prefires: 0, facts: null, duplicateOf: null };
+    // Duplicate receipts matter for expenses; other images are not flagged.
+    const sameImage = type === 'RECEIPT' && [...s.docs.values()].find(doc => doc.type === 'RECEIPT' && doc.imageHash === imageHash);
+    if (sameImage) item.duplicateOf = { id: sameImage.id, name: sameImage.name, reason: 'Same image was already uploaded.' };
     s.docs.set(item.id, item);
-    return { id: item.id, name: item.name, type: item.type };
+    s.order.push(item.id);
+    // Uploading does not open the item; opening (or running an action) does.
+    readAhead(s);
+    return summary(s, item);
+  }
+  function summary(s, doc) {
+    const ocr = s.cache.get(keyFor(doc, 'READ_TEXT'));
+    return { id: doc.id, name: doc.name, type: doc.type, active: s.activeItem === doc.id, read: Boolean(doc.text),
+      textReady: Boolean(doc.text) || ocr?.status === 'ready', textPending: ocr?.status === 'pending', duplicateOf: doc.duplicateOf };
+  }
+  // Switching to another item means the user finished the previous one: record
+  // DONE in the user's own model so it learns when they stop, not only what
+  // they do next.
+  function focus(s, doc) {
+    if (s.activeItem === doc.id) return;
+    const previous = s.docs.get(s.activeItem);
+    if (previous) {
+      s.personal.recordTransition([...toHistory(previous.type, previous.history), `${previous.type}:DONE`]);
+      s.learned[previous.type]++;
+    }
+    s.activeItem = doc.id;
+  }
+  function open(id, itemId) {
+    const s = getSession(id), doc = docFor(s, itemId);
+    focus(s, doc);
+    readAhead(s);
+    return summary(s, doc);
   }
   function docFor(s, id) { const doc = s.docs.get(id); if (!doc) throw new AIError('Image not found in this session.', 404); return doc; }
   function event(s, entry) {
@@ -69,7 +97,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     if (entry?.status === 'ready' && entry.expiresAt <= now()) { s.cache.delete(key); return undefined; }
     return entry;
   }
-  function start(s, doc, action, speculative) {
+  function start(s, doc, action, speculative, kind) {
     const key = keyFor(doc,action);
     const existing = cached(s,key);
     if (existing) return existing;
@@ -80,27 +108,28 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     else s.metrics.demandCalls++;
     s.running++;
     const startTime = performance.now();
-    event(s,{ kind: speculative ? 'prefetch' : 'provider', action, itemId: doc.id, result: 'started', model: providers.identity(action).model });
+    kind ||= speculative ? 'prefetch' : 'provider';
+    event(s,{ kind, action, itemId: doc.id, result: 'started', model: providers.identity(action).model });
     entry.promise = Promise.resolve().then(() => providers.run(action,{...doc})).then(output => {
       entry.status = 'ready'; entry.expiresAt = now()+cacheTtl;
       entry.output = output; entry.providerMs = performance.now()-startTime;
       const sample = s.latencySamples[action] ||= { total: 0, count: 0 };
       sample.total += entry.providerMs; sample.count++;
-      event(s,{ kind: speculative ? 'prefetch' : 'provider', action, itemId:doc.id, result:'completed', providerMs: entry.providerMs, model:output.model, usage:output.usage });
+      event(s,{ kind, action, itemId:doc.id, result:'completed', providerMs: entry.providerMs, model:output.model, usage:output.usage });
       return output;
     }).catch(error => {
       entry.status = 'failed'; s.metrics.failures++;
       s.cache.delete(key);
-      event(s,{kind:speculative?'prefetch':'provider',action,itemId:doc.id,result:'failed',message:error.message});
+      event(s,{kind,action,itemId:doc.id,result:'failed',message:error.message});
       throw error;
     }).finally(()=>{s.running--;});
     return entry;
   }
   function predict(s,doc,history) {
     const latencyByAction = Object.fromEntries(Object.entries(s.latencySamples).map(([action,sample])=>[action,sample.total/sample.count]));
-    return predictNextAction(doc.type, history, {latencyByAction}, s.model)
+    return predictBlended(doc.type, history, {latencyByAction}, s.model, s.personal)
       .filter(p=>SUPPORTED_ACTIONS.includes(p.action))
-      .map(p=>({ action:p.action,label:p.label,probability:p.probability,contextOrder:p.contextOrder,
+      .map(p=>({ action:p.action,label:p.label,probability:p.probability,startingProbability:p.startingProbability,personalObservations:p.personalObservations,contextOrder:p.contextOrder,
         shouldPrefetch:p.shouldPrefetch,expectedValue:p.expectedValue,
         estimatedProviderMs:s.latencySamples[p.action]?.count ? s.latencySamples[p.action].total/s.latencySamples[p.action].count : p.latencyMs,
         latencySource:s.latencySamples[p.action]?.count?'measured':'placeholder',
@@ -113,16 +142,37 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     const prediction = predictions.find(p=>p.shouldPrefetch && p.eligible && !cached(s,keyFor(doc,p.action)));
     if (!prediction) return;
     // No new operations are invented: only the registered read-only actions.
-    const entry = start(s,doc,prediction.action,true);
-    const task = entry.promise.catch(()=>{});
+    track(s, start(s,doc,prediction.action,true));
+  }
+  function track(s, entry) {
+    const task = entry.promise.catch(()=>{}).finally(()=>{ s.background.delete(task); readAhead(s); });
     s.background.add(task);
-    task.finally(()=>s.background.delete(task));
+  }
+  // Read-ahead: while the user works on one item, read the text of the next
+  // unread item in the inbox, so it opens instantly. Sends that image to the
+  // OCR provider before the user opens it, so it needs its own consent
+  // (s.readAhead, off by default) and uses the same model gate as prefetch:
+  // only if Read text is the likely first action for that kind of item.
+  function readAhead(s) {
+    if (!s.readAhead || !providers.available('READ_TEXT') || s.running >= 4) return;
+    if (s.attempts.some(e=>e.status==='pending')) return;
+    const from = s.order.indexOf(s.activeItem);
+    const nextId = s.order.slice(from + 1).find(id => {
+      const doc = s.docs.get(id);
+      return !doc.text && !cached(s, keyFor(doc, 'READ_TEXT')) && doc.prefires < prefetchLimit;
+    });
+    if (!nextId) return;
+    const doc = s.docs.get(nextId);
+    const first = predict(s, doc, []).find(p => p.shouldPrefetch && p.eligible);
+    if (first?.action !== 'READ_TEXT') return;
+    track(s, start(s, doc, 'READ_TEXT', true, 'read-ahead'));
   }
   async function perform(id,itemId,action) {
     const s = getSession(id), doc=docFor(s,itemId);
     if (!SUPPORTED_ACTIONS.includes(action)) throw new AIError('Unsupported action.');
     if (!providers.available(action)) throw new AIError(`Configure ${action==='READ_TEXT'?'PERCEPTRON_API_KEY':'GEMINI_API_KEY'} in backend/.env and restart the backend.`,503,'MISSING_API_KEY');
     if (action !== 'READ_TEXT' && !doc.text) throw new AIError('Run Read text successfully first.',409,'OCR_REQUIRED');
+    focus(s, doc);
     const startTime=performance.now();
     const existing=cached(s,keyFor(doc,action));
     const source=existing?.status==='ready'?'cache':existing?'in-flight':'network';
@@ -146,22 +196,55 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     // duplicate transitions. Learn each successfully completed action once.
     if(!doc.history.includes(action)) {
       doc.history.push(action);
-      s.model.recordTransition(toHistory(doc.type,doc.history));
+      s.personal.recordTransition(toHistory(doc.type,doc.history));
     }
+    if (action==='EXTRACT_FIELDS' && doc.type==='RECEIPT') checkDuplicate(s, doc, output.result);
     const predictions=predict(s,doc,doc.history);s.predictions=predictions;
     prefetch(s,doc,predictions);
+    readAhead(s);
     return { action,result:output.result,provider:output.provider,model:output.model,promptVersion:output.promptVersion,usage:output.usage,
-      source,waitMs,providerMs:entry.providerMs,usedPrefetch,predictions,simulated:false };
+      source,waitMs,providerMs:entry.providerMs,usedPrefetch,predictions,duplicateOf:doc.duplicateOf,simulated:false };
   }
   function setEnabled(id,enabled) {
     if (typeof enabled !== 'boolean') throw new AIError('enabled must be true or false.');
     getSession(id).enabled=enabled;return snapshot(id);
   }
+  function setReadAhead(id,enabled) {
+    if (typeof enabled !== 'boolean') throw new AIError('readAhead must be true or false.');
+    const s=getSession(id);s.readAhead=enabled;readAhead(s);return snapshot(id);
+  }
+  // Same total and same date as an earlier receipt (both supported by OCR
+  // evidence) suggests the receipt was submitted twice. A suggestion only.
+  function checkDuplicate(s, doc, result) {
+    const supported = name => result.fields?.find(f => f.status === 'supported-by-ocr' && f.value != null && (name === 'date' ? /date/i.test(f.name) : f.name === name));
+    const total = amountToken(supported('total')?.value ?? null);
+    const date = supported('date')?.value?.trim();
+    doc.facts = total && date ? { total, date } : null;
+    if (!doc.facts || doc.duplicateOf) return;
+    const match = [...s.docs.values()].find(other => other !== doc && other.facts?.total === total && other.facts?.date === date);
+    if (match) doc.duplicateOf = { id: match.id, name: match.name, reason: `Same total (${total}) and date (${date}) as an earlier receipt.` };
+  }
+  // What the user's own choices have changed, for the learning panel: the
+  // predictions after "Read text" for each kind of item, starting vs now.
+  function learning(s) {
+    return LIVE_TYPES.map(type => {
+      const now = predictBlended(type, ['READ_TEXT'], {}, s.model, s.personal).filter(p => SUPPORTED_ACTIONS.includes(p.action));
+      const pick = list => list.find(p => p.shouldPrefetch)?.action ?? null;
+      const starting = [...now].sort((a, b) => b.startingProbability - a.startingProbability);
+      const startingPick = pick(predictBlended(type, ['READ_TEXT'], {}, s.model, null).filter(p => SUPPORTED_ACTIONS.includes(p.action)));
+      return {
+        type, after: 'READ_TEXT', finishedItems: s.learned[type], observations: now[0]?.personalObservations ?? 0,
+        startingPrefetch: startingPick, nowPrefetch: pick(now),
+        rows: starting.map(p => ({ action: p.action, label: p.label, starting: p.startingProbability, now: p.probability })),
+      };
+    });
+  }
   function snapshot(id) {
     const s=getSession(id);
     const sorted=[...s.waits].sort((a,b)=>a-b), n=sorted.length;
     const attempts=s.attempts;
-    return { enabled:s.enabled, providers:providers.status(), prefetchLimitPerItem:prefetchLimit,
+    return { enabled:s.enabled, readAhead:s.readAhead, providers:providers.status(), prefetchLimitPerItem:prefetchLimit,
+      items:s.order.map(itemId=>summary(s,s.docs.get(itemId))), learning:learning(s),
       metrics:{...s.metrics, running:s.running,
         usedPrefetches:attempts.filter(e=>e.used&&e.status==='ready').length,
         unusedPrefetches:attempts.filter(e=>!e.used&&e.status==='ready').length,
@@ -173,7 +256,7 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
       },
       predictions:s.predictions.map(p=>({...p})),
       requestLog:s.events.map(e=>({...e})),
-      modelTraining:'500 generated journeys; designed behavior probabilities, not real-user accuracy',
+      modelTraining:'Starts from 500 generated journeys (designed probabilities, not real-user accuracy), then adapts to this session\'s own choices',
       scoring:'35% probability floor and inherited expected-value policy; initial latency and cost assumptions are placeholders, not measured ROI',
     };
   }
@@ -183,6 +266,6 @@ function createAIService({ providers, now = Date.now, cacheTtl = CACHE_TTL, env 
     if(s.running)throw new AIError('Wait for running calls to finish before clearing this run.',409);
     sessions.delete(id);
   }
-  return {createSession,upload,perform,setEnabled,snapshot,idle,remove};
+  return {createSession,upload,open,perform,setEnabled,setReadAhead,snapshot,idle,remove};
 }
 module.exports={createAIService,validateImage};
